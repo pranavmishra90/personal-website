@@ -85,10 +85,10 @@ secrets:
   mysql_root_password:
     file: $SECRETSDIR/mysql_root_password
 
-  authelia_jwt_secret:
-    file: $SECRETSDIR/authelia_jwt_secret
-  authelia_session_secret:
-    file: $SECRETSDIR/authelia_session_secret
+  # authelia_jwt_secret:
+  #   file: $SECRETSDIR/authelia_jwt_secret
+  # authelia_session_secret:
+  #   file: $SECRETSDIR/authelia_session_secret
 
 ####################################
 #            Services              #
@@ -208,8 +208,8 @@ services:
 #       - t2_proxy
 #     security_opt:
 #       - no-new-privileges:true
-# #    ports:
-# #      - "$PORTAINER_PORT:9000"
+#     ports:
+#      - "$PORTAINER_PORT:9000"
 #     volumes:
 #       - /var/run/docker.sock:/var/run/docker.sock:ro
 #       - $DOCKERDIR/portainer/data:/data 
@@ -466,85 +466,45 @@ services:
   
 #   matomo:
 
-#   #   image: matomo:fpm-alpine
-#   #   container_name: matomo
-#   #   restart: always
-#   #   ports:
-#   #     - 1182:80
-#   #   links:
-#   #     - mariadb
-#   #   volumes:
-#   #     - $DOCKERDIR/matomo:/var/www/html
-#   #   environment:
-#   #     - MATOMO_DATABASE_HOST=mariadb
-#   #     - MYSQL_USER=$MATOMO_DATABASE_USERNAME
-#   #     - MYSQL_PASSWORD=$MATOMO_DATABASE_PASSWORD
-#   #     - MYSQL_DATABASE=$MATOMO_DATABASE_DBNAME
-#   #     - MATOMO_DATABASE_TABLES_PREFIX=MATOMO_DATABASE_TABLES_PREFIX
+  #   image: matomo:fpm-alpine
+  #   container_name: matomo
+  #   restart: always
+  #   ports:
+  #     - 1182:80
+  #   links:
+  #     - mariadb
+  #   volumes:
+  #     - $DOCKERDIR/matomo:/var/www/html
+  #   environment:
+  #     - MATOMO_DATABASE_HOST=mariadb
+  #     - MYSQL_USER=$MATOMO_DATABASE_USERNAME
+  #     - MYSQL_PASSWORD=$MATOMO_DATABASE_PASSWORD
+  #     - MYSQL_DATABASE=$MATOMO_DATABASE_DBNAME
+  #     - MATOMO_DATABASE_TABLES_PREFIX=MATOMO_DATABASE_TABLES_PREFIX
 
-#     image: matomo
-#     restart: always
-#     container_name: matomo-alone
-#     volumes:
-# #     - ./config:/var/www/html/config
-# #     - ./logs:/var/www/html/logs
-#       - $DOCKERDIR/matomo:/var/www/html
-#     networks:
-#       t2_proxy:
-#         ipv4_address: 10.1.2.230
-#     environment:
-#       - MATOMO_DATABASE_HOST=mariadb
-#     env_file:
-#       - ./db.env
-#     # ports:
-#     #   - 12080:80
-#     labels:
-#       - "traefik.enable=true"
-#       ## HTTP Routers
-#       - "traefik.http.routers.motomo-alone-router.entrypoints=https"
-#       - "traefik.http.routers.motomo-alone-router.tls=true"
-#       - "traefik.http.routers.motomo-alone-router.rule=Host(`amatomo.$DOMAINNAME`)"
-#       ## Middlewares
-#       - "traefik.http.routers.motomo-alone-router.middlewares=chain-no-auth@file"
-#       # - "traefik.http.routers.motomo-alone-router.middlewares=chain-basic-auth@file" ## Website HTTP authentication
-#       # ## HTTP Services
-#       # - "traefik.http.routers.motomo-alone-router.service=amatomo-svc"
-#       # - "traefik.http.services.amatomo-svc.loadbalancer.server.port=12080"  
-
-
-
-# # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
-#   authelia:
-#     container_name: authelia
-#     # image: authelia/authelia:latest
-#     image: authelia/authelia:4.21.0
-#     restart: always
-#     networks:
-#       - t2_proxy
-#     depends_on:
-#       - mariadb
-#       - redis
-#     volumes:
-#       - $DOCKERDIR/authelia:/config
-#     environment:
-#       - TZ=$TZ
-#       - AUTHELIA_JWT_SECRET_FILE=/run/secrets/authelia_jwt_secret
-#       - AUTHELIA_SESSION_SECRET_FILE=/run/secrets/authelia_session_secret
-#       # - AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE=/run/secrets/authelia_storage_mysql_password
-#       # - AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE=/run/secrets/authelia_notifier_smtp_password
-#     secrets:
-#       - authelia_jwt_secret
-#       - authelia_session_secret
-#       # - authelia_storage_mysql_password
-#       # - authelia_notifier_smtp_password
-#     labels:
-#       - "traefik.enable=true"
-#       ## HTTP Routers
-#       - "traefik.http.routers.authelia-rtr.entrypoints=https"
-#       - "traefik.http.routers.authelia-rtr.rule=HostHeader(`authelia.$DOMAINNAME`)"
-#       ## Middlewares
-#       - "traefik.http.routers.authelia-rtr.middlewares=chain-authelia@file"
-#       ## HTTP Services
-#       - "traefik.http.routers.authelia-rtr.service=authelia-svc"
-#       - "traefik.http.services.authelia-svc.loadbalancer.server.port=9091"
-
+  # StatPing - Status Page & Monitoring Server
+  statping:
+    image: hunterlong/statping:latest
+    container_name: statping
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - $DOCKERDIR/statping:/app
+    environment:
+      DB_CONN: sqlite
+    # ports:
+    #   - 15090:8080
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.statping-rtr.entrypoints=https"
+      - "traefik.http.routers.statping-rtr.rule=Host(`statping.$DOMAINNAME`)"
+      - "traefik.http.routers.statping-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.statping-rtr.middlewares=chain-basic-auth@file"
+      # ## HTTP Services
+      # - "traefik.http.routers.statping-rtr.service=statping-svc"
+      # - "traefik.http.services.statping-svc.loadbalancer.server.port=15090"

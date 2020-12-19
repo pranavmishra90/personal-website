@@ -22,6 +22,7 @@ authelia/
 /portainer/data/*
 /secrets/*
 /sites/wordpress/html/*
+/statping/*
 /vscode/*
 /wiki/config/*
 /wiki/data/*
