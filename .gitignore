@@ -1,0 +1,30 @@
+#Specific files
+.htpasswd
+.env
+acme.json
+on
+
+#Types of files
+*.aof
+*.log
+*.key
+*.cnf
+*.pub
+*.sql
+*.code-workspace
+
+
+#Folders
+authelia/
+/heimdall/config/*
+/mariadb/data/*
+/portainer/data/*
+/secrets/*
+/sites/wordpress/html/*
+/vscode/*
+/wiki/config/*
+/wiki/data/*
+
+
+#### Allow files
+!*/folder_notes.yaml
