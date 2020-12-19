@@ -1,0 +1,6 @@
+# Folder Notes for /traefik2/acme
+
+# The following files are not synced by GitHub in this folder
+
+# .htpasswd
+# It contains the http access information to the traefik backend
