@@ -186,6 +186,9 @@ services:
       - "traefik.http.routers.traefik-rtr.middlewares=middlewares-secure-headers@file,middlewares-rate-limit@file,middlewares-basic-auth@file" #security headers
 
   # Cloudflare DDNS - Dynamic DNS Updater - Update IP address of the VM automatically
+
+  #### When the website is ready, uncomment this container (no need to flood Cloudflare DDNS when restarting this file)
+
   # cf-ddns:
   #   container_name: Cloudflare-DDNS
   #   image: oznu/cloudflare-ddns:latest
@@ -411,7 +414,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
-
+  # Wiki.js - a Wiki site built on JS
   wiki:
     image: ghcr.io/linuxserver/wikijs
     container_name: wikijs
@@ -442,6 +445,7 @@ services:
       - "traefik.http.routers.wiki-rtr.service=wiki-svc"
       - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"    
 
+  # Heimdall - a convenient dashboard to jump to your services with
   heimdall:
     image: ghcr.io/linuxserver/heimdall
     container_name: heimdall
@@ -508,6 +512,8 @@ services:
       # ## HTTP Services
       # - "traefik.http.routers.statping-rtr.service=statping-svc"
       # - "traefik.http.services.statping-svc.loadbalancer.server.port=15090"
+  
+  # Glances - System monitoring
   glances:
     image: nicolargo/glances:latest
     container_name: glances
