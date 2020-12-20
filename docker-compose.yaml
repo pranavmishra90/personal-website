@@ -104,7 +104,7 @@ services:
     restart: unless-stopped
     command: # CLI arguments
       - --global.checkNewVersion=true
-      - --global.sendAnonymousUsage=true
+      - --global.sendAnonymousUsage=false
       - --entryPoints.http.address=:80
       - --entryPoints.https.address=:443
         # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
@@ -198,36 +198,36 @@ services:
   #     - DELETE_ON_STOP=false
   #     - DNS_SERVER=1.1.1.1
 
-# # Portainer - WebUI for Containers
-#   portainer:
-#     container_name: portainer
-#     image: portainer/portainer:latest
-#     restart: unless-stopped
-#     command: -H unix:///var/run/docker.sock
-#     networks:
-#       - t2_proxy
-#     security_opt:
-#       - no-new-privileges:true
-#     ports:
-#      - "$PORTAINER_PORT:9000"
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock:ro
-#       - $DOCKERDIR/portainer/data:/data 
-#     environment:
-#       - TZ=$TZ
-#     labels:
-#       - "traefik.enable=true"
-#       ## HTTP Routers
-#       - "traefik.http.routers.portainer-rtr.entrypoints=https"
-#       - "traefik.http.routers.portainer-rtr.rule=Host(`ptr.$DOMAINNAME`)"
-#       - "traefik.http.routers.portainer-rtr.tls=true"
-#       ## Middlewares
-#       - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
-#       # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-#       # - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
-#       ## HTTP Services
-#       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
-#       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+# Portainer - WebUI for Containers
+  portainer:
+    container_name: portainer
+    image: portainer/portainer:latest
+    restart: unless-stopped
+    command: -H unix:///var/run/docker.sock
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    ports:
+     - "$PORTAINER_PORT:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - $DOCKERDIR/portainer/data:/data 
+    environment:
+      - TZ=$TZ
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.portainer-rtr.entrypoints=https"
+      - "traefik.http.routers.portainer-rtr.rule=Host(`ptr.$DOMAINNAME`)"
+      - "traefik.http.routers.portainer-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+      ## HTTP Services
+      - "traefik.http.routers.portainer-rtr.service=portainer-svc"
+      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
 
   # VSCode - VSCode Editing
   vscode:
@@ -508,3 +508,37 @@ services:
       # ## HTTP Services
       # - "traefik.http.routers.statping-rtr.service=statping-svc"
       # - "traefik.http.services.statping-svc.loadbalancer.server.port=15090"
+  glances:
+    image: nicolargo/glances:latest
+    container_name: glances
+    restart: unless-stopped
+    privileged: true
+    # network_mode: host
+    networks:
+      t2_proxy:
+        ipv4_address: 10.1.2.220
+    # depends_on:
+    #   - socket-proxy #have not configured this yet
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "$GLANCES_PORT:61208"
+    pid: host
+    volumes:
+      - $DOCKERDIR/glances/glances.conf:/glances/conf/glances.conf # Use this if you want to add a glances.conf file
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Use Docker Socket Proxy instead for improved security
+    environment:
+      # GLANCES_OPT: "-C /glances/conf/glances.conf --quiet --export influxdb"
+      GLANCES_OPT: "-w" #start a web server to view data
+      DOCKER_HOST: tcp://socket-proxy:2375
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.glances-rtr.entrypoints=https"
+      - "traefik.http.routers.glances-rtr.rule=Host(`glances.$DOMAINNAME`)"
+      - "traefik.http.routers.glances-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.glances-rtr.middlewares=chain-basic-auth@file"
+      # ## HTTP Services
+      # - "traefik.http.routers.glances-rtr.service=glances-svc"
+      # - "traefik.http.services.glances-svc.loadbalancer.server.port=61208"
