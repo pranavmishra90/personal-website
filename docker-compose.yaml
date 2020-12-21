@@ -85,6 +85,9 @@ secrets:
   mysql_root_password:
     file: $SECRETSDIR/mysql_root_password
 
+  cloudflare_api_token:
+    file: $SECRETSDIR/cloudflare_api_token
+
   # authelia_jwt_secret:
   #   file: $SECRETSDIR/authelia_jwt_secret
   # authelia_session_secret:
@@ -200,6 +203,38 @@ services:
   #     - RRTYPE=A
   #     - DELETE_ON_STOP=false
   #     - DNS_SERVER=1.1.1.1
+
+
+  # Cloudflare-Companion - Automatic CNAME DNS Creation
+  cf-companion:
+    container_name: cloudflare-companion
+    image: tiredofit/traefik-cloudflare-companion:latest
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+      - default
+    #depends_on:
+    #  - socket-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - TIMEZONE=$TZ
+      - TRAEFIK_VERSION=2
+      #- CF_EMAIL=$CLOUDFLARE_EMAIL
+      - CF_TOKEN=$CLOUDFLARE_API_TOKEN
+      - TARGET_DOMAIN=$DOMAINNAME
+      - DOMAIN1=$DOMAINNAME
+      - DOMAIN1_ZONE_ID=$CLOUDFLARE_ZONEID # Copy from Cloudflare Overview page
+      - DOMAIN1_PROXIED=TRUE
+      - DOCKER_ENTRYPOINT=unix://var/run/docker.sock
+    secrets: # not working
+      - cloudflare_api_token
+    # labels:
+      # Add hosts specified in rules here to force cf-companion to create the CNAMEs
+      # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
+      # - "traefik.http.routers.cf-companion-rtr.rule=Host(`portainer.$DOMAINNAME`) || `synglances.$DOMAINNAME`) || `pihole.$
 
 # Portainer - WebUI for Containers
   portainer:
