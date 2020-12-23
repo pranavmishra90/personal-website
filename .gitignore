@@ -31,3 +31,6 @@ authelia/
 #### Allow files
 !*/folder_notes.yaml
 !LICENSE-*
+
+#Matomo testing
+/matomo-server/*
