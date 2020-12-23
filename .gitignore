@@ -33,4 +33,4 @@ authelia/
 !LICENSE-*
 
 #Matomo testing
-/matomo-server/*
+/sites/matomo/*
