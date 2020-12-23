@@ -4,6 +4,11 @@ http:
       basicAuth:
         usersFile: "/shared/.htpasswd" #be sure to mount the volume through docker-compose.yml
         realm: "Traefik 2 Basic Auth"
+    
+    middlewares-visitor-auth:
+      basicAuth:
+        usersFile: "/shared/.visitorhtpasswd" #be sure to mount the volume through docker-compose.yml
+        realm: "Traefik 2 Vistor Auth"
 
     middlewares-rate-limit:
       rateLimit:
