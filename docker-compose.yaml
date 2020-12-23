@@ -367,6 +367,9 @@ services:
       - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
       - $DOCKERDIR/php/php7:/usr/local/etc/php
 
+      #Matomo
+      - $DOCKERDIR/matomo-server/matomo:/var/www/html/matomo
+
 
   # Nginx - Web Server
   nginx:
@@ -384,6 +387,11 @@ services:
       - $DOCKERDIR/nginx:/etc/nginx
       - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
       - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
+
+      #Matomo
+      - $DOCKERDIR/matomo-server/matomo:/var/www/html/matomo
+
+
     labels:
       - "traefik.enable=true"
       ## HTTP Routers Wordpress (Dr. Pranav Mishra) Authenticated Access
@@ -402,6 +410,13 @@ services:
       - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
 
+
+      # Matomo
+      - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-matomo-rtr.tls=true"
+      - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`mat.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-matomo-rtr.priority=95"
+
       # Redirect Wordpress non-www to www middleware
       - "traefik.http.middlewares.wordpress-redirect.redirectregex.regex=^https?://$DOMAINNAME/(.*)"
       - "traefik.http.middlewares.wordpress-redirect.redirectregex.replacement=https://www.$DOMAINNAME/$${1}"
@@ -410,14 +425,19 @@ services:
       ## Middlewares
       # - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
       - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" ## Website HTTP authentication
-
       - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
       - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #OPCache requring HTTP authentication
+
+      ####Matomo
+      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-basic-auth@file"
       
       ## HTTP Services
       - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
       - "traefik.http.routers.nginx-wordpress-auth-rtr.service=nginx-svc"
       - "traefik.http.services.nginx-svc.loadbalancer.server.port=80"
+
+      ####Matomo
+      - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
 
   # Redis - Key-value Store
   redis:
