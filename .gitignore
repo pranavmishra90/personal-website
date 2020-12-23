@@ -1,5 +1,6 @@
 #Specific files
 .htpasswd
+.visitorhtpasswd
 acme.json
 on
 
