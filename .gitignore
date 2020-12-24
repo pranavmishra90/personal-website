@@ -18,6 +18,7 @@ on
 #Folders
 authelia/
 /heimdall/config/*
+/logs/
 /mariadb/data/*
 /matomo/*
 /portainer/data/*
@@ -32,6 +33,7 @@ authelia/
 #### Allow files
 !*/folder_notes.yaml
 !LICENSE-*
+!*/conf.d/custom.cnf
 
 #Matomo testing
 /sites/matomo/*
