@@ -309,6 +309,7 @@ services:
       - $DOCKERDIR/mariadb/data:/config
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+      - $DOCKERDIR/mariadb/conf.d/custom.cnf:/etc/mysql/conf.d/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
     environment:
       - PUID=$PUID
       - PGID=$PGID
