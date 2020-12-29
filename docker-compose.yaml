@@ -260,8 +260,8 @@ services:
       - "traefik.http.routers.portainer-rtr.rule=Host(`ptr.$DOMAINNAME`)"
       - "traefik.http.routers.portainer-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
+      - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
       # - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
@@ -276,7 +276,8 @@ services:
       - t2_proxy
     volumes:
       - $DOCKERDIR:/home/coder/personal-website
-      - $DOCKERDIR/vscode:/home/coder
+      - $DOCKERDIR/vscode:/home/coder/vscode
+      - $AZUREDIR:/home/coder
     environment:
       PASSWORD: $VSCODE_PASSWORD
       # Run as root first time (user: 0), then stop container, then change permissions to user:docker and 775. Disable run as root below.
@@ -412,6 +413,7 @@ services:
       - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
 
 
+
       # Matomo
       - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
       - "traefik.http.routers.nginx-matomo-rtr.tls=true"
@@ -445,11 +447,18 @@ services:
     container_name: redis
     image: redis:6.0.6
     restart: unless-stopped
-    entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
+    # entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
+    entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
     networks:
       - t2_proxy
+      - default
     security_opt:
       - no-new-privileges:true
+    ports:
+      - 6379:6379
+    sysctls:
+    - net.core.somaxconn=1024
     volumes:
       - $DOCKERDIR/redis/data:/data
       - /etc/timezone:/etc/timezone:ro
