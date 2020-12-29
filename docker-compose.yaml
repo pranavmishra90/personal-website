@@ -277,7 +277,8 @@ services:
     volumes:
       - $DOCKERDIR:/home/coder/personal-website
       - $DOCKERDIR/vscode:/home/coder/vscode
-      - $AZUREDIR:/home/coder
+      - $AZUREDIR/research:/home/coder/research
+      - $AZUREDIR/github-profile:/home/coder/github-profile
     environment:
       PASSWORD: $VSCODE_PASSWORD
       # Run as root first time (user: 0), then stop container, then change permissions to user:docker and 775. Disable run as root below.
