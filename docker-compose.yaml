@@ -427,13 +427,13 @@ services:
       - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
 
       ## Middlewares
-      - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
+      # - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
       - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-visitor-auth@file" ## Website HTTP authentication
       - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
       - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #OPCache requring HTTP authentication
 
       ####Matomo
-      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-basic-auth@file"
+      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-no-auth@file"
       
       ## HTTP Services
       - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
