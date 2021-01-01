@@ -25,6 +25,7 @@ authelia/
 /secrets/*
 /sites/wordpress/html/*
 /statping/*
+/trash/
 /vscode/*
 /wiki/config/*
 /wiki/data/*
