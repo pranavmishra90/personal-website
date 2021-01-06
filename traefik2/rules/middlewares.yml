@@ -37,14 +37,15 @@ http:
         # sslHost: "example.com"
         referrerPolicy: "same-origin"
         # Setting contentSecurityPolicy is more secure but it can break things. Proper auth will reduce the risk.
-        # the below line also breaks some apps due to 'none' - sonarr, radarr, etc.
+        # the below line also breaks some apps due to 'none'
         # contentSecurityPolicy: "frame-ancestors '*.example.com:*';object-src 'none';script-src 'none';"
         featurePolicy: "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'; usb 'none'; vr 'none';"
         
         ## These customResponseHeaders will prevent search engine indexing
-        # customResponseHeaders:
-        #   X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex,"
-        #   server: ""
+        customResponseHeaders:
+          # X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex,"
+          X-Robots-Tag: "all"
+          server: ""
 
     # middlewares-oauth:
     #   forwardAuth:
