@@ -36,6 +36,7 @@ authelia/
 !LICENSE-*
 !*/conf.d/custom.cnf
 !/sites/wordpress/html/wp-content/themes/myself
+!/sites/wordpress/html/wp-content/themes/myself/template-parts/content.php
 
 #Matomo testing
 /sites/matomo/*

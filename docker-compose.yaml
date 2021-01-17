@@ -433,7 +433,7 @@ services:
       - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #OPCache requring HTTP authentication
 
       ####Matomo
-      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-basic-auth@file"
       
       ## HTTP Services
       - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
