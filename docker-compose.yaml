@@ -88,10 +88,16 @@ secrets:
   cloudflare_api_token:
     file: $SECRETSDIR/cloudflare_api_token
 
-  # authelia_jwt_secret:
-  #   file: $SECRETSDIR/authelia_jwt_secret
-  # authelia_session_secret:
-  #   file: $SECRETSDIR/authelia_session_secret
+  authelia_jwt_secret:
+    file: $DOCKERDIR/secrets/authelia_jwt_secret
+  authelia_session_secret:
+    file: $DOCKERDIR/secrets/authelia_session_secret
+  authelia_storage_mysql_password:
+    file: $DOCKERDIR/secrets/authelia_storage_mysql_password
+  authelia_notifier_smtp_password:
+    file: $DOCKERDIR/secrets/authelia_notifier_smtp_password
+  # authelia_duo_api_secret_key:
+  #   file: $DOCKERDIR/secrets/authelia_duo_api_secret_key
 
 ####################################
 #            Services              #
@@ -183,10 +189,49 @@ services:
       - "traefik.http.routers.traefik-rtr.service=api@internal"
       
       ## Middlewares
-      - "traefik.http.routers.traefik-rtr.middlewares=middlewares-basic-auth@file" #basic authentication for traefik dashboard, per middlewares.toml
-      - "traefik.http.routers.traefik-rtr.middlewares=chain-basic-auth@file" #authentication chains per middlewares-chains.toml
-      - "traefik.http.routers.traefik-rtr.middlewares=middlewares-rate-limit@file,middlewares-basic-auth@file" #rate limiting access
-      - "traefik.http.routers.traefik-rtr.middlewares=middlewares-secure-headers@file,middlewares-rate-limit@file,middlewares-basic-auth@file" #security headers
+      # - "traefik.http.routers.traefik-rtr.middlewares=middlewares-basic-auth@file" #basic authentication for traefik dashboard, per middlewares.toml
+      # - "traefik.http.routers.traefik-rtr.middlewares=chain-basic-auth@file" #authentication chains per middlewares-chains.toml
+      # - "traefik.http.routers.traefik-rtr.middlewares=middlewares-rate-limit@file,middlewares-basic-auth@file" #rate limiting access
+      - "traefik.http.routers.traefik-rtr.middlewares=middlewares-secure-headers@file,middlewares-rate-limit@file,chain-authelia@file" #security headers
+
+
+  # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
+  authelia:
+    container_name: authelia
+    # Check this before upgrading: https://github.com/authelia/authelia/blob/master/BREAKING.md
+    image: authelia/authelia:latest
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+      - default
+    # ports:
+    #   - "9091:9091"
+    volumes:
+      - $DOCKERDIR/authelia:/config
+    environment:
+      - TZ=$TZ
+      - AUTHELIA_JWT_SECRET_FILE=/run/secrets/authelia_jwt_secret
+      - AUTHELIA_SESSION_SECRET_FILE=/run/secrets/authelia_session_secret
+      - AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE=/run/secrets/authelia_storage_mysql_password
+      - AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE=/run/secrets/authelia_notifier_smtp_password
+      # - AUTHELIA_DUO_API_SECRET_KEY_FILE=/run/secrets/authelia_duo_api_secret_key
+    secrets:
+      - authelia_jwt_secret
+      - authelia_session_secret
+      - authelia_storage_mysql_password
+      - authelia_notifier_smtp_password
+      # - authelia_duo_api_secret_key
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.authelia-rtr.entrypoints=https"
+      - "traefik.http.routers.authelia-rtr.rule=Host(`authelia.$DOMAINNAME`)"
+      - "traefik.http.routers.authelia-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.authelia-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.authelia-rtr.service=authelia-svc"
+      - "traefik.http.services.authelia-svc.loadbalancer.server.port=9091"
 
   # Cloudflare DDNS - Dynamic DNS Updater - Update IP address of the VM automatically
 
@@ -261,7 +306,8 @@ services:
       - "traefik.http.routers.portainer-rtr.tls=true"
       ## Middlewares
       # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
-      - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
       # - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
       ## HTTP Services
       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
@@ -292,10 +338,38 @@ services:
       - "traefik.http.routers.vscode-rtr.rule=Host(`vscode.$DOMAINNAME`)"
       ## Middlewares
       # - "traefik.http.routers.vscode-rtr.middlewares=chain-oauth@file"
-      - "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
+      # - "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
+      - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
       ## HTTP Services
       - "traefik.http.routers.vscode-rtr.service=vscode-svc"
       - "traefik.http.services.vscode-svc.loadbalancer.server.port=8080"
+
+  nodered:
+    image: nodered/node-red:latest
+    environment:
+      - TZ=America/Chicago
+    container_name: nodered
+    # ports:
+    #   - "1880:1880"
+    networks:
+      - t2_proxy
+    volumes:
+      - $DOCKERDIR/nodered:/data
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.nodered-rtr.entrypoints=https"
+      - "traefik.http.routers.nodered-rtr.tls=true"
+      - "traefik.http.routers.nodered-rtr.rule=Host(`nodered.$DOMAINNAME`)"
+      ## Middlewares
+      # - "traefik.http.routers.nodered-rtr.middlewares=chain-oauth@file"
+      # - "traefik.http.routers.nodered-rtr.middlewares=chain-basic-auth@file"
+      - "traefik.http.routers.nodered-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
+      # ## HTTP Services
+      # - "traefik.http.routers.nodered-rtr.service=nodered-svc"
+      # - "traefik.http.services.nodered-svc.loadbalancer.server.port=8080"
 
   # MariaDB - MySQL Database
   mariadb:
@@ -349,7 +423,9 @@ services:
       - "traefik.http.routers.phpmyadmin-rtr.tls=true"
       - "traefik.http.routers.phpmyadmin-rtr.rule=Host(`pma.$DOMAINNAME`)"
       ## Middlewares
-      - "traefik.http.routers.phpmyadmin-rtr.middlewares=middlewares-basic-auth@file"
+      # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
       ## HTTP Services
       - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
       - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
@@ -427,13 +503,13 @@ services:
       - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
 
       ## Middlewares
-      # - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
-      - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-visitor-auth@file" ## Website HTTP authentication
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
-      - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #OPCache requring HTTP authentication
+
+      - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring HTTP authentication
+      - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=wordpress-redirect,chain-authelia@file" #OPCache requring HTTP authentication
 
       ####Matomo
-      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-basic-auth@file"
+      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-authelia@file"
       
       ## HTTP Services
       - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
@@ -488,10 +564,12 @@ services:
       ## HTTP Routers
       - "traefik.http.routers.wiki-rtr.entrypoints=https"
       - "traefik.http.routers.wiki-rtr.tls=true"
-      - "traefik.http.routers.wiki-rtr.rule=Host(`wiki.$DOMAINNAME`)"
+      - "traefik.http.routers.wiki-rtr.rule=Host(`foamed.$DOMAINNAME`)"
       ## Middlewares
       - "traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file"
       # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+      # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
       ## HTTP Services
       - "traefik.http.routers.wiki-rtr.service=wiki-svc"
       - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"    
@@ -517,7 +595,10 @@ services:
       - "traefik.http.routers.heimdall-router.rule=Host(`gateway.$DOMAINNAME`)"
       ## Middlewares
       # - "traefik.http.routers.heimdall-router.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.heimdall-router.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+      # - "traefik.http.routers.heimdall-router.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+      - "traefik.http.routers.heimdall-router.middlewares=chain-authelia@file" # Authelia authentication
+
+      
   
 
   # StatPing - Status Page & Monitoring Server
@@ -542,7 +623,9 @@ services:
       - "traefik.http.routers.statping-rtr.rule=Host(`statping.$DOMAINNAME`)"
       - "traefik.http.routers.statping-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.statping-rtr.middlewares=chain-basic-auth@file"
+      # - "traefik.http.routers.statping-rtr.middlewares=chain-basic-auth@file"
+      - "traefik.http.routers.statping-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
       # ## HTTP Services
       # - "traefik.http.routers.statping-rtr.service=statping-svc"
       # - "traefik.http.services.statping-svc.loadbalancer.server.port=15090"
@@ -578,7 +661,34 @@ services:
       - "traefik.http.routers.glances-rtr.rule=Host(`glances.$DOMAINNAME`)"
       - "traefik.http.routers.glances-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.glances-rtr.middlewares=chain-basic-auth@file"
+      # - "traefik.http.routers.glances-rtr.middlewares=chain-basic-auth@file"
+      - "traefik.http.routers.glances-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
       # ## HTTP Services
       # - "traefik.http.routers.glances-rtr.service=glances-svc"
       # - "traefik.http.services.glances-svc.loadbalancer.server.port=61208"
+
+
+# KH Info Gateway
+  khinfo:
+    image: ghcr.io/linuxserver/heimdall
+    container_name: khinfo
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - TZ=$TZ
+    volumes:
+      - $DOCKERDIR/kh_gateway/config:/config
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.heimdall-router.entrypoints=https"
+      - "traefik.http.routers.heimdall-router.tls=true"
+      - "traefik.http.routers.heimdall-router.rule=Host(`kh.$DOMAINNAME`)"
+      ## Middlewares
+      # - "traefik.http.routers.heimdall-router.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.heimdall-router.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+      - "traefik.http.routers.heimdall-router.middlewares=chain-authelia@file" # Authelia authentication

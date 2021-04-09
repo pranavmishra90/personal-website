@@ -18,7 +18,7 @@ http:
         middlewares:
           - middlewares-rate-limit
           - middlewares-secure-headers
-          # - middlewares-visitor-auth
+          - middlewares-visitor-auth
 
     # chain-oauth:
     #   chain:
