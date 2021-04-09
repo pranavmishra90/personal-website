@@ -21,6 +21,7 @@ authelia/
 /logs/
 /mariadb/data/*
 /matomo/*
+/nodered/*
 /portainer/data/*
 /secrets/*
 /sites/wordpress/html/*
@@ -29,6 +30,9 @@ authelia/
 /vscode/*
 /wiki/config/*
 /wiki/data/*
+
+# KH Info
+/kh_gateway/*
 
 
 #### Allow files
