@@ -6,6 +6,7 @@ on
 
 #Types of files
 *.aof
+*.db
 *.env
 *.log
 *.key
