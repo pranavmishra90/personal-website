@@ -280,7 +280,28 @@ services:
     #   # Add hosts specified in rules here to force cf-companion to create the CNAMEs
     #   # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
     #   - "traefik.http.routers.cf-companion-rtr.rule=Host(`XYZ.$DOMAINNAME`)"
-
+  # MariaDB - MySQL Database
+  mariadb:
+    container_name: mariadb
+    image: linuxserver/mariadb:110.4.14mariabionic-ls77
+    restart: always
+    networks:
+      t2_proxy:
+        ipv4_address: 10.1.2.250
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - $DOCKERDIR/mariadb/data:/config
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - $DOCKERDIR/mariadb/conf.d/custom.cnf:/etc/mysql/conf.d/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password # Not taking this pw during initialization
+    secrets:
+      - mysql_root_password
+      
 # # Portainer - WebUI for Containers
 #   portainer:
 #     container_name: portainer
@@ -346,27 +367,7 @@ services:
   #     - "traefik.http.services.vscode-svc.loadbalancer.server.port=8080"
 
 
-  # MariaDB - MySQL Database
-  mariadb:
-    container_name: mariadb
-    image: linuxserver/mariadb:110.4.14mariabionic-ls77
-    restart: always
-    networks:
-      t2_proxy:
-        ipv4_address: 10.1.2.250
-    security_opt:
-      - no-new-privileges:true
-    volumes:
-      - $DOCKERDIR/mariadb/data:/config
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-      - $DOCKERDIR/mariadb/conf.d/custom.cnf:/etc/mysql/conf.d/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
-    environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password # Not taking this pw during initialization
-    secrets:
-      - mysql_root_password
+
 
 # phpMyAdmin - Database management
   phpmyadmin:
