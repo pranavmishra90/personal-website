@@ -281,37 +281,37 @@ services:
     #   # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
     #   - "traefik.http.routers.cf-companion-rtr.rule=Host(`XYZ.$DOMAINNAME`)"
 
-# Portainer - WebUI for Containers
-  portainer:
-    container_name: portainer
-    image: portainer/portainer:latest
-    restart: unless-stopped
-    command: -H unix:///var/run/docker.sock
-    networks:
-      - t2_proxy
-    security_opt:
-      - no-new-privileges:true
-    ports:
-     - "$PORTAINER_PORT:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - $DOCKERDIR/portainer/data:/data 
-    environment:
-      - TZ=$TZ
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.portainer-rtr.entrypoints=https"
-      - "traefik.http.routers.portainer-rtr.rule=Host(`ptr.$DOMAINNAME`)"
-      - "traefik.http.routers.portainer-rtr.tls=true"
-      ## Middlewares
-      # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
-      # - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
-      ## HTTP Services
-      - "traefik.http.routers.portainer-rtr.service=portainer-svc"
-      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+# # Portainer - WebUI for Containers
+#   portainer:
+#     container_name: portainer
+#     image: portainer/portainer:latest
+#     restart: unless-stopped
+#     command: -H unix:///var/run/docker.sock
+#     networks:
+#       - t2_proxy
+#     security_opt:
+#       - no-new-privileges:true
+#     ports:
+#      - "$PORTAINER_PORT:9000"
+#     volumes:
+#       - /var/run/docker.sock:/var/run/docker.sock:ro
+#       - $DOCKERDIR/portainer/data:/data 
+#     environment:
+#       - TZ=$TZ
+#     labels:
+#       - "traefik.enable=true"
+#       ## HTTP Routers
+#       - "traefik.http.routers.portainer-rtr.entrypoints=https"
+#       - "traefik.http.routers.portainer-rtr.rule=Host(`ptr.$DOMAINNAME`)"
+#       - "traefik.http.routers.portainer-rtr.tls=true"
+#       ## Middlewares
+#       # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
+#       # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+#       - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
+#       # - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+#       ## HTTP Services
+#       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
+#       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
 
   # # VSCode - VSCode Editing
   # vscode:
@@ -520,120 +520,71 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
-  # Wiki.js - a Wiki site built on JS
-  wiki:
-    image: ghcr.io/linuxserver/wikijs
-    container_name: wikijs
-    # links:
-    #   - mariadb
-    environment:
-      - PUID=0
-      - PGID=0
-      - TZ=$TZ
-    volumes:
-      - $DOCKERDIR/wiki/config:/config
-      - $DOCKERDIR/wiki/data:/data
-    ports:
-      - 3000:3000
-    restart: unless-stopped
-    networks:
-      - t2_proxy
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.wiki-rtr.entrypoints=https"
-      - "traefik.http.routers.wiki-rtr.tls=true"
-      - "traefik.http.routers.wiki-rtr.rule=Host(`foamed.$DOMAINNAME`)"
-      ## Middlewares
-      - "traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file"
-      # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
-      # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
+  # # Wiki.js - a Wiki site built on JS
+  # wiki:
+  #   image: ghcr.io/linuxserver/wikijs
+  #   container_name: wikijs
+  #   # links:
+  #   #   - mariadb
+  #   environment:
+  #     - PUID=0
+  #     - PGID=0
+  #     - TZ=$TZ
+  #   volumes:
+  #     - $DOCKERDIR/wiki/config:/config
+  #     - $DOCKERDIR/wiki/data:/data
+  #   ports:
+  #     - 3000:3000
+  #   restart: unless-stopped
+  #   networks:
+  #     - t2_proxy
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.wiki-rtr.entrypoints=https"
+  #     - "traefik.http.routers.wiki-rtr.tls=true"
+  #     - "traefik.http.routers.wiki-rtr.rule=Host(`foamed.$DOMAINNAME`)"
+  #     ## Middlewares
+  #     - "traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file"
+  #     # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+  #     # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
 
-      ## HTTP Services
-      - "traefik.http.routers.wiki-rtr.service=wiki-svc"
-      - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"    
-
-  # Heimdall - a convenient dashboard to jump to your services with
-  heimdall:
-    image: ghcr.io/linuxserver/heimdall
-    container_name: heimdall
-    environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - TZ=$TZ
-    volumes:
-      - $DOCKERDIR/heimdall/config:/config
-    restart: unless-stopped
-    networks:
-      - t2_proxy
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.heimdall-router.entrypoints=https"
-      - "traefik.http.routers.heimdall-router.tls=true"
-      - "traefik.http.routers.heimdall-router.rule=Host(`gateway.$DOMAINNAME`)"
-      ## Middlewares
-      # - "traefik.http.routers.heimdall-router.middlewares=chain-no-auth@file"
-      # - "traefik.http.routers.heimdall-router.middlewares=chain-basic-auth@file" ## Website HTTP authentication
-      - "traefik.http.routers.heimdall-router.middlewares=chain-authelia@file" # Authelia authentication
-
-      
+  #     ## HTTP Services
+  #     - "traefik.http.routers.wiki-rtr.service=wiki-svc"
+  #     - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"    
 
 
-  traggo:
-    image: traggo/server:latest
-    container_name: traggo
-    # ports:
-    #   - 3030:3030
-    environment:
-      TRAGGO_DEFAULT_USER_NAME: $traggo_admin_username
-      TRAGGO_DEFAULT_USER_PASS: $traggo_admin_password
-    volumes:
-      - $DOCKERDIR/traggo/data:/opt/traggo/data
-    networks:
-      - t2_proxy
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.traggo-router.entrypoints=https"
-      - "traefik.http.routers.traggo-router.tls=true"
-      - "traefik.http.routers.traggo-router.rule=Host(`time.$DOMAINNAME`)"
-      ## Middlewares
-      - "traefik.http.routers.traggo-router.middlewares=chain-authelia@file" # Authelia authentication
+ 
 
-      ## HTTP Services
-      - "traefik.http.routers.traggo-router.service=traggo-svc"
-      - "traefik.http.services.traggo-svc.loadbalancer.server.port=3030"    
-
-  duplicati:
-    image: ghcr.io/linuxserver/duplicati
-    container_name: duplicati
-    environment:
-      - PUID=0 #need to be root in order to read the files
-      - PGID=0
-      - TZ=$TZ
-      # - CLI_ARGS= #optional
-    volumes:
-      - ~/duplicati/config:/config
-      # - ~/backups:/backups #will not be storing local backups
-      - $DOCKERDIR/:/drpm-website:ro #website backup
-      - /home/pranav/research:/drpm-research:ro #research directory backup
-      - /home/pranav/github-profile:/github-profile:ro #github profile page backup
-    ports:
-      - 8200:8200
-    restart: unless-stopped
-    networks:
-      - t2_proxy
-      - default
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.duplicati-rtr.entrypoints=https"
-      - "traefik.http.routers.duplicati-rtr.tls=true"
-      - "traefik.http.routers.duplicati-rtr.rule=Host(`duplicati.$DOMAINNAME`)"
-      ## Middlewares
-      # - "traefik.http.routers.duplicati-rtr.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.duplicati-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
-      - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200" 
+  # duplicati:
+  #   image: ghcr.io/linuxserver/duplicati
+  #   container_name: duplicati
+  #   environment:
+  #     - PUID=0 #need to be root in order to read the files
+  #     - PGID=0
+  #     - TZ=$TZ
+  #     # - CLI_ARGS= #optional
+  #   volumes:
+  #     - ~/duplicati/config:/config
+  #     # - ~/backups:/backups #will not be storing local backups
+  #     - $DOCKERDIR/:/drpm-website:ro #website backup
+  #     - /home/pranav/research:/drpm-research:ro #research directory backup
+  #     - /home/pranav/github-profile:/github-profile:ro #github profile page backup
+  #   ports:
+  #     - 8200:8200
+  #   restart: unless-stopped
+  #   networks:
+  #     - t2_proxy
+  #     - default
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.duplicati-rtr.entrypoints=https"
+  #     - "traefik.http.routers.duplicati-rtr.tls=true"
+  #     - "traefik.http.routers.duplicati-rtr.rule=Host(`duplicati.$DOMAINNAME`)"
+  #     ## Middlewares
+  #     # - "traefik.http.routers.duplicati-rtr.middlewares=chain-no-auth@file"
+  #     - "traefik.http.routers.duplicati-rtr.middlewares=chain-authelia@file"
+  #     ## HTTP Services
+  #     - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
+  #     - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200" 
