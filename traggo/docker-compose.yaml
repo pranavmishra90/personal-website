@@ -1,0 +1,48 @@
+####################################
+#         Docker-Compose           #
+####################################
+version: "3.7"
+
+####################################
+#            Networks              #
+####################################
+
+networks:
+  t2_proxy:
+    external:
+      name: t2_proxy
+  default:
+    driver: bridge
+
+####################################
+#            Services              #
+####################################  
+services:  
+  # #######################################################
+  # Punch-in punch-out timer application
+  # #######################################################
+
+  traggo:
+    image: traggo/server:latest
+    container_name: traggo
+    # ports:
+    #   - 3030:3030
+    environment:
+      TRAGGO_DEFAULT_USER_NAME: $traggo_admin_username
+      TRAGGO_DEFAULT_USER_PASS: $traggo_admin_password
+    volumes:
+      - $DOCKERDIR/traggo/data:/opt/traggo/data
+    networks:
+      - t2_proxy
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.traggo-router.entrypoints=https"
+      - "traefik.http.routers.traggo-router.tls=true"
+      - "traefik.http.routers.traggo-router.rule=Host(`time.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.traggo-router.middlewares=chain-authelia@file" # Authelia authentication
+
+      ## HTTP Services
+      - "traefik.http.routers.traggo-router.service=traggo-svc"
+      - "traefik.http.services.traggo-svc.loadbalancer.server.port=3030"   

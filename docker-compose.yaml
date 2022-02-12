@@ -553,57 +553,8 @@ services:
       - "traefik.http.routers.wiki-rtr.service=wiki-svc"
       - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"    
 
-  # Heimdall - a convenient dashboard to jump to your services with
-  heimdall:
-    image: ghcr.io/linuxserver/heimdall
-    container_name: heimdall
-    environment:
-      - PUID=$PUID
-      - PGID=$PGID
-      - TZ=$TZ
-    volumes:
-      - $DOCKERDIR/heimdall/config:/config
-    restart: unless-stopped
-    networks:
-      - t2_proxy
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.heimdall-router.entrypoints=https"
-      - "traefik.http.routers.heimdall-router.tls=true"
-      - "traefik.http.routers.heimdall-router.rule=Host(`gateway.$DOMAINNAME`)"
-      ## Middlewares
-      # - "traefik.http.routers.heimdall-router.middlewares=chain-no-auth@file"
-      # - "traefik.http.routers.heimdall-router.middlewares=chain-basic-auth@file" ## Website HTTP authentication
-      - "traefik.http.routers.heimdall-router.middlewares=chain-authelia@file" # Authelia authentication
 
-      
-
-
-  traggo:
-    image: traggo/server:latest
-    container_name: traggo
-    # ports:
-    #   - 3030:3030
-    environment:
-      TRAGGO_DEFAULT_USER_NAME: $traggo_admin_username
-      TRAGGO_DEFAULT_USER_PASS: $traggo_admin_password
-    volumes:
-      - $DOCKERDIR/traggo/data:/opt/traggo/data
-    networks:
-      - t2_proxy
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.traggo-router.entrypoints=https"
-      - "traefik.http.routers.traggo-router.tls=true"
-      - "traefik.http.routers.traggo-router.rule=Host(`time.$DOMAINNAME`)"
-      ## Middlewares
-      - "traefik.http.routers.traggo-router.middlewares=chain-authelia@file" # Authelia authentication
-
-      ## HTTP Services
-      - "traefik.http.routers.traggo-router.service=traggo-svc"
-      - "traefik.http.services.traggo-svc.loadbalancer.server.port=3030"    
+ 
 
   duplicati:
     image: ghcr.io/linuxserver/duplicati
