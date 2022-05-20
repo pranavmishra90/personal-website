@@ -14,6 +14,7 @@ on
 *.pub
 *.sql
 *.code-workspace
+*.tar
 
 
 #Folders
@@ -23,6 +24,7 @@ authelia/
 /mariadb/data/*
 /matomo/*
 /nodered/*
+/redis/*
 /portainer/data/*
 /secrets/*
 /sites/wordpress/html/*
