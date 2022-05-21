@@ -18,24 +18,24 @@ secrets/.gitignore
 
 
 #Folders
+.ipynb_checkpoints/
+.vscode/
 authelia/
-/heimdall/config/*
+/duplicati/*
+/old_code/*
 /logs/
 /mariadb/data/*
-/matomo/*
 /nodered/*
 /redis/*
 /portainer/data/*
 /secrets/*
 /sites/wordpress/html/*
+/sites/matomo/*
 /statping/*
 /trash/
 /vscode/*
 /wiki/config/*
 /wiki/data/*
-
-# KH Info
-/kh_gateway/*
 
 
 #### Allow files
@@ -44,6 +44,3 @@ authelia/
 !*/conf.d/custom.cnf
 !/sites/wordpress/html/wp-content/themes/myself
 !/sites/wordpress/html/wp-content/themes/myself/template-parts/content.php
-
-#Matomo testing
-/sites/matomo/*
