@@ -89,15 +89,17 @@ secrets:
     file: $SECRETSDIR/cloudflare_api_token
 
   authelia_jwt_secret:
-    file: $DOCKERDIR/secrets/authelia_jwt_secret
+    file: $SECRETSDIR/authelia_jwt_secret
   authelia_session_secret:
-    file: $DOCKERDIR/secrets/authelia_session_secret
+    file: $SECRETSDIR/authelia_session_secret
   authelia_storage_mysql_password:
-    file: $DOCKERDIR/secrets/authelia_storage_mysql_password
+    file: $SECRETSDIR/authelia_storage_mysql_password
   authelia_notifier_smtp_password:
-    file: $DOCKERDIR/secrets/authelia_notifier_smtp_password
-  # authelia_duo_api_secret_key:
-  #   file: $DOCKERDIR/secrets/authelia_duo_api_secret_key
+    file: $SECRETSDIR/authelia_notifier_smtp_password
+  authelia_encryption_key:
+    file: $SECRETSDIR/authelia_encryption_key
+  authelia_duo_api_secret_key:
+    file: $SECRETSDIR/authelia_duo_api_secret_key
 
 ####################################
 #            Services              #
@@ -199,28 +201,32 @@ services:
   authelia:
     container_name: authelia
     # Check this before upgrading: https://github.com/authelia/authelia/blob/master/BREAKING.md
-    image: authelia/authelia:latest
-    restart: unless-stopped
+    image: authelia/authelia:4.29.4
+    # restart: unless-stopped
+    depends_on:
+     - mariadb
     networks:
       - t2_proxy
       - default
     # ports:
     #   - "9091:9091"
     volumes:
-      - $DOCKERDIR/authelia:/config
+      - $DOCKERDIR/authelia/config:/config
     environment:
       - TZ=$TZ
       - AUTHELIA_JWT_SECRET_FILE=/run/secrets/authelia_jwt_secret
       - AUTHELIA_SESSION_SECRET_FILE=/run/secrets/authelia_session_secret
       - AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE=/run/secrets/authelia_storage_mysql_password
       - AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE=/run/secrets/authelia_notifier_smtp_password
-      # - AUTHELIA_DUO_API_SECRET_KEY_FILE=/run/secrets/authelia_duo_api_secret_key
+      - AUTHELIA_DUO_API_SECRET_KEY_FILE=/run/secrets/authelia_duo_api_secret_key
+      - AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE=/run/secrets/authelia_encryption_key
     secrets:
       - authelia_jwt_secret
       - authelia_session_secret
       - authelia_storage_mysql_password
       - authelia_notifier_smtp_password
-      # - authelia_duo_api_secret_key
+      - authelia_encryption_key
+      - authelia_duo_api_secret_key
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -228,7 +234,7 @@ services:
       - "traefik.http.routers.authelia-rtr.rule=Host(`authelia.$DOMAINNAME`)"
       - "traefik.http.routers.authelia-rtr.tls=true"
       ## Middlewares
-      - "traefik.http.routers.authelia-rtr.middlewares=chain-authelia@file"
+      # - "traefik.http.routers.authelia-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
       - "traefik.http.routers.authelia-rtr.service=authelia-svc"
       - "traefik.http.services.authelia-svc.loadbalancer.server.port=9091"
@@ -399,8 +405,8 @@ services:
       - "traefik.http.routers.phpmyadmin-rtr.tls=true"
       - "traefik.http.routers.phpmyadmin-rtr.rule=Host(`pma.$DOMAINNAME`)"
       ## Middlewares
-      # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file" # Authelia authentication
+      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file" # Authelia authentication
 
       ## HTTP Services
       - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
@@ -410,10 +416,7 @@ services:
 # PHP - Hypertext Preprocessor
   php7:
     container_name: php7
-    image: php:7.4-fpm-custom
-    build:
-      context: $DOCKERDIR/custom/
-      dockerfile: Dockerfile-php7
+    image: mishra-php
     restart: unless-stopped
     user: $PUID:$PGID # allows upgrading WP and plugins
     networks:
@@ -440,7 +443,7 @@ services:
       - /var/log/nginx:/var/log/nginx
       - $DOCKERDIR/nginx:/etc/nginx
       - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
-      - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
+      - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
 
       #Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
@@ -483,7 +486,8 @@ services:
       ## Middlewares
 
       - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring HTTP authentication
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring authelia
+      # - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
       - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=chain-authelia@file" #OPCache requring HTTP authentication
       
       #### Preparedx 
@@ -499,6 +503,7 @@ services:
       ####Matomo
       - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
 
+
   # Redis - Key-value Store
   redis:
     container_name: redis
@@ -506,8 +511,9 @@ services:
     restart: unless-stopped
     # entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
     entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
-
     networks:
+      # t2_proxy:
+      #     ipv4_address: 10.1.2.210
       - t2_proxy
       - default
     security_opt:
@@ -515,7 +521,7 @@ services:
     ports:
       - 6379:6379
     sysctls:
-    - net.core.somaxconn=1024
+      - net.core.somaxconn=1024
     volumes:
       - $DOCKERDIR/redis/data:/data
       - /etc/timezone:/etc/timezone:ro
