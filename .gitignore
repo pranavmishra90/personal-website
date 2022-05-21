@@ -3,7 +3,7 @@
 .visitorhtpasswd
 acme.json
 on
-
+secrets/.gitignore
 #Types of files
 *.aof
 *.db
