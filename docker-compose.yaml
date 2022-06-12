@@ -119,7 +119,7 @@ services:
       - --entryPoints.http.address=:80
       - --entryPoints.https.address=:443
         # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
-      - --entrypoints.https.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
+      # - --entrypoints.https.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
       - --entryPoints.traefik.address=:8080
       - --api=true
 #      - --api.insecure=true
@@ -139,7 +139,7 @@ services:
       - --providers.file.directory=/rules # Load dynamic configuration from one or more .toml or .yml files in a directory.
       - --providers.file.watch=true # Only works on top level files in the rules folder
 # Staging caServer commented out, time to get the real certificates
-#      - --certificatesResolvers.dns-cloudflare.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
+      # - --certificatesResolvers.dns-cloudflare.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
       - --certificatesResolvers.dns-cloudflare.acme.email=$CLOUDFLARE_EMAIL
       - --certificatesResolvers.dns-cloudflare.acme.storage=/acme.json
       - --certificatesResolvers.dns-cloudflare.acme.dnsChallenge.provider=cloudflare
@@ -183,7 +183,7 @@ services:
       - "traefik.http.routers.traefik-rtr.entrypoints=https"
       - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.$DOMAINNAME`)"
       - "traefik.http.routers.traefik-rtr.tls=true"
-###      - "traefik.http.routers.traefik-rtr.tls.certresolver=dns-cloudflare" # Comment out this line after first run of traefik to force the use of wildcard certs
+      # - "traefik.http.routers.traefik-rtr.tls.certresolver=dns-cloudflare" # Comment out this line after first run of traefik to force the use of wildcard certs
       - "traefik.http.routers.traefik-rtr.tls.domains[0].main=$DOMAINNAME"
       - "traefik.http.routers.traefik-rtr.tls.domains[0].sans=*.$DOMAINNAME"
       
@@ -241,8 +241,6 @@ services:
 
   # Cloudflare DDNS - Dynamic DNS Updater - Update IP address of the VM automatically
 
-  #### When the website is ready, uncomment this container (no need to flood Cloudflare DDNS when restarting this file)
-
   cf-ddns:
     container_name: Cloudflare-DDNS
     image: oznu/cloudflare-ddns:latest
@@ -257,35 +255,40 @@ services:
 
 
   # Cloudflare-Companion - Automatic CNAME DNS Creation
-  cf-companion:
-    container_name: cloudflare-companion
-    image: tiredofit/traefik-cloudflare-companion:latest
-    security_opt:
-      - no-new-privileges:true
-    restart: unless-stopped
-    networks:
-      - t2_proxy
-      - default
-    #depends_on:
-    #  - socket-proxy
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - TIMEZONE=$TZ
-      - TRAEFIK_VERSION=2
-      #- CF_EMAIL=$CLOUDFLARE_EMAIL
-      - CF_TOKEN=$CLOUDFLARE_API_TOKEN
-      - TARGET_DOMAIN=$DOMAINNAME
-      - DOMAIN1=$DOMAINNAME
-      - DOMAIN1_ZONE_ID=$CLOUDFLARE_ZONEID # Copy from Cloudflare Overview page
-      - DOMAIN1_PROXIED=TRUE
-      - DOCKER_ENTRYPOINT=unix://var/run/docker.sock
-    secrets: # not working
-      - cloudflare_api_token
-    # labels:
-    #   # Add hosts specified in rules here to force cf-companion to create the CNAMEs
-    #   # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
-    #   - "traefik.http.routers.cf-companion-rtr.rule=Host(`XYZ.$DOMAINNAME`)"
+  # This container is no longer needed since wildcard subdomains are now possible with cloudflare
+
+  # cf-companion:
+  #   container_name: cloudflare-companion
+  #   image: tiredofit/traefik-cloudflare-companion:latest
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   restart: unless-stopped
+  #   networks:
+  #     - t2_proxy
+  #     - default
+  #   #depends_on:
+  #   #  - socket-proxy
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   environment:
+  #     - TIMEZONE=$TZ
+  #     - TRAEFIK_VERSION=2
+  #     #- CF_EMAIL=$CLOUDFLARE_EMAIL
+  #     - CF_TOKEN=$CLOUDFLARE_API_TOKEN
+  #     - TARGET_DOMAIN=$DOMAINNAME
+  #     - DOMAIN1=$DOMAINNAME
+  #     - DOMAIN1_ZONE_ID=$CLOUDFLARE_ZONEID # Copy from Cloudflare Overview page
+  #     - DOMAIN1_PROXIED=TRUE
+  #     - DOCKER_ENTRYPOINT=unix://var/run/docker.sock
+  #   secrets: # not working
+  #     - cloudflare_api_token
+  #   # labels:
+  #   #   # Add hosts specified in rules here to force cf-companion to create the CNAMEs
+  #   #   # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
+  #   #   - "traefik.http.routers.cf-companion-rtr.rule=Host(`XYZ.$DOMAINNAME`)"
+  
+  
+  
   # MariaDB - MySQL Database
   mariadb:
     container_name: mariadb
