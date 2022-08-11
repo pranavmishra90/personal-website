@@ -1,0 +1,137 @@
+########################################################################################
+# The following code is taken from the Overleaf Github repository:
+# https://raw.githubusercontent.com/overleaf/overleaf/old-master/docker-compose.yml
+# https://github.com/overleaf/overleaf
+
+# License: AGPL-3.0 license
+########################################################################################
+
+version: '2.2'
+
+####################################
+#            Networks              #
+####################################
+
+networks:
+    t2_proxy:
+        external:
+            name: t2_proxy
+    default:
+        driver: bridge
+
+####################################
+#            Services              #
+####################################
+
+services:
+    sharelatex:
+        # restart: no
+        # image: sharelatex/sharelatex
+        # tlmgr install scheme-ful
+        # docker commit sharelatex sharelatex/sharelatex:with-texlive-full
+        image: pm0102/sharelatex:with-texlive-full
+
+        container_name: sharelatex
+        depends_on:
+            mongo:
+                condition: service_healthy
+            redis2:
+                condition: service_started
+        # ports:
+        #     - 80:80
+        env_file:
+            - ~/personal-website/.env
+        links:
+            - mongo
+            - redis2
+        networks:
+            - t2_proxy
+            - default
+        volumes:
+            - ~/personal-website/overleaf/data:/var/lib/sharelatex
+        labels:
+            - traefik.enable=true
+              ## HTTP Routers
+            - traefik.http.routers.latex-rtr.entrypoints=https
+            - traefik.http.routers.latex-rtr.tls=true
+            - traefik.http.routers.latex-rtr.rule=Host(`latex.drpranavmishra.com`)
+              ## Middlewares
+              # - "traefik.http.routers.latex-rtr.middlewares=chain-no-auth@file"
+            - traefik.http.routers.latex-rtr.middlewares=chain-authelia@file # Authelia authentication
+
+
+              ## HTTP Services
+            - traefik.http.routers.latex-rtr.service=latex-svc
+            - traefik.http.services.latex-svc.loadbalancer.server.port=80
+
+        environment:
+            SHARELATEX_APP_NAME: Overleaf Community Edition
+
+            SHARELATEX_MONGO_URL: mongodb://mongo/sharelatex
+
+            # Same property, unfortunately with different names in
+            # different locations
+            SHARELATEX_REDIS_HOST: redis2
+            REDIS_HOST: redis2
+
+            ENABLED_LINKED_FILE_TYPES: url,project_file
+
+            # Enables Thumbnail generation using ImageMagick
+            ENABLE_CONVERSIONS: 'true'
+
+            # Disables email confirmation requirement
+            EMAIL_CONFIRMATION_DISABLED: 'true'
+
+            # temporary fix for LuaLaTex compiles
+            # see https://github.com/overleaf/overleaf/issues/695
+            TEXMFVAR: /var/lib/sharelatex/tmp/texmf-var
+
+            ## Set for SSL via nginx-proxy
+            #VIRTUAL_HOST: 103.112.212.22
+
+            # SHARELATEX_SITE_URL: http://sharelatex.mydomain.com
+            # SHARELATEX_NAV_TITLE: Our ShareLaTeX Instance
+            # SHARELATEX_HEADER_IMAGE_URL: http://somewhere.com/mylogo.png
+            # SHARELATEX_ADMIN_EMAIL: support@it.com
+
+            # SHARELATEX_LEFT_FOOTER: '[{"text": "Powered by <a href=\"https://www.sharelatex.com\">ShareLaTeX</a> 2016"},{"text": "Another page I want to link to can be found <a href=\"here\">here</a>"} ]'
+            # SHARELATEX_RIGHT_FOOTER: '[{"text": "Hello I am on the Right"} ]'
+
+            # SHARELATEX_EMAIL_FROM_ADDRESS: "team@sharelatex.com"
+
+            # SHARELATEX_EMAIL_AWS_SES_ACCESS_KEY_ID:
+            # SHARELATEX_EMAIL_AWS_SES_SECRET_KEY:
+
+            # SHARELATEX_EMAIL_SMTP_HOST: smtp.mydomain.com
+            # SHARELATEX_EMAIL_SMTP_PORT: 587
+            # SHARELATEX_EMAIL_SMTP_SECURE: false
+            # SHARELATEX_EMAIL_SMTP_USER:
+            # SHARELATEX_EMAIL_SMTP_PASS:
+            # SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH: true
+            # SHARELATEX_EMAIL_SMTP_IGNORE_TLS: false
+            # SHARELATEX_EMAIL_SMTP_NAME: '127.0.0.1'
+            # SHARELATEX_EMAIL_SMTP_LOGGER: true
+            # SHARELATEX_CUSTOM_EMAIL_FOOTER: "This system is run by department x"
+
+    mongo:
+        restart: always
+        image: mongo:4.0
+        container_name: mongo
+        expose:
+            - 27017
+        volumes:
+            - ./mongo_data:/data/db
+        healthcheck:
+            test: echo 'db.stats().ok' | mongo localhost:27017/test --quiet
+            interval: 10s
+            timeout: 10s
+            retries: 5
+
+    redis2:
+        restart: always
+        image: redis:5.0
+        container_name: redis2
+        expose:
+            - 6379
+        volumes:
+            - ./redis_data:/data
