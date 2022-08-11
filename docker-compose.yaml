@@ -387,11 +387,10 @@ services:
   # PHP - Hypertext Preprocessor
   php7:
     container_name: php7
-
-    image: php:7.4-fpm-custom
-    build:
-      context: $DOCKERDIR/custom/
-      dockerfile: Dockerfile-php7
+    image: pranavmishra90/php:7.4-fpm-custom
+    # build:
+    #   context: $DOCKERDIR/custom/
+    #   dockerfile: Dockerfile-php7
     restart: unless-stopped
     user: $PUID:$PGID # allows upgrading WP and plugins
     networks:
