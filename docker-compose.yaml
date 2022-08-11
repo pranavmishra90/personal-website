@@ -128,6 +128,7 @@ services:
             #      - --serversTransport.insecureSkipVerify=true
             - --log=true
             - --log.level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+            - --log.filePath=/container_log.log
             - --accessLog=true
             - --accessLog.filePath=/traefik.log
             - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
@@ -257,35 +258,35 @@ services:
     # Cloudflare-Companion - Automatic CNAME DNS Creation
     # This container is no longer needed since wildcard subdomains are now possible with cloudflare
 
-    cf-companion:
-        container_name: cloudflare-companion
-        image: tiredofit/traefik-cloudflare-companion:latest
-        security_opt:
-            - no-new-privileges:true
-        restart: unless-stopped
-        networks:
-            - t2_proxy
-            - default
-        #depends_on:
-        #  - socket-proxy
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock:ro
-        environment:
-            - TIMEZONE=$TZ
-            - TRAEFIK_VERSION=2
-            #- CF_EMAIL=$CLOUDFLARE_EMAIL
-            - CF_TOKEN=$CLOUDFLARE_API_TOKEN
-            - TARGET_DOMAIN=$DOMAINNAME
-            - DOMAIN1=$DOMAINNAME
-            - DOMAIN1_ZONE_ID=$CLOUDFLARE_ZONEID # Copy from Cloudflare Overview page
-            - DOMAIN1_PROXIED=TRUE
-            - DOCKER_ENTRYPOINT=unix://var/run/docker.sock
-        secrets: # not working
-            - cloudflare_api_token
-        # labels:
-        #   # Add hosts specified in rules here to force cf-companion to create the CNAMEs
-        #   # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
-        #   - "traefik.http.routers.cf-companion-rtr.rule=Host(`XYZ.$DOMAINNAME`)"
+    # cf-companion:
+    #     container_name: cloudflare-companion
+    #     image: tiredofit/traefik-cloudflare-companion:latest
+    #     security_opt:
+    #         - no-new-privileges:true
+    #     restart: unless-stopped
+    #     networks:
+    #         - t2_proxy
+    #         - default
+    #     #depends_on:
+    #     #  - socket-proxy
+    #     volumes:
+    #         - /var/run/docker.sock:/var/run/docker.sock:ro
+    #     environment:
+    #         - TIMEZONE=$TZ
+    #         - TRAEFIK_VERSION=2
+    #         #- CF_EMAIL=$CLOUDFLARE_EMAIL
+    #         - CF_TOKEN=$CLOUDFLARE_API_TOKEN
+    #         - TARGET_DOMAIN=$DOMAINNAME
+    #         - DOMAIN1=$DOMAINNAME
+    #         - DOMAIN1_ZONE_ID=$CLOUDFLARE_ZONEID # Copy from Cloudflare Overview page
+    #         - DOMAIN1_PROXIED=TRUE
+    #         - DOCKER_ENTRYPOINT=unix://var/run/docker.sock
+    #     secrets: # not working
+    #         - cloudflare_api_token
+    #     # labels:
+    #     #   # Add hosts specified in rules here to force cf-companion to create the CNAMEs
+    #     #   # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
+    #     #   - "traefik.http.routers.cf-companion-rtr.rule=Host(`XYZ.$DOMAINNAME`)"
 
     # MariaDB - MySQL Database
     mariadb:
@@ -475,38 +476,38 @@ services:
             ####Matomo
             - 'traefik.http.routers.nginx-matomo-rtr.service=nginx-svc'
 
-    # # Wiki.js - a Wiki site built on JS
-    # wiki:
-    #     image: ghcr.io/linuxserver/wikijs
-    #     container_name: wikijs
-    #     # links:
-    #     #   - mariadb
-    #     environment:
-    #         - PUID=0
-    #         - PGID=0
-    #         - TZ=$TZ
-    #     volumes:
-    #         - $DOCKERDIR/wiki/config:/config
-    #         - $DOCKERDIR/wiki/data:/data
-    #     ports:
-    #         - 3000:3000
-    #     restart: unless-stopped
-    #     networks:
-    #         - t2_proxy
-    #     labels:
-    #         - 'traefik.enable=true'
-    #         ## HTTP Routers
-    #         - 'traefik.http.routers.wiki-rtr.entrypoints=https'
-    #         - 'traefik.http.routers.wiki-rtr.tls=true'
-    #         - 'traefik.http.routers.wiki-rtr.rule=Host(`foamed.$DOMAINNAME`)'
-    #         ## Middlewares
-    #         - 'traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file'
-    #         # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
-    #         # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
+    # Wiki.js - a Wiki site built on JS
+    wiki:
+        image: ghcr.io/linuxserver/wikijs
+        container_name: wikijs
+        # links:
+        #   - mariadb
+        environment:
+            - PUID=0
+            - PGID=0
+            - TZ=$TZ
+        volumes:
+            - $DOCKERDIR/wiki/config:/config
+            - $DOCKERDIR/wiki/data:/data
+        ports:
+            - 3000:3000
+        restart: unless-stopped
+        networks:
+            - t2_proxy
+        labels:
+            - 'traefik.enable=true'
+            ## HTTP Routers
+            - 'traefik.http.routers.wiki-rtr.entrypoints=https'
+            - 'traefik.http.routers.wiki-rtr.tls=true'
+            - 'traefik.http.routers.wiki-rtr.rule=Host(`foamed.$DOMAINNAME`)'
+            ## Middlewares
+            - 'traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file'
+            # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+            # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
 
-    #         ## HTTP Services
-    #         - 'traefik.http.routers.wiki-rtr.service=wiki-svc'
-    #         - 'traefik.http.services.wiki-svc.loadbalancer.server.port=3000'
+            ## HTTP Services
+            - 'traefik.http.routers.wiki-rtr.service=wiki-svc'
+            - 'traefik.http.services.wiki-svc.loadbalancer.server.port=3000'
 
     # duplicati:
     #     image: ghcr.io/linuxserver/duplicati
