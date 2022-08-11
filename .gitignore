@@ -24,7 +24,9 @@ authelia/
 /duplicati/*
 /old_code/*
 /logs/
+/mongodb/data/*
 /mariadb/data/*
+/overleaf/*
 /nodered/*
 /redis/*
 /portainer/data/*
