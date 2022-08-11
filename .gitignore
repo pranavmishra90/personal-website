@@ -26,7 +26,7 @@ authelia/
 /logs/
 /mongodb/data/*
 /mariadb/data/*
-/overleaf/data/*
+/overleaf/*
 /nodered/*
 /redis/*
 /portainer/data/*
