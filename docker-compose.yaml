@@ -146,7 +146,7 @@ services:
       - --certificatesResolvers.dns-cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
     networks:
       t2_proxy:
-        ipv4_address: 10.1.2.245
+        ipv4_address: 10.1.3.245
     security_opt:
       - no-new-privileges:true
     ports:
@@ -296,7 +296,7 @@ services:
     restart: always
     networks:
       t2_proxy:
-        ipv4_address: 10.1.2.250
+        ipv4_address: 10.1.3.250
     security_opt:
       - no-new-privileges:true
     volumes:
@@ -516,7 +516,7 @@ services:
     entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
       # t2_proxy:
-      #     ipv4_address: 10.1.2.210
+      #     ipv4_address: 10.1.3.210
       - t2_proxy
       - default
     security_opt:

@@ -1,9 +1,12 @@
 #Specific files
 .htpasswd
 .visitorhtpasswd
+
 acme.json
-on
-secrets/.gitignore
+
+secrets/
+
+
 #Types of files
 *.aof
 *.db
@@ -19,8 +22,7 @@ secrets/.gitignore
 
 #Folders
 .ipynb_checkpoints/
-.vscode/
-authelia/
+/authelia/
 /duplicati/*
 /old_code/*
 /logs/
@@ -40,7 +42,7 @@ authelia/
 
 #### Allow files
 !*/folder_notes.yaml
-!LICENSE-*
+!**LICENSE*
 !*/conf.d/custom.cnf
 !/sites/wordpress/html/wp-content/themes/myself
 !/sites/wordpress/html/wp-content/themes/myself/template-parts/content.php
