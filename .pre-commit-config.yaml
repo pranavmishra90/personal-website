@@ -21,5 +21,5 @@ repos:
       #   args: ["--maxkb=5000"]
 
       # Prevent direct commits to the following branches (requires pull request)
-      - id: no-commit-to-branch
-        args: [--branch, master, --branch, main, --pattern, release/.*]
+      # - id: no-commit-to-branch
+      #   args: [--branch, master, --branch, main, --pattern, release/.*]
