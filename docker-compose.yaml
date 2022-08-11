@@ -66,6 +66,7 @@ networks:
     t2_proxy:
         external:
             name: t2_proxy
+            #Created with docker network create --gateway 10.1.2.1 --subnet 10.1.2.0/24 t2_proxy
     default:
         driver: bridge
 
@@ -109,6 +110,11 @@ services:
         container_name: traefik
         image: traefik:2.2.1 #breaking change in 2.2.2
         restart: unless-stopped
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "5"   # number of files or file count
+                max-size: "10m" # file size
         command: # CLI arguments
             - --global.checkNewVersion=true
             - --global.sendAnonymousUsage=false
@@ -121,7 +127,7 @@ services:
             #      - --api.insecure=true
             #      - --serversTransport.insecureSkipVerify=true
             - --log=true
-            - --log.level=WARN # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+            - --log.level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
             - --accessLog=true
             - --accessLog.filePath=/traefik.log
             - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
@@ -303,20 +309,20 @@ services:
         secrets:
             - mysql_root_password
 
-    # MongoDB - NOSQL Database
-    mongo:
-        restart: always
-        image: mongo:4.2
-        container_name: mongo
-        expose:
-            - 27017
-        volumes:
-            - $DOCKERDIR/mongodb/data:/data/db
-        healthcheck:
-            test: echo 'db.stats().ok' | mongo localhost:27017/test --quiet
-            interval: 10s
-            timeout: 10s
-            retries: 5
+    # # MongoDB - NOSQL Database
+    # mongo:
+    #     restart: always
+    #     image: mongo:4.2
+    #     container_name: mongo
+    #     expose:
+    #         - 27017
+    #     volumes:
+    #         - $DOCKERDIR/mongodb/data:/data/db
+    #     healthcheck:
+    #         test: echo 'db.stats().ok' | mongo localhost:27017/test --quiet
+    #         interval: 10s
+    #         timeout: 10s
+    #         retries: 5
 
     # Redis - Key-value Store
     redis:
@@ -381,7 +387,11 @@ services:
     # PHP - Hypertext Preprocessor
     php7:
         container_name: php7
-        image: mishra-php
+
+        image: php:7.4-fpm-custom
+        build:
+            context: $DOCKERDIR/custom/
+            dockerfile: Dockerfile-php7
         restart: unless-stopped
         user: $PUID:$PGID # allows upgrading WP and plugins
         networks:
@@ -464,59 +474,6 @@ services:
 
             ####Matomo
             - 'traefik.http.routers.nginx-matomo-rtr.service=nginx-svc'
-
-    # Overleaf LaTex editor
-    latex:
-        restart: always
-        image: sharelatex/sharelatex
-        container_name: latex
-        depends_on:
-            mongo:
-                condition: service_healthy
-            redis:
-                condition: service_started
-        networks:
-            - t2_proxy
-        links:
-            - mongo
-            - redis
-        volumes:
-            - $DOCKERDIR/overleaf/data:/var/lib/sharelatex
-        labels:
-            - 'traefik.enable=true'
-            ## HTTP Routers
-            - 'traefik.http.routers.latex-rtr.entrypoints=https'
-            - 'traefik.http.routers.latex-rtr.tls=true'
-            - 'traefik.http.routers.latex-rtr.rule=Host(`latex.$DOMAINNAME`)'
-            ## Middlewares
-            # - "traefik.http.routers.latex-rtr.middlewares=chain-no-auth@file"
-            - 'traefik.http.routers.latex-rtr.middlewares=chain-authelia@file' # Authelia authentication
-
-            ## HTTP Services
-            - 'traefik.http.routers.latex-rtr.service=latex-svc'
-            - 'traefik.http.services.latex-svc.loadbalancer.server.port=80'
-
-        environment:
-            SHARELATEX_APP_NAME: Overleaf Community Edition
-
-            SHARELATEX_MONGO_URL: mongodb://mongo/sharelatex
-
-            # Same property, unfortunately with different names in
-            # different locations
-            SHARELATEX_REDIS_HOST: redis
-            REDIS_HOST: redis
-
-            ENABLED_LINKED_FILE_TYPES: 'project_file,project_output_file'
-
-            # Enables Thumbnail generation using ImageMagick
-            ENABLE_CONVERSIONS: 'true'
-
-            # Disables email confirmation requirement
-            EMAIL_CONFIRMATION_DISABLED: 'true'
-
-            # temporary fix for LuaLaTex compiles
-            # see https://github.com/overleaf/overleaf/issues/695
-            TEXMFVAR: /var/lib/sharelatex/tmp/texmf-var
 
     # # Wiki.js - a Wiki site built on JS
     # wiki:
