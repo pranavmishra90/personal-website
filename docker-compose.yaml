@@ -66,7 +66,7 @@ networks:
   t2_proxy:
     external:
       name: t2_proxy
-      #Created with docker network create --gateway 10.1.2.1 --subnet 10.1.2.0/24 t2_proxy
+      #Created with docker network create --gateway 10.1.3.1 --subnet 10.1.3.0/24 t2_proxy
   default:
     driver: bridge
 
@@ -127,7 +127,7 @@ services:
       #      - --api.insecure=true
       #      - --serversTransport.insecureSkipVerify=true
       - --log=true
-      - --log.level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --log.level=WARN # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=true
       - --accessLog.filePath=/traefik.log
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
@@ -148,7 +148,7 @@ services:
       - --certificatesResolvers.dns-cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
     networks:
       t2_proxy:
-        ipv4_address: 10.1.2.245
+        ipv4_address: 10.1.3.245
     security_opt:
       - no-new-privileges:true
     ports:
@@ -202,7 +202,7 @@ services:
   authelia:
     container_name: authelia
     # Check this before upgrading: https://github.com/authelia/authelia/blob/master/BREAKING.md
-    image: authelia/authelia:latest
+    image: authelia/authelia:4.29.4
     # restart: unless-stopped
     depends_on:
       - mariadb
@@ -258,34 +258,34 @@ services:
   # This container is no longer needed since wildcard subdomains are now possible with cloudflare
 
   # cf-companion:
-  #     container_name: cloudflare-companion
-  #     image: tiredofit/traefik-cloudflare-companion:latest
-  #     security_opt:
-  #         - no-new-privileges:true
-  #     restart: unless-stopped
-  #     networks:
-  #         - t2_proxy
-  #         - default
-  #     #depends_on:
-  #     #  - socket-proxy
-  #     volumes:
-  #         - /var/run/docker.sock:/var/run/docker.sock:ro
-  #     environment:
-  #         - TIMEZONE=$TZ
-  #         - TRAEFIK_VERSION=2
-  #         #- CF_EMAIL=$CLOUDFLARE_EMAIL
-  #         - CF_TOKEN=$CLOUDFLARE_API_TOKEN
-  #         - TARGET_DOMAIN=$DOMAINNAME
-  #         - DOMAIN1=$DOMAINNAME
-  #         - DOMAIN1_ZONE_ID=$CLOUDFLARE_ZONEID # Copy from Cloudflare Overview page
-  #         - DOMAIN1_PROXIED=TRUE
-  #         - DOCKER_ENTRYPOINT=unix://var/run/docker.sock
-  #     secrets: # not working
-  #         - cloudflare_api_token
-  #     # labels:
-  #     #   # Add hosts specified in rules here to force cf-companion to create the CNAMEs
-  #     #   # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
-  #     #   - "traefik.http.routers.cf-companion-rtr.rule=Host(`XYZ.$DOMAINNAME`)"
+  #   container_name: cloudflare-companion
+  #   image: tiredofit/traefik-cloudflare-companion:latest
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   restart: unless-stopped
+  #   networks:
+  #     - t2_proxy
+  #     - default
+  #   #depends_on:
+  #   #  - socket-proxy
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   environment:
+  #     - TIMEZONE=$TZ
+  #     - TRAEFIK_VERSION=2
+  #     #- CF_EMAIL=$CLOUDFLARE_EMAIL
+  #     - CF_TOKEN=$CLOUDFLARE_API_TOKEN
+  #     - TARGET_DOMAIN=$DOMAINNAME
+  #     - DOMAIN1=$DOMAINNAME
+  #     - DOMAIN1_ZONE_ID=$CLOUDFLARE_ZONEID # Copy from Cloudflare Overview page
+  #     - DOMAIN1_PROXIED=TRUE
+  #     - DOCKER_ENTRYPOINT=unix://var/run/docker.sock
+  #   secrets: # not working
+  #     - cloudflare_api_token
+  #   # labels:
+  #   #   # Add hosts specified in rules here to force cf-companion to create the CNAMEs
+  #   #   # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
+  #   #   - "traefik.http.routers.cf-companion-rtr.rule=Host(`XYZ.$DOMAINNAME`)"
 
   # MariaDB - MySQL Database
   mariadb:
@@ -294,7 +294,7 @@ services:
     restart: always
     networks:
       t2_proxy:
-        ipv4_address: 10.1.2.250
+        ipv4_address: 10.1.3.250
     security_opt:
       - no-new-privileges:true
     volumes:
@@ -309,43 +309,69 @@ services:
     secrets:
       - mysql_root_password
 
-  # # MongoDB - NOSQL Database
-  # mongo:
-  #     restart: always
-  #     image: mongo:4.2
-  #     container_name: mongo
-  #     expose:
-  #         - 27017
+  # # Portainer - WebUI for Containers
+  #   portainer:
+  #     container_name: portainer
+  #     image: portainer/portainer:latest
+  #     restart: unless-stopped
+  #     command: -H unix:///var/run/docker.sock
+  #     networks:
+  #       - t2_proxy
+  #     security_opt:
+  #       - no-new-privileges:true
+  #     ports:
+  #      - "$PORTAINER_PORT:9000"
   #     volumes:
-  #         - $DOCKERDIR/mongodb/data:/data/db
-  #     healthcheck:
-  #         test: echo 'db.stats().ok' | mongo localhost:27017/test --quiet
-  #         interval: 10s
-  #         timeout: 10s
-  #         retries: 5
+  #       - /var/run/docker.sock:/var/run/docker.sock:ro
+  #       - $DOCKERDIR/portainer/data:/data
+  #     environment:
+  #       - TZ=$TZ
+  #     labels:
+  #       - "traefik.enable=true"
+  #       ## HTTP Routers
+  #       - "traefik.http.routers.portainer-rtr.entrypoints=https"
+  #       - "traefik.http.routers.portainer-rtr.rule=Host(`ptr.$DOMAINNAME`)"
+  #       - "traefik.http.routers.portainer-rtr.tls=true"
+  #       ## Middlewares
+  #       # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
+  #       # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+  #       - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
+  #       # - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
+  #       ## HTTP Services
+  #       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
+  #       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
 
-  # Redis - Key-value Store
-  redis:
-    container_name: redis
-    image: redis:6.0.6
-    restart: unless-stopped
-    # entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
-    entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
-    networks:
-      # t2_proxy:
-      #     ipv4_address: 10.1.2.210
-      - t2_proxy
-      - default
-    security_opt:
-      - no-new-privileges:true
-    ports:
-      - 6379:6379
-    sysctls:
-      - net.core.somaxconn=1024
-    volumes:
-      - $DOCKERDIR/redis/data:/data
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
+  # # VSCode - VSCode Editing
+  # vscode:
+  #   image: codercom/code-server:latest
+  #   container_name: vscode
+  #   restart: unless-stopped
+  #   networks:
+  #     - t2_proxy
+  #   volumes:
+  #     - $DOCKERDIR:/home/coder/personal-website
+  #     - $DOCKERDIR/vscode:/home/coder/vscode
+  #     - $AZUREDIR/research:/home/coder/research
+  #     - $AZUREDIR/github-profile:/home/coder/github-profile
+  #   environment:
+  #     PASSWORD: $VSCODE_PASSWORD
+  #     # Run as root first time (user: 0), then stop container, then change permissions to user:docker and 775. Disable run as root below.
+  #     user: $PUID:$PGID
+  #     # user: "0"
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.vscode-rtr.entrypoints=https"
+  #     - "traefik.http.routers.vscode-rtr.tls=true"
+  #     - "traefik.http.routers.vscode-rtr.rule=Host(`vscode.$DOMAINNAME`)"
+  #     ## Middlewares
+  #     # - "traefik.http.routers.vscode-rtr.middlewares=chain-oauth@file"
+  #     # - "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
+  #     - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
+  #     ## HTTP Services
+  #     - "traefik.http.routers.vscode-rtr.service=vscode-svc"
+  #     - "traefik.http.services.vscode-svc.loadbalancer.server.port=8080"
 
   # phpMyAdmin - Database management
   phpmyadmin:
@@ -377,8 +403,8 @@ services:
       - "traefik.http.routers.phpmyadmin-rtr.tls=true"
       - "traefik.http.routers.phpmyadmin-rtr.rule=Host(`pma.$DOMAINNAME`)"
       ## Middlewares
-      # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file" # Authelia authentication
+      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file" # Authelia authentication
 
       ## HTTP Services
       - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
@@ -387,10 +413,7 @@ services:
   # PHP - Hypertext Preprocessor
   php7:
     container_name: php7
-    image: pranavmishra90/php:7.4-fpm-custom
-    # build:
-    #   context: $DOCKERDIR/custom/
-    #   dockerfile: Dockerfile-php7
+    image: pranavmishra90/php:latest
     restart: unless-stopped
     user: $PUID:$PGID # allows upgrading WP and plugins
     networks:
@@ -416,10 +439,11 @@ services:
       - /var/log/nginx:/var/log/nginx
       - $DOCKERDIR/nginx:/etc/nginx
       - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
-      #Wordpress site
       - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
-      #Matomo analytics
-      - $DOCKERDIR/sites/matomo:/var/www/html/matomo:rw
+
+      #Matomo
+      - $DOCKERDIR/sites/matomo:/var/www/html/matomo
+
     labels:
       - "traefik.enable=true"
       ## HTTP Routers Wordpress (Dr. Pranav Mishra) Authenticated Access
@@ -474,100 +498,91 @@ services:
       ####Matomo
       - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
 
+  # Redis - Key-value Store
+  redis:
+    container_name: redis
+    image: redis:6.0.6
+    restart: unless-stopped
+    # entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
+    entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      # t2_proxy:
+      #     ipv4_address: 10.1.3.210
+      - t2_proxy
+      - default
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 6379:6379
+    sysctls:
+      - net.core.somaxconn=1024
+    volumes:
+      - $DOCKERDIR/redis/data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
   # # Wiki.js - a Wiki site built on JS
   # wiki:
-  #     image: ghcr.io/linuxserver/wikijs
-  #     container_name: wikijs
-  #     # links:
-  #     #   - mariadb
-  #     environment:
-  #         - PUID=0
-  #         - PGID=0
-  #         - TZ=$TZ
-  #     volumes:
-  #         - $DOCKERDIR/wiki/config:/config
-  #         - $DOCKERDIR/wiki/data:/data
-  #     ports:
-  #         - 3000:3000
-  #     restart: unless-stopped
-  #     networks:
-  #         - t2_proxy
-  #     labels:
-  #         - 'traefik.enable=true'
-  #         ## HTTP Routers
-  #         - 'traefik.http.routers.wiki-rtr.entrypoints=https'
-  #         - 'traefik.http.routers.wiki-rtr.tls=true'
-  #         - 'traefik.http.routers.wiki-rtr.rule=Host(`foamed.$DOMAINNAME`)'
-  #         ## Middlewares
-  #         - 'traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file'
-  #         # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
-  #         # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
+  #   image: ghcr.io/linuxserver/wikijs
+  #   container_name: wikijs
+  #   # links:
+  #   #   - mariadb
+  #   environment:
+  #     - PUID=0
+  #     - PGID=0
+  #     - TZ=$TZ
+  #   volumes:
+  #     - $DOCKERDIR/wiki/config:/config
+  #     - $DOCKERDIR/wiki/data:/data
+  #   ports:
+  #     - 3000:3000
+  #   restart: unless-stopped
+  #   networks:
+  #     - t2_proxy
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.wiki-rtr.entrypoints=https"
+  #     - "traefik.http.routers.wiki-rtr.tls=true"
+  #     - "traefik.http.routers.wiki-rtr.rule=Host(`foamed.$DOMAINNAME`)"
+  #     ## Middlewares
+  #     - "traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file"
+  #     # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+  #     # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
 
-  #         ## HTTP Services
-  #         - 'traefik.http.routers.wiki-rtr.service=wiki-svc'
-  #         - 'traefik.http.services.wiki-svc.loadbalancer.server.port=3000'
+  #     ## HTTP Services
+  #     - "traefik.http.routers.wiki-rtr.service=wiki-svc"
+  #     - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"
 
   # duplicati:
-  #     image: ghcr.io/linuxserver/duplicati
-  #     container_name: duplicati
-  #     environment:
-  #         - PUID=0 #need to be root in order to read the files
-  #         - PGID=0
-  #         - TZ=$TZ
-  #         # - CLI_ARGS= #optional
-  #     volumes:
-  #         - ~/duplicati/config:/config
-  #         # - ~/backups:/backups #will not be storing local backups
-  #         - $DOCKERDIR/:/drpm-website:ro #website backup
-  #         - /home/pranav/research:/drpm-research:ro #research directory backup
-  #         - /home/pranav/github-profile:/github-profile:ro #github profile page backup
-  #     ports:
-  #         - 8200:8200
-  #     restart: unless-stopped
-  #     networks:
-  #         - t2_proxy
-  #         - default
-  #     labels:
-  #         - 'traefik.enable=true'
-  #         ## HTTP Routers
-  #         - 'traefik.http.routers.duplicati-rtr.entrypoints=https'
-  #         - 'traefik.http.routers.duplicati-rtr.tls=true'
-  #         - 'traefik.http.routers.duplicati-rtr.rule=Host(`duplicati.$DOMAINNAME`)'
-  #         ## Middlewares
-  #         # - "traefik.http.routers.duplicati-rtr.middlewares=chain-no-auth@file"
-  #         - 'traefik.http.routers.duplicati-rtr.middlewares=chain-authelia@file'
-  #         ## HTTP Services
-  #         - 'traefik.http.routers.duplicati-rtr.service=duplicati-svc'
-  #         - 'traefik.http.services.duplicati-svc.loadbalancer.server.port=8200'
-
-  # # Portainer - WebUI for Containers
-  # portainer:
-  #     container_name: portainer
-  #     image: portainer/portainer:latest
-  #     restart: unless-stopped
-  #     command: -H unix:///var/run/docker.sock
-  #     networks:
-  #         - t2_proxy
-  #     security_opt:
-  #         - no-new-privileges:true
-  #     ports:
-  #         - '$PORTAINER_PORT:9000'
-  #     volumes:
-  #         - /var/run/docker.sock:/var/run/docker.sock:ro
-  #         - $DOCKERDIR/portainer/data:/data
-  #     environment:
-  #         - TZ=$TZ
-  #     labels:
-  #         - 'traefik.enable=true'
-  #         ## HTTP Routers
-  #         - 'traefik.http.routers.portainer-rtr.entrypoints=https'
-  #         - 'traefik.http.routers.portainer-rtr.rule=Host(`ptr.$DOMAINNAME`)'
-  #         - 'traefik.http.routers.portainer-rtr.tls=true'
-  #         ## Middlewares
-  #         # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
-  #         # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-  #         - 'traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file' # Authelia authentication
-  #         # - "traefik.http.routers.portainer-rtr.middlewares=chain-oauth@file" # Google OAuth 2.0
-  #         ## HTTP Services
-  #         - 'traefik.http.routers.portainer-rtr.service=portainer-svc'
-  #         - 'traefik.http.services.portainer-svc.loadbalancer.server.port=9000'
+  #   image: ghcr.io/linuxserver/duplicati
+  #   container_name: duplicati
+  #   environment:
+  #     - PUID=0 #need to be root in order to read the files
+  #     - PGID=0
+  #     - TZ=$TZ
+  #     # - CLI_ARGS= #optional
+  #   volumes:
+  #     - ~/duplicati/config:/config
+  #     # - ~/backups:/backups #will not be storing local backups
+  #     - $DOCKERDIR/:/drpm-website:ro #website backup
+  #     - /home/pranav/research:/drpm-research:ro #research directory backup
+  #     - /home/pranav/github-profile:/github-profile:ro #github profile page backup
+  #   ports:
+  #     - 8200:8200
+  #   restart: unless-stopped
+  #   networks:
+  #     - t2_proxy
+  #     - default
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.duplicati-rtr.entrypoints=https"
+  #     - "traefik.http.routers.duplicati-rtr.tls=true"
+  #     - "traefik.http.routers.duplicati-rtr.rule=Host(`duplicati.$DOMAINNAME`)"
+  #     ## Middlewares
+  #     # - "traefik.http.routers.duplicati-rtr.middlewares=chain-no-auth@file"
+  #     - "traefik.http.routers.duplicati-rtr.middlewares=chain-authelia@file"
+  #     ## HTTP Services
+  #     - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
+  #     - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
