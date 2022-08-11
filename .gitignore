@@ -27,11 +27,7 @@ secrets/
 /logs/
 /mongodb/data/*
 /mariadb/data/*
-<<<<<<< Updated upstream
 /overleaf/*
-=======
-/mongodb/*
->>>>>>> Stashed changes
 /nodered/*
 /old_code/*
 /overleaf/*
