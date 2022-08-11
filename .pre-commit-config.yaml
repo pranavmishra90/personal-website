@@ -16,9 +16,9 @@ repos:
       # Detect problemmatic refereneced files
       - id: check-symlinks
 
-      # # Use LFS for large files
-      # - id: check-added-large-files
-      #   args: ["--maxkb=5000"]
+      # Use LFS for large files
+      - id: check-added-large-files
+        args: ["--maxkb=5000"]
 
       # Prevent direct commits to the following branches (requires pull request)
       - id: no-commit-to-branch
