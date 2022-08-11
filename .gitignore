@@ -22,12 +22,17 @@ secrets/.gitignore
 .vscode/
 authelia/
 /duplicati/*
-/old_code/*
 /logs/
 /mongodb/data/*
 /mariadb/data/*
+<<<<<<< Updated upstream
 /overleaf/*
+=======
+/mongodb/*
+>>>>>>> Stashed changes
 /nodered/*
+/old_code/*
+/overleaf/*
 /redis/*
 /portainer/data/*
 /secrets/*
