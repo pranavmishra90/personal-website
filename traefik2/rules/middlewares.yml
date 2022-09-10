@@ -4,11 +4,6 @@ http:
       basicAuth:
         usersFile: "/shared/.htpasswd" #be sure to mount the volume through docker-compose.yml
         realm: "Traefik 2 Basic Auth"
-    
-    middlewares-visitor-auth:
-      basicAuth:
-        usersFile: "/shared/.visitorhtpasswd" #be sure to mount the volume through docker-compose.yml
-        realm: "Traefik 2 Vistor Auth"
 
     middlewares-rate-limit:
       rateLimit:
@@ -40,19 +35,12 @@ http:
         # the below line also breaks some apps due to 'none'
         # contentSecurityPolicy: "frame-ancestors '*.example.com:*';object-src 'none';script-src 'none';"
         # featurePolicy: "camera 'none'; geolocation 'none'; microphone 'none'; payment 'none'; usb 'none'; vr 'none';"
-        
+
         # These customResponseHeaders will prevent search engine indexing
         customResponseHeaders:
         #   # X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex,"
           X-Robots-Tag: "index,follow"
         #   server: ""
-
-    # middlewares-oauth:
-    #   forwardAuth:
-    #     address: "http://oauth:4181" # Make sure you have the OAuth service in docker-compose.yml
-    #     trustForwardHeader: true
-    #     authResponseHeaders:
-    #       - "X-Forwarded-User"
 
     middlewares-authelia:
       forwardAuth:
