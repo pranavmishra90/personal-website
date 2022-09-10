@@ -254,39 +254,6 @@ services:
       - DELETE_ON_STOP=false
       - DNS_SERVER=1.1.1.1
 
-  # Cloudflare-Companion - Automatic CNAME DNS Creation
-  # This container is no longer needed since wildcard subdomains are now possible with cloudflare
-
-  # cf-companion:
-  #   container_name: cloudflare-companion
-  #   image: tiredofit/traefik-cloudflare-companion:latest
-  #   security_opt:
-  #     - no-new-privileges:true
-  #   restart: unless-stopped
-  #   networks:
-  #     - t2_proxy
-  #     - default
-  #   #depends_on:
-  #   #  - socket-proxy
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #   environment:
-  #     - TIMEZONE=$TZ
-  #     - TRAEFIK_VERSION=2
-  #     #- CF_EMAIL=$CLOUDFLARE_EMAIL
-  #     - CF_TOKEN=$CLOUDFLARE_API_TOKEN
-  #     - TARGET_DOMAIN=$DOMAINNAME
-  #     - DOMAIN1=$DOMAINNAME
-  #     - DOMAIN1_ZONE_ID=$CLOUDFLARE_ZONEID # Copy from Cloudflare Overview page
-  #     - DOMAIN1_PROXIED=TRUE
-  #     - DOCKER_ENTRYPOINT=unix://var/run/docker.sock
-  #   secrets: # not working
-  #     - cloudflare_api_token
-  #   # labels:
-  #   #   # Add hosts specified in rules here to force cf-companion to create the CNAMEs
-  #   #   # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
-  #   #   - "traefik.http.routers.cf-companion-rtr.rule=Host(`XYZ.$DOMAINNAME`)"
-
   # MariaDB - MySQL Database
   mariadb:
     container_name: mariadb
@@ -341,37 +308,6 @@ services:
       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
 
-  # # VSCode - VSCode Editing
-  # vscode:
-  #   image: codercom/code-server:latest
-  #   container_name: vscode
-  #   restart: unless-stopped
-  #   networks:
-  #     - t2_proxy
-  #   volumes:
-  #     - $DOCKERDIR:/home/coder/personal-website
-  #     - $DOCKERDIR/vscode:/home/coder/vscode
-  #     - $AZUREDIR/research:/home/coder/research
-  #     - $AZUREDIR/github-profile:/home/coder/github-profile
-  #   environment:
-  #     PASSWORD: $VSCODE_PASSWORD
-  #     # Run as root first time (user: 0), then stop container, then change permissions to user:docker and 775. Disable run as root below.
-  #     user: $PUID:$PGID
-  #     # user: "0"
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.vscode-rtr.entrypoints=https"
-  #     - "traefik.http.routers.vscode-rtr.tls=true"
-  #     - "traefik.http.routers.vscode-rtr.rule=Host(`vscode.$DOMAINNAME`)"
-  #     ## Middlewares
-  #     # - "traefik.http.routers.vscode-rtr.middlewares=chain-oauth@file"
-  #     # - "traefik.http.routers.vscode-rtr.middlewares=chain-basic-auth@file"
-  #     - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia@file" # Authelia authentication
-
-  #     ## HTTP Services
-  #     - "traefik.http.routers.vscode-rtr.service=vscode-svc"
-  #     - "traefik.http.services.vscode-svc.loadbalancer.server.port=8080"
 
   # phpMyAdmin - Database management
   phpmyadmin:
