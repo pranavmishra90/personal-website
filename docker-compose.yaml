@@ -338,8 +338,8 @@ services:
       - "traefik.http.routers.phpmyadmin-rtr.tls=true"
       - "traefik.http.routers.phpmyadmin-rtr.rule=Host(`pma.$DOMAINNAME`)"
       ## Middlewares
-      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
-      # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file" # Authelia authentication
+      # - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file" # Authelia authentication
 
       ## HTTP Services
       - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
@@ -479,7 +479,7 @@ services:
       ## HTTP Routers
       - "traefik.http.routers.wiki-rtr.entrypoints=https"
       - "traefik.http.routers.wiki-rtr.tls=true"
-      - "traefik.http.routers.wiki-rtr.rule=Host(`foamed.$DOMAINNAME`)"
+      - "traefik.http.routers.wiki-rtr.rule=Host(`wiki.$DOMAINNAME`)"
       ## Middlewares
       - "traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file"
       # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
