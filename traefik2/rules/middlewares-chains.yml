@@ -20,13 +20,6 @@ http:
           - middlewares-secure-headers
           - middlewares-visitor-auth
 
-    # chain-oauth:
-    #   chain:
-    #     middlewares:
-    #       - middlewares-rate-limit
-    #       - middlewares-secure-headers
-    #       - middlewares-oauth
-        
     chain-authelia:
       chain:
         middlewares:
