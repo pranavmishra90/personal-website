@@ -381,6 +381,12 @@ services:
 
     labels:
       - "traefik.enable=true"
+
+      # Redirect Wordpress non-www to www middleware
+      - "traefik.http.middlewares.wordpress-redirect.redirectregex.regex=^https?://$DOMAINNAME/(.*)"
+      - "traefik.http.middlewares.wordpress-redirect.redirectregex.replacement=https://www.$DOMAINNAME/$${1}"
+      - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
+
       ## HTTP Routers Wordpress (Dr. Pranav Mishra) Authenticated Access
       - "traefik.http.routers.nginx-wordpress-auth-rtr.entrypoints=https"
       - "traefik.http.routers.nginx-wordpress-auth-rtr.tls=true"
@@ -408,11 +414,6 @@ services:
       - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`matomo.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-matomo-rtr.priority=95"
 
-      # Redirect Wordpress non-www to www middleware
-      - "traefik.http.middlewares.wordpress-redirect.redirectregex.regex=^https?://$DOMAINNAME/(.*)"
-      - "traefik.http.middlewares.wordpress-redirect.redirectregex.replacement=https://www.$DOMAINNAME/$${1}"
-      - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
-
       ## Middlewares
 
       - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
@@ -423,7 +424,7 @@ services:
       #### Preparedx
       - "traefik.http.routers.nginx-preparedx-testing-rtr.middlewares=chain-authelia@file"
       ####Matomo
-      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-no-autha@file"
+      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-authelia@file"
 
       ## HTTP Services
       - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
