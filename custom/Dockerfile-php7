@@ -4,7 +4,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 
 RUN chmod uga+x /usr/local/bin/install-php-extensions && sync && \
     install-php-extensions gd mysqli pdo_mysql opcache imagick exif zip mcrypt pspell redis sockets ssh2
-    
+
 # MIT License
 
 # Copyright (c) 2019 SmartHomeBeginner
