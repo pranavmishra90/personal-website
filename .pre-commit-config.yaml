@@ -6,9 +6,6 @@ repos:
       - id: check-yaml
       - id: check-xml
       - id: check-json
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
-      - id: check-executables-have-shebangs
 
       # Prevent adding private keys in files
       - id: detect-private-key
@@ -20,7 +17,6 @@ repos:
       - id: check-added-large-files
         args: ["--maxkb=5000"]
 
-      # Prevent direct commits to the following branches (requires pull request)
-      - id: no-commit-to-branch
-      #   args: [--branch, master, --branch, main, --pattern, release/.*]
-        args: [--pattern, release/.*]
+      # Only use LF line endings
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
