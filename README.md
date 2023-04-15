@@ -2,9 +2,10 @@
 
 [www.drpranavmishra.com](drpranavmishra.com)
 
+<!--- 
 ## Free open acces medical education (FOAMed) at:
 [FOAMed - Dr. Pranav Mishra](https://foamed.drpranavmishra.com)
-
+--->
 # License
 MIT License
 
