@@ -108,7 +108,7 @@ services:
   # Traefik 2 - Reverse Proxy
   traefik:
     container_name: traefik
-    image: traefik:2.2.1 #breaking change in 2.2.2
+    image: traefik:2.9.10
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -128,7 +128,7 @@ services:
       #      - --serversTransport.insecureSkipVerify=true
       - --log=true
       - --log.level=WARN # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
-      - --accessLog=true
+      - --accessLog=false
       - --accessLog.filePath=/traefik.log
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
       - --accessLog.filters.statusCodes=400-499
@@ -417,7 +417,7 @@ services:
       ## Middlewares
 
       - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring authelia
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-no-auth@file" #Backend requiring authelia
       # - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
       - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=chain-authelia@file" #OPCache requring HTTP authentication
 
@@ -522,3 +522,43 @@ services:
       ## HTTP Services
       - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
       - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
+
+
+  #######################################################
+  # Leantime - project planner
+  #######################################################
+  leantime:
+    image: leantime/leantime:latest
+    container_name: Leantime
+    networks:
+      - t2_proxy
+    environment:
+      LEAN_DB_HOST: "mariadb"
+      LEAN_DB_USER: "leantime"
+      LEAN_DB_PASSWORD: $LEANTIME_DB_PASS
+      LEAN_DB_DATABASE: "leantime"
+      LEAN_APP_URL: "https://projects.drpranavmishra.com"
+    volumes:
+      - /home/pranav/personal-website/leantime/html:/var/www/HTML
+      # - $DOCKERDIR/leantime/userfiles:/userfiles
+      # - $DOCKERDIR/leantime/public/userfiles:/public/userfiles
+      # - $DOCKERDIR/leantime/logs:/resources/logs
+      # # - $DOCKERDIR/leantime/nginx.conf:nginx.conf
+    # ports:
+    #   - "9000:9000"
+    #   - "80:80"
+    depends_on:
+      - mariadb
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.leantime-rtr.entrypoints=https"
+      - "traefik.http.routers.leantime-rtr.tls=true"
+      - "traefik.http.routers.leantime-rtr.rule=Host(`leantime.$DOMAINNAME`)"
+      ## Middlewares
+      # - "traefik.http.routers.leantime-rtr.middlewares=chain-oauth@file"
+      # - "traefik.http.routers.leantime-rtr.middlewares=chain-basic-auth@file"
+      - "traefik.http.routers.leantime-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.leantime-rtr.service=leantime-svc"
+      - "traefik.http.services.leantime-svc.loadbalancer.server.port=80"
