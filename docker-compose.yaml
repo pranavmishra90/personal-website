@@ -355,10 +355,24 @@ services:
       - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
 
   # PHP - Hypertext Preprocessor
-  php8:
-    image: php:8-fpm
-    container_name: MishraCloud-PHP8
+  # php8:
+  #   image: php:8-fpm
+  #   container_name: MishraCloud-PHP8
+  #   restart: unless-stopped
+  #   networks:
+  #     - t2_proxy
+  #   volumes:
+  #     - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
+  #     - $DOCKERDIR/php/php7:/usr/local/etc/php
+  #     #Matomo
+  #     - $DOCKERDIR/sites/matomo:/var/www/html/matomo
+
+  # PHP - Hypertext Preprocessor
+  php7:
+    container_name: php7
+    image: pranavmishra90/php:latest
     restart: unless-stopped
+    user: $PUID:$PGID # allows upgrading WP and plugins
     networks:
       - t2_proxy
     volumes:
@@ -373,7 +387,7 @@ services:
     image: nginx:1.18
     restart: unless-stopped
     depends_on:
-      - php8
+      - php7
     networks:
       - t2_proxy
     volumes:
