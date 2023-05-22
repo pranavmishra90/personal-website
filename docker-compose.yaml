@@ -123,6 +123,7 @@ services:
         # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
       # - --entrypoints.https.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
       - --entryPoints.traefik.address=:8080
+      - "--entrypoints.federation.address=:8448" # Matrix federation
       - --api=true
       #      - --api.insecure=true
       #      - --serversTransport.insecureSkipVerify=true
@@ -164,6 +165,10 @@ services:
         published: 8080
         protocol: tcp
         mode: host
+      - target: 8448
+        published: 8448
+        protocol: tcp
+        mode: host
     volumes:
       - $DOCKERDIR/traefik2/rules:/rules
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -197,6 +202,7 @@ services:
       # - "traefik.http.routers.traefik-rtr.middlewares=chain-basic-auth@file" #authentication chains per middlewares-chains.toml
       # - "traefik.http.routers.traefik-rtr.middlewares=middlewares-rate-limit@file,middlewares-basic-auth@file" #rate limiting access
       - "traefik.http.routers.traefik-rtr.middlewares=middlewares-secure-headers@file,middlewares-rate-limit@file,chain-authelia@file" #security headers
+
 
   # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
   authelia:
@@ -303,6 +309,9 @@ services:
       # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
       # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
       - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
+      # Redirect to https
+      - "traefik.http.middlewares.test-redirectscheme.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.test-redirectscheme.redirectscheme.permanent=true"
       ## HTTP Services
       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
@@ -346,11 +355,10 @@ services:
       - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
 
   # PHP - Hypertext Preprocessor
-  php7:
-    container_name: php7
-    image: pranavmishra90/php:latest
+  php8:
+    image: php:8-fpm
+    container_name: MishraCloud-PHP8
     restart: unless-stopped
-    user: $PUID:$PGID # allows upgrading WP and plugins
     networks:
       - t2_proxy
     volumes:
@@ -365,7 +373,7 @@ services:
     image: nginx:1.18
     restart: unless-stopped
     depends_on:
-      - php7
+      - php8
     networks:
       - t2_proxy
     volumes:
@@ -376,7 +384,7 @@ services:
       - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
       - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
 
-      #Matomo
+      # Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
     labels:
@@ -433,6 +441,9 @@ services:
 
       ####Matomo
       - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
+
+      ##############################################################
+
 
   # Redis - Key-value Store
   redis:
