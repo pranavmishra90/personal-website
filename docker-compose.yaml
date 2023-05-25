@@ -401,6 +401,9 @@ services:
       # Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
+      # Prrx1
+      - $DOCKERDIR/sites/prrx1-notebook/_site:/var/www/html/prrx1
+
     labels:
       - "traefik.enable=true"
 
@@ -455,6 +458,15 @@ services:
 
       ####Matomo
       - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
+
+
+      #### prrx1  ############
+      - "traefik.http.routers.nginx-prrx1-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-prrx1-rtr.tls=true"
+      - "traefik.http.routers.nginx-prrx1-rtr.rule=Host(`prrx1.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-prrx1-rtr.priority=95"
+      - "traefik.http.routers.nginx-prrx1-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.nginx-prrx1-rtr.service=nginx-svc"
 
       ##############################################################
 

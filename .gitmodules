@@ -1,0 +1,6 @@
+[submodule "prrx1-notebook"]
+	path = prrx1-notebook
+	url = git@github.com:SinguLab-Rush/prrx1-notebook.git
+[submodule "sites/prrx1-notebook"]
+	path = sites/prrx1-notebook
+	url = git@github.com:SinguLab-Rush/prrx1-notebook.git
