@@ -9,6 +9,6 @@ git pull
 cd /home/pranav/personal-website
 
 git branch develop
-git commit ./sites -m 'Auto update of static sites'
+git commit ./sites -m 'Auto update of static sites' -no-gpg-sign
 
-git push upstream develop
+git push origin develop
