@@ -108,7 +108,7 @@ services:
   # Traefik 2 - Reverse Proxy
   traefik:
     container_name: traefik
-    image: traefik:2.9.10
+    image: traefik:latest
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -380,6 +380,9 @@ services:
       - $DOCKERDIR/php/php7:/usr/local/etc/php
       #Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
+
+      #Matomo
+      - $DOCKERDIR/sites/prrx1-notebook/_site:/var/www/html/prrx1
 
   # Nginx - Web Server
   nginx:
