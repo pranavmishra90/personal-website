@@ -25,6 +25,7 @@ secrets/
 /authelia/
 /duplicati/*
 /logs/
+/env
 /mongodb/data/*
 /mariadb/data/*
 /overleaf/*
