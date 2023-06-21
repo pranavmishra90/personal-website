@@ -382,7 +382,7 @@ services:
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
       #Matomo
-      - $DOCKERDIR/sites/prrx1-notebook/_site:/var/www/html/prrx1
+      - $DOCKERDIR/sites/prrx1-notebook/:/var/www/html/prrx1:ro
 
   # Nginx - Web Server
   nginx:
@@ -405,7 +405,7 @@ services:
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
       # Prrx1
-      - $DOCKERDIR/sites/prrx1-notebook/_site:/var/www/html/prrx1
+      - $DOCKERDIR/sites/prrx1-notebook/:/var/www/html/prrx1:ro
 
     labels:
       - "traefik.enable=true"
