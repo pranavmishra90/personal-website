@@ -128,11 +128,11 @@ services:
       #      - --api.insecure=true
       #      - --serversTransport.insecureSkipVerify=true
       - --log=true
-      - --log.level=WARN # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+      - --log.level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=false
       - --accessLog.filePath=/traefik.log
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
-      - --accessLog.filters.statusCodes=400-499
+      - --accessLog.filters.statusCodes=400-520
       - --providers.docker=true
       - --providers.docker.endpoint=unix:///var/run/docker.sock
       - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$DOMAINNAME`)
@@ -207,9 +207,9 @@ services:
   # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
   authelia:
     container_name: authelia
-    # Check this before upgrading: https://github.com/authelia/authelia/blob/master/BREAKING.md
-    image: authelia/authelia:4.29.4
-    # restart: unless-stopped
+    # Checking breaking changes before changing the image tag: https://github.com/authelia/authelia/releases
+    image: authelia/authelia:4.29.4 #4.37.5
+    restart: unless-stopped
     depends_on:
       - mariadb
     networks:
@@ -218,7 +218,9 @@ services:
     # ports:
     #   - "9091:9091"
     volumes:
-      - $DOCKERDIR/authelia/config:/config
+      - $DOCKERDIR/authelia/config/configuration.yml:/config/configuration.yml:rw
+      - $DOCKERDIR/authelia/config/users_database.yml:/config/users_database.yml:rw
+      - $DOCKERDIR/authelia/config/notification.txt:/config/notification.txt:rw
     environment:
       - TZ=$TZ
       - AUTHELIA_JWT_SECRET_FILE=/run/secrets/authelia_jwt_secret
