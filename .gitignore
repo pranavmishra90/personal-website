@@ -22,7 +22,8 @@ secrets/
 
 #Folders
 .ipynb_checkpoints/
-/authelia/
+/authelia/config/
+!/authelia/config/configuration.yml
 /duplicati/*
 /logs/
 /env
@@ -35,6 +36,7 @@ secrets/
 /redis/*
 /portainer/data/*
 /secrets/*
+!/secrets/folder_notes.yaml
 /sites/wordpress/html/*
 /sites/matomo/*
 /statping/*
