@@ -4,6 +4,9 @@
 # */20 * * * * bash /home/pranav/personal-website/shell/static-sites.sh >> /home/pranav/personal-website/shell/crontab.log 2>&1
 
 
+# Prrx1
+#-------------------------------------------------------
+
 cd /home/pranav/personal-website/sites/prrx1-notebook
 echo "Directory is now" $PWD
 
@@ -12,6 +15,23 @@ git reset --hard
 
 # Pull down updates from GitHub
 git pull
+
+
+# BFGI
+#-------------------------------------------------------
+cd /home/pranav/personal-website/sites/bfgi-notebook
+echo "Directory is now" $PWD
+
+# Discard current changes in the static website
+git reset --hard
+
+# Pull down updates from GitHub
+git pull
+
+
+# Commit changes to DrPM ~/personal-website
+#-------------------------------------------------------
+
 
 # Commit the changed submodule hash
 cd /home/pranav/personal-website
