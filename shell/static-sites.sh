@@ -3,6 +3,7 @@
 # Crontab settings
 # */20 * * * * bash /home/pranav/personal-website/shell/static-sites.sh >> /home/pranav/personal-website/shell/crontab.log 2>&1
 
+ssh-add /home/pranav.ssh/automated_ed25519.pub 
 
 # Prrx1
 #-------------------------------------------------------
