@@ -1,9 +1,21 @@
 #!/bin/bash
 
-# Crontab settings
-# */20 * * * * bash /home/pranav/personal-website/shell/static-sites.sh >> /home/pranav/personal-website/shell/crontab.log 2>&1
 
-ssh-add /home/pranav.ssh/automated_ed25519.pub 
+echo "----------------------------"
+echo "Starting static site update"
+date
+echo "----------------------------"
+
+# Prepare environment
+
+source /home/pranav/personal-website/shell/bfgi.env
+
+# Check if SSH agent is running, if not, start a new one
+if [ -z "$SSH_AGENT_PID" ]; then
+    eval "$(ssh-agent -s)"
+fi
+
+ssh-add /home/pranav/.ssh/automated_ed25519
 
 # Prrx1
 #-------------------------------------------------------
@@ -27,23 +39,32 @@ echo "Directory is now" $PWD
 git reset --hard
 
 # Pull down updates from GitHub
-git pull
+datalad update --how merge
+
+datalad get .
+
+datalad unlock .
 
 
 # Commit changes to DrPM ~/personal-website
 #-------------------------------------------------------
 
-
 # Commit the changed submodule hash
 cd /home/pranav/personal-website
-echo "Directory is now" $PWD
+echo "Changing directory to the root: " $PWD
 
-git checkout develop
-git commit ./sites -m 'Auto update of static sites'
+# Change the signing key to automatic
+git config user.signingkey /home/pranav/.ssh/automated_ed25519.pub
+
+# git checkout develop
+git add ./sites
+git commit -a -m 'Auto update of static sites'
 
 git push origin develop
 
+# Change back the signing key to manual
+git config user.signingkey /home/pranav/.ssh/id_ed25519.pub
 
 # Completed
 date
-echo "Done" 
+echo "Done"
