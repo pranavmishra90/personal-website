@@ -120,10 +120,8 @@ services:
       - --global.sendAnonymousUsage=false
       - --entryPoints.http.address=:80
       - --entryPoints.https.address=:443
-        # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
-      # - --entrypoints.https.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
       - --entryPoints.traefik.address=:8080
-      - "--entrypoints.federation.address=:8448" # Matrix federation
+      - --entrypoints.matrix-federation.address=:8448 # Matrix federation
       - --api=true
       #      - --api.insecure=true
       #      - --serversTransport.insecureSkipVerify=true
@@ -165,7 +163,7 @@ services:
         published: 8080
         protocol: tcp
         mode: host
-      - target: 8448
+      - target: 8448 #Matrix federation
         published: 8448
         protocol: tcp
         mode: host
@@ -409,6 +407,9 @@ services:
       # Prrx1
       - $DOCKERDIR/sites/prrx1-notebook/:/var/www/html/prrx1:ro
 
+      # BFGI
+      - $DOCKERDIR/sites/bfgi-notebook/:/var/www/html/bfgi:ro
+
     labels:
       - "traefik.enable=true"
 
@@ -447,7 +448,7 @@ services:
       ## Middlewares
 
       - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-no-auth@file" #Backend requiring authelia
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring authelia
       # - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
       - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=chain-authelia@file" #OPCache requring HTTP authentication
 
@@ -464,8 +465,7 @@ services:
       ####Matomo
       - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
 
-
-      #### prrx1  ############
+      #### Prrx1  #############################################################
       - "traefik.http.routers.nginx-prrx1-rtr.entrypoints=https"
       - "traefik.http.routers.nginx-prrx1-rtr.tls=true"
       - "traefik.http.routers.nginx-prrx1-rtr.rule=Host(`prrx1.$DOMAINNAME`)"
@@ -473,7 +473,15 @@ services:
       - "traefik.http.routers.nginx-prrx1-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.nginx-prrx1-rtr.service=nginx-svc"
 
-      ##############################################################
+      #### BFGI  #############################################################
+      - "traefik.http.routers.nginx-bfgi-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-bfgi-rtr.tls=true"
+      - "traefik.http.routers.nginx-bfgi-rtr.rule=Host(`bfgi.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-bfgi-rtr.priority=95"
+      - "traefik.http.routers.nginx-bfgi-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.nginx-bfgi-rtr.service=nginx-svc"
+
+      ##########################################################################
 
 
   # Redis - Key-value Store
@@ -564,3 +572,30 @@ services:
       ## HTTP Services
       - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
       - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
+
+  # vscode:
+  #   image: lscr.io/linuxserver/code-server:latest
+  #   container_name: vscode-server
+  #   restart: unless-stopped
+  #   volumes:
+  #     - $DOCKERDIR/vscode/config:/config
+  #   # ports:
+  #   #   - 8443:8443
+  #   environment:
+  #     - PUID=$PUID
+  #     - PGID=$PGID
+  #     - TZ=$TZ
+  #     - PROXY_DOMAIN=code.$DOMAINNAME #optional
+  #     - DEFAULT_WORKSPACE=/config/workspace #optional    
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.vscode-rtr.entrypoints=https"
+  #     - "traefik.http.routers.vscode-rtr.tls=true"
+  #     - "traefik.http.routers.vscode-rtr.rule=Host(`code.$DOMAINNAME`)"
+  #     ## Middlewares
+  #     # - "traefik.http.routers.vscode-rtr.middlewares=chain-no-auth@file"
+  #     - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia@file"
+  #     ## HTTP Services
+  #     - "traefik.http.routers.vscode-rtr.service=vscode-svc"
+  #     - "traefik.http.services.vscode-svc.loadbalancer.server.port=8443"

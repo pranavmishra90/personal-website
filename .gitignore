@@ -41,6 +41,7 @@ secrets/
 /sites/matomo/*
 /statping/*
 /trash/
+/traefik2/acme
 /vscode/*
 /wiki/config/*
 /wiki/data/*
