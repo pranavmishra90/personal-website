@@ -2,12 +2,19 @@
 
 [www.drpranavmishra.com](drpranavmishra.com)
 
+<img alt="contabo" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fpranavmishra90%2Fbadges%2Fmain%2Ftwo-side-status-badge/contabo.json&color=3e4c75">
+
+<img alt="wordpress" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fpranavmishra90%2Fbadges%2Fmain%2Fone-sided-badge/wordpress.json&color=3e4c75">
+
+<img alt="docker" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fpranavmishra90%2Fbadges%2Fmain%2Fone-sided-badge/docker.json&color=3e4c75">
+
 <!--- 
 ## Free open acces medical education (FOAMed) at:
 [FOAMed - Dr. Pranav Mishra](https://foamed.drpranavmishra.com)
 --->
 # License
-MIT License
+
+<img alt="source_code_MIT" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fpranavmishra90%2Fbadges%2Fmain%2Fone-sided-badge/source_code_MIT.json&color=3e4c75">
 
 Copyright (c) 2020-2022 Pranav Mishra
 
