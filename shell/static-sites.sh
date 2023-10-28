@@ -45,6 +45,22 @@ datalad get .
 
 datalad unlock .
 
+# OA-PTOA
+#-------------------------------------------------------
+cd /home/pranav/personal-website/sites/oa-ptoa-notebook
+echo "Directory is now" $PWD
+
+# Discard current changes in the static website
+git reset --hard
+
+# Pull down updates from GitHub
+datalad update --how merge
+
+datalad get .
+
+datalad unlock .
+
+
 
 # Commit changes to DrPM ~/personal-website
 #-------------------------------------------------------
