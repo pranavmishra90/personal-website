@@ -7,3 +7,6 @@
 [submodule "sites/bfgi-notebook"]
 	path = sites/bfgi-notebook
 	url = git@github.com:SinguLab-Rush/bfgi-notebook.git
+[submodule "sites/oa-ptoa-notebook"]
+	path = sites/oa-ptoa-notebook
+	url = git@github.com:SinguLab-Rush/oa-ptoa-notebook.git
