@@ -110,6 +110,8 @@ services:
     container_name: traefik
     image: traefik:latest
     restart: unless-stopped
+    depends_on:
+      - authelia
     logging:
       driver: "json-file"
       options:
@@ -160,10 +162,10 @@ services:
         published: 443
         protocol: tcp
         mode: host
-      - target: 8080
-        published: 8080
-        protocol: tcp
-        mode: host
+      # - target: 8080
+      #   published: 8080
+      #   protocol: tcp
+      #   mode: host
       - target: 8448 #Matrix federation
         published: 8448
         protocol: tcp
@@ -289,6 +291,8 @@ services:
     image: portainer/portainer:latest
     restart: unless-stopped
     command: -H unix:///var/run/docker.sock
+    depends_on:
+      - mariadb
     networks:
       - t2_proxy
     security_opt:
@@ -323,6 +327,8 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin
     restart: unless-stopped
+    depends_on:
+      - mariadb
     links:
       - mariadb
     networks:
