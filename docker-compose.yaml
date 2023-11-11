@@ -561,6 +561,7 @@ services:
       - $DOCKERDIR/:/drpm-website:ro #website backup
       - /home/pranav/research:/drpm-research:ro #research directory backup
       - /home/pranav/github-profile:/github-profile:ro #github profile page backup
+      - /home/pranav/backup/matrix:/drpm-matrix-postgresql:ro
     # ports:
     #   - 8200:8200
     restart: unless-stopped
