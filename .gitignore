@@ -43,6 +43,7 @@ secrets/
 /trash/
 /traefik2/acme
 /vscode/*
+/vcard/*
 /wiki/config/*
 /wiki/data/*
 
