@@ -582,29 +582,30 @@ services:
       - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
       - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
 
-  # vscode:
-  #   image: lscr.io/linuxserver/code-server:latest
-  #   container_name: vscode-server
-  #   restart: unless-stopped
-  #   volumes:
-  #     - $DOCKERDIR/vscode/config:/config
-  #   # ports:
-  #   #   - 8443:8443
-  #   environment:
-  #     - PUID=$PUID
-  #     - PGID=$PGID
-  #     - TZ=$TZ
-  #     - PROXY_DOMAIN=code.$DOMAINNAME #optional
-  #     - DEFAULT_WORKSPACE=/config/workspace #optional    
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.vscode-rtr.entrypoints=https"
-  #     - "traefik.http.routers.vscode-rtr.tls=true"
-  #     - "traefik.http.routers.vscode-rtr.rule=Host(`code.$DOMAINNAME`)"
-  #     ## Middlewares
-  #     # - "traefik.http.routers.vscode-rtr.middlewares=chain-no-auth@file"
-  #     - "traefik.http.routers.vscode-rtr.middlewares=chain-authelia@file"
-  #     ## HTTP Services
-  #     - "traefik.http.routers.vscode-rtr.service=vscode-svc"
-  #     - "traefik.http.services.vscode-svc.loadbalancer.server.port=8443"
+  #######################################################
+  # Homer - Dashboard
+  #######################################################
+  homer:
+    image: b4bz/homer:v23.05.1
+    container_name: Homer
+    volumes:
+      - ./homer/config:/www/assets
+    # ports:
+    #   - 8082:8080
+    environment:
+      - PUID=1001
+      - PGID=1001
+    restart: unless-stopped
+    networks:
+      - traefik_external
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.homer-rtr.entrypoints=https"
+      - "traefik.http.routers.homer-rtr.tls=true"
+      - "traefik.http.routers.homer-rtr.rule=Host(`dashboard.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.homer-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.homer-rtr.service=homer-svc"
+      - "traefik.http.services.homer-svc.loadbalancer.server.port=8080"
