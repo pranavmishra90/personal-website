@@ -586,7 +586,7 @@ services:
   # Homer - Dashboard
   #######################################################
   homer:
-    image: b4bz/homer:v23.05.1
+    image: b4bz/homer:v23.10.1
     container_name: Homer
     volumes:
       - ./homer/config:/www/assets
@@ -597,13 +597,13 @@ services:
       - PGID=1001
     restart: unless-stopped
     networks:
-      - traefik_external
+      - t2_proxy
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
       - "traefik.http.routers.homer-rtr.entrypoints=https"
       - "traefik.http.routers.homer-rtr.tls=true"
-      - "traefik.http.routers.homer-rtr.rule=Host(`dashboard.$DOMAINNAME`)"
+      - "traefik.http.routers.homer-rtr.rule=Host(`start.$DOMAINNAME`)"
       ## Middlewares
       - "traefik.http.routers.homer-rtr.middlewares=chain-authelia@file"
       ## HTTP Services
