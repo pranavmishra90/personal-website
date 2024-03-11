@@ -1,0 +1,174 @@
+# Homepage configuration
+# See https://fontawesome.com/icons for icons options
+
+title: "Dashboard"
+subtitle: "Dr. Pranav Mishra's"
+
+# logo: "logo.png"
+
+header: true
+footer: "<p>This is the Homer dashboard for the Dr. Pranav Mishra website</p>"
+
+connectivityCheck: true
+
+
+# Optional theme customization
+theme: default
+colors:
+  light:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#f5f5f5"
+    card-background: "#ffffff"
+    text: "#363636"
+    text-header: "#ffffff"
+    text-title: "#303030"
+    text-subtitle: "#424242"
+    card-shadow: rgba(0, 0, 0, 0.1)
+    link-hover: "#363636"
+  dark:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#131313"
+    card-background: "#2b2b2b"
+    text: "#eaeaea"
+    text-header: "#ffffff"
+    text-title: "#fafafa"
+    text-subtitle: "#f5f5f5"
+    card-shadow: rgba(0, 0, 0, 0.4)
+    link-hover: "#ffdd57"
+
+
+# Some pre-defined tag styles. reference these using <<: *{NAME} inside an item definition; For Example, <<: *Apps
+tags:
+  MishraCloud: &MishraCloud
+    - tag: "MishraCloud"
+      tagstyle: "is-medium is-info"
+  DrPM: &DrPM
+    - tag: "DrPM Web"
+      tagstyle: "is-medium is-info"
+  Rush: &Rush
+    - tag: "Rush"
+      tagstyle: "is-medium is-info"
+  Web: &Web
+    - tag: "Web"
+      tagstyle: "is-medium is-info"
+  Media: &Media
+    - tag: "Media"
+      tagstyle: "is-medium is-info"
+
+services:
+  # Favorites
+  #------------------------------------------------
+  - name: "Favorites"
+    icon: "fas fa-heart"
+    items:
+      - name: "Home Assistant"
+        subtitle: "Home automation server"
+        logo: "assets/icons/home-assistant.png"
+        <<: *MishraCloud
+        url: "https://ha.mishracloud.com"
+        target: "_blank"
+
+      - name: "Send"
+        subtitle: "Share files with end-to-end encryption"
+        logo: "assets/icons/Send.svg"
+        <<: *MishraCloud
+        url: "https://send.mishracloud.com/"
+        target: "_blank"
+
+      - name: "Privatebin"
+        subtitle: "Secure text sharing"
+        logo: "assets/icons/privatebin.png"
+        <<: *MishraCloud
+        url: "https://privatebin.mishracloud.com"
+        target: "_blank"
+
+
+  # DrPM - Web
+  #------------------------------------------------
+  - name: "DrPM Web"
+    icon: "fas fa-cloud"
+    items:
+      - name: "Authelia"
+        subtitle: "Single sign on authentication"
+        logo: "assets/icons/authelia.png"
+        <<: *DrPM
+        url: "https://authelia.drpranavmishra.com"
+        target: "_blank"
+
+      - name: "Monica"
+        subtitle: "PRM Contact Manager"
+        logo: "assets/icons/monica.png"
+        <<: *DrPM
+        url: "https://monica.drpranavmishra.com"
+        target: "_blank"
+      
+      - name: "Element"
+        subtitle: "Matrix Client"
+        logo: "assets/icons/element.png"
+        <<: *DrPM
+        url: "https://element.drpranavmishra.com"
+        target: "_blank"
+
+      - name: "Matrix Admin"
+        subtitle: "Matrix Admin Panel"
+        logo: "assets/icons/matrix.svg"
+        <<: *DrPM
+        url: "https://element.drpranavmishra.com"
+        target: "_blank"
+
+      - name: "Traefik"
+        subtitle: "Reverse Proxy"
+        logo: "assets/icons/traefik.png"
+        <<: *DrPM
+        url: "https://traefik.drpranavmishra.com"
+        target: "_blank"
+
+  # Web
+  #------------------------------------------------
+  - name: "Web"
+    icon: "fas fa-cloud"
+    items:
+      - name: "GitHub: pranavmishra90"
+        subtitle: "Repositories"
+        logo: "assets/icons/github.png"
+        <<: *Web
+        url: "https://github.com/pranavmishra90?tab=repositories"
+        target: "_blank"
+
+      - name: "GitHub: SinguLab-Rush"
+        subtitle: "Repositories"
+        logo: "assets/icons/github.png"
+        <<: *Web
+        url: "https://github.com/Singulab-Rush?tab=repositories"
+        target: "_blank"
+
+
+  # Rush
+  #------------------------------------------------
+  - name: "Rush"
+    icon: "fas fa-cloud"
+    items:
+      - name: "BFGI Notebook"
+        subtitle: "Project"
+        # logo: "assets/icons/github.png"
+        <<: *Rush
+        url: "https://bfgi.drpranavmishra.com"
+        target: "_blank"
+
+      - name: "Prrx1 Notebook"
+        subtitle: "Project"
+        # logo: "assets/icons/github.png"
+        <<: *Rush
+        url: "https://prrx1.drpranavmishra.com"
+        target: "_blank"
+
+      - name: "OA-PTOA Notebook"
+        subtitle: "Project"
+        # logo: "assets/icons/github.png"
+        <<: *Rush
+        url: "https://oa.drpranavmishra.com"
+        target: "_blank"
