@@ -27,6 +27,7 @@ secrets/
 /duplicati/*
 /logs/
 /env
+/homer
 /mongodb/data/*
 /mariadb/data/*
 /overleaf/*
