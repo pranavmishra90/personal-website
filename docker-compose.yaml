@@ -417,6 +417,9 @@ services:
       # BFGI
       - $DOCKERDIR/sites/bfgi-notebook/:/var/www/html/bfgi:ro
 
+      # Research Reference
+      - $DOCKERDIR/sites/research-reference/:/var/www/html/research-reference:ro
+
     labels:
       - "traefik.enable=true"
 
@@ -487,6 +490,14 @@ services:
       - "traefik.http.routers.nginx-bfgi-rtr.priority=95"
       - "traefik.http.routers.nginx-bfgi-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.nginx-bfgi-rtr.service=nginx-svc"
+
+      #### Research Reference#################################################
+      - "traefik.http.routers.nginx-research-ref.entrypoints=https"
+      - "traefik.http.routers.nginx-research-ref.tls=true"
+      - "traefik.http.routers.nginx-research-ref.rule=Host(`ref.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-research-ref.priority=95"
+      - "traefik.http.routers.nginx-research-ref.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.nginx-research-ref.service=nginx-svc"
 
       ##########################################################################
 
