@@ -4,7 +4,7 @@
 
 # MIT License
 
-# Copyright (c) 2020 Pranav Mishra
+# Copyright (c) 2020-2024 Pranav Mishra
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -55,8 +55,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-version: "3.7"
 
 ####################################
 #            Networks              #
@@ -131,7 +129,7 @@ services:
       - --log=true
       - --log.level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=false
-      - --accessLog.filePath=/traefik.log
+      - --accessLog.filePath=/traefik-access.log
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
       - --accessLog.filters.statusCodes=400-520
       - --providers.docker=true
@@ -173,8 +171,10 @@ services:
     volumes:
       - $DOCKERDIR/traefik2/rules:/rules
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # - $DOCKERDIR/traefik2/traefik-static.yaml:/etc/traefik/traefik.yaml # Comment out to use CLI static configuration
       - $DOCKERDIR/traefik2/acme/acme.json:/acme.json
       - $DOCKERDIR/traefik2/traefik.log:/traefik.log
+      - $DOCKERDIR/traefik2/traefik-access.log:/traefik-access.log
       - $DOCKERDIR/shared:/shared
     environment:
       - CF_API_EMAIL=$CLOUDFLARE_EMAIL
@@ -284,6 +284,40 @@ services:
       - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password # Not taking this pw during initialization
     secrets:
       - mysql_root_password
+
+  #######################################################
+  # Database Backup
+  #######################################################
+  # dbbackup:
+  #     image: docker.io/tiredofit/db-backup:latest
+  #     container_name: DB-Backup
+  #     depends_on: 
+  #       - mariadb
+  #     volumes:
+  #       - /home/pranav/personal-website/db-backup/backup:/logs
+  #       - ./db-backup/backup:/backup
+  #     environment:
+  #       - DEFAULT_BACKUP_LOCATION:FILESYSTEM
+  #       - USER_DBBACKUP=1001
+  #       - GROUP_DBBACKUP=1001
+  #       - LOG_PATH="/logs"
+  #       - DEFAULT_FILESYSTEM_PATH:"/backup"
+  #       - DEFAULT_CREATE_LATEST_SYMLINK:TRUE
+  #       - DEFAULT_CHECKSUM:MD5
+  #       - DEFAULT_LOG_LEVEL:DEBUG
+  #       - DEFAULT_GZ_RSYNCABLE:TRUE 
+  #       - DEFAULT_BACKUP_INTERVAL:1440 #min, 1440 = daily
+  #       - DEFAULT_BACKUP_BEGIN:"+1"
+  #       # MariaDB
+  #       - DB01_HOST:mariadb
+  #       - DB01_TYPE:mysql
+  #       - DB01_BACKUP_BEGIN:"+0"
+  #       - DB01_NAME:ALL
+  #       - DEFAULT_MYSQL_MAX_ALLOWED_PACKET:64M
+  #     restart: unless-stopped
+  #     networks:
+  #       - t2_proxy
+
 
 # Portainer - WebUI for Containers
   portainer:
