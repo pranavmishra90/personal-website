@@ -14,7 +14,7 @@ networks:
 ####################################
 services:
   app:
-    image: monica:fpm
+    image: monica:4.1.2-fpm
     container_name: Monica
     environment:
       - APP_ENV=production
