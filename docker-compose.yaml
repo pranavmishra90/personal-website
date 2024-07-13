@@ -120,12 +120,8 @@ services:
       - --global.sendAnonymousUsage=false
       - --entryPoints.http.address=:80
       - --entryPoints.https.address=:443
-      # - --entryPoints.traefik.address=:8080
-      - --entrypoints.matrix-federation.address=:8448 # Matrix federation
       - --api=true
       - --api.dashboard=true
-      #      - --api.insecure=true
-      #      - --serversTransport.insecureSkipVerify=true
       - --log=true
       - --log.level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
       - --accessLog=false
@@ -158,14 +154,6 @@ services:
         mode: host
       - target: 443
         published: 443
-        protocol: tcp
-        mode: host
-      # - target: 8080
-      #   published: 8080
-      #   protocol: tcp
-      #   mode: host
-      - target: 8448 #Matrix federation
-        published: 8448
         protocol: tcp
         mode: host
     volumes:
