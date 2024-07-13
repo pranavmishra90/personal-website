@@ -207,9 +207,10 @@ services:
     # ports:
     #   - "9091:9091"
     volumes:
-      - $DOCKERDIR/authelia/config/configuration.yml:/config/configuration.yml:rw
-      - $DOCKERDIR/authelia/config/users_database.yml:/config/users_database.yml:rw
-      - $DOCKERDIR/authelia/config/notification.txt:/config/notification.txt:rw
+      # - $DOCKERDIR/authelia/config/configuration.yml:/config/configuration.yml:rw
+      # - $DOCKERDIR/authelia/config/users_database.yml:/config/users_database.yml:rw
+      # - $DOCKERDIR/authelia/config/notification.txt:/config/notification.txt:rw
+      - $DOCKERDIR/authelia/config:/config:rw
     environment:
       - TZ=$TZ
       - AUTHELIA_JWT_SECRET_FILE=/run/secrets/authelia_jwt_secret
