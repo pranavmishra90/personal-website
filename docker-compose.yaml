@@ -197,7 +197,7 @@ services:
   authelia:
     container_name: authelia
     # Checking breaking changes before changing the image tag: https://github.com/authelia/authelia/releases
-    image: authelia/authelia:4.29.4 #4.37.5
+    image: authelia/authelia:4.38 #4.29.4 #4.37.5
     restart: unless-stopped
     depends_on:
       - mariadb

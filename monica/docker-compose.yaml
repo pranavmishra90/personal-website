@@ -1,6 +1,4 @@
 # Run Monica with fpm+nginx backend
-
-version: "3.7"
 ####################################
 #            Networks              #
 ####################################
@@ -50,8 +48,6 @@ services:
       - "traefik.http.routers.monica-rtr.rule=Host(`monica.$DOMAINNAME`)"
       - "traefik.http.routers.monica-rtr.tls=true"
       ## Middlewares
-      # - "traefik.http.routers.monica-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.monica-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
       - "traefik.http.routers.monica-rtr.middlewares=chain-authelia@file" # Authelia authentication
       # Redirect to https
       - "traefik.http.middlewares.test-redirectscheme.redirectscheme.scheme=https"
