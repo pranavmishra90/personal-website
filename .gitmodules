@@ -8,11 +8,6 @@
 	datalad-url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
 	datalad-id = 6761fae7-e6e1-4490-a11c-95288d784d11
 
-[submodule "sites/oa-ptoa-notebook"]
-	path = sites/oa-ptoa-notebook
-	url = git@github.com:FacsimiLab-Rush/oa-ptoa-notebook.git
-
-	
 [submodule "sites/research-reference"]
 	path = sites/research-reference
 	url = git@github.com:pranavmishra90/research-reference.git

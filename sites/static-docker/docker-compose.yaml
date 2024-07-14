@@ -74,3 +74,23 @@ services:
       - "traefik.http.routers.nginx-bfgi-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.nginx-bfgi-rtr.service=nginx-bfgi-svc"
       - "traefik.http.services.nginx-bfgi-svc.loadbalancer.server.port=8080"
+
+
+ # OA-PTOA Notebook
+  oaptoa:
+    container_name: Notebook-OA-PTOA
+    image: trafex/php-nginx:latest
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+    volumes:
+      - $DOCKERDIR/sites/oa-ptoa-notebook/_site:/var/www/html
+    labels:
+      - "traefik.enable=true"
+      #### OA-PTOA  #############################################################
+      - "traefik.http.routers.nginx-oaptoa-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-oaptoa-rtr.tls=true"
+      - "traefik.http.routers.nginx-oaptoa-rtr.rule=Host(`oaptoa.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-oaptoa-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.nginx-oaptoa-rtr.service=nginx-oaptoa-svc"
+      - "traefik.http.services.nginx-oaptoa-svc.loadbalancer.server.port=8080"
