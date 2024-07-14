@@ -509,15 +509,40 @@ services:
       - "traefik.http.routers.nginx-bfgi-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.nginx-bfgi-rtr.service=nginx-svc"
 
+      # #### Research Reference#################################################
+      # - "traefik.http.routers.nginx-research-ref.entrypoints=https"
+      # - "traefik.http.routers.nginx-research-ref.tls=true"
+      # - "traefik.http.routers.nginx-research-ref.rule=Host(`ref.$DOMAINNAME`)"
+      # - "traefik.http.routers.nginx-research-ref.priority=95"
+      # - "traefik.http.routers.nginx-research-ref.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.nginx-research-ref.service=nginx-svc"
+
+      ##########################################################################
+
+ # Research References
+  site-ref:
+    container_name: DrPM-ref
+    image: trafex/php-nginx
+    restart: unless-stopped
+    depends_on:
+      - authelia
+    networks:
+      - t2_proxy
+    volumes:
+      - $DOCKERDIR/sites/research-reference/_site:/var/www/html:ro
+    labels:
+      - "traefik.enable=true"
       #### Research Reference#################################################
       - "traefik.http.routers.nginx-research-ref.entrypoints=https"
       - "traefik.http.routers.nginx-research-ref.tls=true"
       - "traefik.http.routers.nginx-research-ref.rule=Host(`ref.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-research-ref.priority=95"
       - "traefik.http.routers.nginx-research-ref.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.nginx-research-ref.service=nginx-svc"
+      ## HTTP Services
+      - "traefik.http.routers.nginx-research-ref.service=nginx-ref"
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.service=nginx-ref"
+      - "traefik.http.services.nginx-ref.loadbalancer.server.port=8080"
 
-      ##########################################################################
 
 
   # Redis - Key-value Store
