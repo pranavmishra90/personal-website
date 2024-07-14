@@ -6,6 +6,7 @@
 	path = sites/bfgi-notebook
 	url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
 	datalad-url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
+	datalad-id = 6761fae7-e6e1-4490-a11c-95288d784d11
 
 [submodule "sites/oa-ptoa-notebook"]
 	path = sites/oa-ptoa-notebook

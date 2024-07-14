@@ -6,7 +6,6 @@ networks:
   t2_proxy:
     external: true
     name: t2_proxy
-    #Created with docker network create --gateway 10.1.3.1 --subnet 10.1.3.0/24 t2_proxy
   default:
     driver: bridge
 
@@ -17,3 +16,23 @@ networks:
 
 services:
   # All services / apps go below this line
+
+ # Research References
+  site-ref:
+    container_name: DrPM-ref
+    image: trafex/php-nginx
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+    volumes:
+      - $DOCKERDIR/sites/research-reference/_site:/var/www/html:ro
+    labels:
+      - "traefik.enable=true"
+      #### Research Reference#################################################
+      - "traefik.http.routers.nginx-research-ref.entrypoints=https"
+      - "traefik.http.routers.nginx-research-ref.rule=Host(`ref.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-research-ref.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.nginx-research-ref.service=nginx-rvc"
+      - "traefik.http.services.nginx-ref.loadbalancer.server.port=8080"
+
