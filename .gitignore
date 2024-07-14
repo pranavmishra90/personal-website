@@ -1,11 +1,8 @@
 #Specific files
-.htpasswd
-.visitorhtpasswd
+**/.htpasswd
+**/.visitorhtpasswd
 
-acme.json
-
-secrets/
-
+**/acme.json
 
 #Types of files
 *.aof
@@ -27,7 +24,7 @@ secrets/
 #############################
 
 #Folders
-.ipynb_checkpoints/
+**/.ipynb_checkpoints/
 /authelia/config/
 !/authelia/config/configuration.yml
 /duplicati/*
