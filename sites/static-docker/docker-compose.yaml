@@ -17,26 +17,6 @@ networks:
 services:
   # All services / apps go below this line
 
- # Matomo
-  matomo:
-    container_name: Matomo
-    image: trafex/php-nginx:latest
-    restart: unless-stopped
-    networks:
-      - t2_proxy
-    volumes:
-      - $DOCKERDIR/sites/matomo:/var/www/html:ro
-    labels:
-      - "traefik.enable=true"
-      #### Research Reference#################################################
-      - "traefik.http.routers.nginx-matomo.entrypoints=https"
-      - "traefik.http.routers.nginx-matomo.tls=true"
-      - "traefik.http.routers.nginx-matomo.rule=Host(`matomo.$DOMAINNAME`)"
-      - "traefik.http.routers.nginx-matomo.middlewares=chain-no-auth@file"
-      ## HTTP Services
-      - "traefik.http.routers.nginx-matomo.service=matomo-svc"
-      - "traefik.http.services.matomo-svc.loadbalancer.server.port=8080"
-
  # Research References
   site-ref:
     container_name: DrPM-ref
@@ -45,7 +25,7 @@ services:
     networks:
       - t2_proxy
     volumes:
-      - $DOCKERDIR/sites/research-reference/_site:/var/www/html:ro
+      - $DOCKERDIR/sites/research-reference/_site:/var/www/html
     labels:
       - "traefik.enable=true"
       #### Research Reference#################################################
@@ -64,7 +44,7 @@ services:
     networks:
       - t2_proxy
     volumes:
-      - $DOCKERDIR/sites/prrx1/_site:/var/www/html:ro
+      - $DOCKERDIR/sites/prrx1-notebook/_site:/var/www/html
     labels:
       - "traefik.enable=true"
       #### Prrx1  #############################################################
@@ -74,3 +54,23 @@ services:
       - "traefik.http.routers.nginx-prrx1-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.nginx-prrx1-rtr.service=nginx-prrx1-svc"
       - "traefik.http.services.nginx-prrx1-svc.loadbalancer.server.port=8080"
+
+
+ # BFGI Notebook
+  bfgi:
+    container_name: Notebook-BFGI
+    image: trafex/php-nginx:latest
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+    volumes:
+      - $DOCKERDIR/sites/bfgi-notebook/_site:/var/www/html
+    labels:
+      - "traefik.enable=true"
+      #### BFGI  #############################################################
+      - "traefik.http.routers.nginx-bfgi-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-bfgi-rtr.tls=true"
+      - "traefik.http.routers.nginx-bfgi-rtr.rule=Host(`bfgi.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-bfgi-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.nginx-bfgi-rtr.service=nginx-bfgi-svc"
+      - "traefik.http.services.nginx-bfgi-svc.loadbalancer.server.port=8080"

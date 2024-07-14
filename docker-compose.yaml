@@ -434,15 +434,6 @@ services:
       # Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
-      # Prrx1
-      - $DOCKERDIR/sites/prrx1-notebook/:/var/www/html/prrx1:ro
-
-      # BFGI
-      - $DOCKERDIR/sites/bfgi-notebook/:/var/www/html/bfgi:ro
-
-      # Research Reference
-      - $DOCKERDIR/sites/research-reference/:/var/www/html/research-reference:ro
-
     labels:
       - "traefik.enable=true"
 
@@ -467,14 +458,9 @@ services:
       - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
 
-      # # Matomo
-      # - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
-      # - "traefik.http.routers.nginx-matomo-rtr.tls=true"
-      # - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`matomo.$DOMAINNAME`)"
-      # - "traefik.http.routers.nginx-matomo-rtr.priority=95"
+
 
       ## Middlewares
-
       - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
       - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring authelia
       # - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
@@ -485,13 +471,16 @@ services:
       - "traefik.http.routers.nginx-wordpress-auth-rtr.service=nginx-svc"
       - "traefik.http.services.nginx-svc.loadbalancer.server.port=80"
 
-      #### BFGI  #############################################################
-      - "traefik.http.routers.nginx-bfgi-rtr.entrypoints=https"
-      - "traefik.http.routers.nginx-bfgi-rtr.tls=true"
-      - "traefik.http.routers.nginx-bfgi-rtr.rule=Host(`bfgi.$DOMAINNAME`)"
-      - "traefik.http.routers.nginx-bfgi-rtr.priority=95"
-      - "traefik.http.routers.nginx-bfgi-rtr.middlewares=chain-authelia@file"
-      - "traefik.http.routers.nginx-bfgi-rtr.service=nginx-svc"
+
+      # Matomo
+      - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-matomo-rtr.tls=true"
+      - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`matomo.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-matomo-rtr.priority=95"
+      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
+
+
 
 
   # Redis - Key-value Store
