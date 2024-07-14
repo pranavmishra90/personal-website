@@ -1,12 +1,11 @@
 [submodule "prrx1-notebook"]
 	path = prrx1-notebook
-	url = git@github.com:SinguLab-Rush/prrx1-notebook.git
-[submodule "sites/prrx1-notebook"]
-	path = sites/prrx1-notebook
-	url = git@github.com:SinguLab-Rush/prrx1-notebook.git
+	url = git@github.com:FacsimiLab-Rush/prrx1-notebook.git
+
 [submodule "sites/bfgi-notebook"]
 	path = sites/bfgi-notebook
-	url = git@github.com:SinguLab-Rush/bfgi-notebook.git
+	url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
+
 [submodule "sites/oa-ptoa-notebook"]
 	path = sites/oa-ptoa-notebook
-	url = git@github.com:SinguLab-Rush/oa-ptoa-notebook.git
+	url = git@github.com:FacsimiLab-Rush/oa-ptoa-notebook.git
