@@ -50,6 +50,7 @@ services:
       #### Prrx1  #############################################################
       - "traefik.http.routers.nginx-prrx1-rtr.entrypoints=https"
       - "traefik.http.routers.nginx-prrx1-rtr.tls=true"
+      - "traefik.http.routers.nginx-prrx1-rtr.priority=80"
       - "traefik.http.routers.nginx-prrx1-rtr.rule=Host(`prrx1.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-prrx1-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.nginx-prrx1-rtr.service=nginx-prrx1-svc"
@@ -70,27 +71,29 @@ services:
       #### BFGI  #############################################################
       - "traefik.http.routers.nginx-bfgi-rtr.entrypoints=https"
       - "traefik.http.routers.nginx-bfgi-rtr.tls=true"
+      - "traefik.http.routers.nginx-bfgi-rtr.priority=80"
       - "traefik.http.routers.nginx-bfgi-rtr.rule=Host(`bfgi.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-bfgi-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.nginx-bfgi-rtr.service=nginx-bfgi-svc"
       - "traefik.http.services.nginx-bfgi-svc.loadbalancer.server.port=8080"
 
 
- # OA-PTOA Notebook
-  oaptoa:
-    container_name: Notebook-OA-PTOA
-    image: trafex/php-nginx:latest
-    restart: unless-stopped
-    networks:
-      - t2_proxy
-    volumes:
-      - $DOCKERDIR/sites/oa-ptoa-notebook/_site:/var/www/html
-    labels:
-      - "traefik.enable=true"
-      #### OA-PTOA  #############################################################
-      - "traefik.http.routers.nginx-oaptoa-rtr.entrypoints=https"
-      - "traefik.http.routers.nginx-oaptoa-rtr.tls=true"
-      - "traefik.http.routers.nginx-oaptoa-rtr.rule=Host(`oaptoa.$DOMAINNAME`)"
-      - "traefik.http.routers.nginx-oaptoa-rtr.middlewares=chain-authelia@file"
-      - "traefik.http.routers.nginx-oaptoa-rtr.service=nginx-oaptoa-svc"
-      - "traefik.http.services.nginx-oaptoa-svc.loadbalancer.server.port=8080"
+#  # OA-PTOA Notebook
+#   oaptoa:
+#     container_name: Notebook-OA-PTOA
+#     image: trafex/php-nginx:latest
+#     restart: unless-stopped
+#     networks:
+#       - t2_proxy
+#     volumes:
+#       - $DOCKERDIR/sites/oa-ptoa-notebook/_site:/var/www/html
+#     labels:
+#       - "traefik.enable=true"
+#       #### OA-PTOA  #############################################################
+#       - "traefik.http.routers.nginx-oaptoa-rtr.entrypoints=https"
+#       - "traefik.http.routers.nginx-oaptoa-rtr.tls=true"
+#       - "traefik.http.routers.nginx-oaptoa-rtr.priority=80"
+#       - "traefik.http.routers.nginx-oaptoa-rtr.rule=Host(`oaptoa.$DOMAINNAME`)"
+#       - "traefik.http.routers.nginx-oaptoa-rtr.middlewares=chain-authelia@file"
+#       - "traefik.http.routers.nginx-oaptoa-rtr.service=nginx-oaptoa-svc"
+#       - "traefik.http.services.nginx-oaptoa-svc.loadbalancer.server.port=8080"
