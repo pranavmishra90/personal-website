@@ -424,7 +424,7 @@ services:
 
   nginx-php:
     container_name: nginx-php8
-    image: trafex/wordpress:6.5.5
+    image: trafex/php-nginx:3.6.0
     restart: unless-stopped
     depends_on:
       - authelia
@@ -434,7 +434,13 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
       - /var/log/nginx:/var/log/nginx
-      - $DOCKERDIR/nginx:/etc/nginx
+
+
+      #Nginx
+      - $DOCKERDIR/nginx-php8/nginx:/etc/nginx
+      - $DOCKERDIR/php/php.ini:/etc/php83/conf.d/settings.ini
+
+      # - $DOCKERDIR/nginx:/etc/nginx
       - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
       - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
 
