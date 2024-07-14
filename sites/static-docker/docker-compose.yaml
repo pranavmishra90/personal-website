@@ -17,10 +17,30 @@ networks:
 services:
   # All services / apps go below this line
 
+ # Matomo
+  matomo:
+    container_name: Matomo
+    image: trafex/php-nginx:latest
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+    volumes:
+      - $DOCKERDIR/sites/matomo:/var/www/html:ro
+    labels:
+      - "traefik.enable=true"
+      #### Research Reference#################################################
+      - "traefik.http.routers.nginx-matomo.entrypoints=https"
+      - "traefik.http.routers.nginx-matomo.tls=true"
+      - "traefik.http.routers.nginx-matomo.rule=Host(`matomo.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-matomo.middlewares=chain-no-auth@file"
+      ## HTTP Services
+      - "traefik.http.routers.nginx-matomo.service=matomo-svc"
+      - "traefik.http.services.matomo-svc.loadbalancer.server.port=8080"
+
  # Research References
   site-ref:
     container_name: DrPM-ref
-    image: trafex/php-nginx
+    image: trafex/php-nginx:latest
     restart: unless-stopped
     networks:
       - t2_proxy
@@ -30,9 +50,27 @@ services:
       - "traefik.enable=true"
       #### Research Reference#################################################
       - "traefik.http.routers.nginx-research-ref.entrypoints=https"
+      - "traefik.http.routers.nginx-research-ref.tls=true"
       - "traefik.http.routers.nginx-research-ref.rule=Host(`ref.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-research-ref.middlewares=chain-no-auth@file"
-      ## HTTP Services
-      - "traefik.http.routers.nginx-research-ref.service=nginx-rvc"
-      - "traefik.http.services.nginx-ref.loadbalancer.server.port=8080"
+      - "traefik.http.routers.nginx-research-ref.service=nginx-ref-svc"
+      - "traefik.http.services.nginx-ref-svc.loadbalancer.server.port=8080"
 
+ # Research References
+  prrx1:
+    container_name: Notebook-Prrx1
+    image: trafex/php-nginx:latest
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+    volumes:
+      - $DOCKERDIR/sites/prrx1/_site:/var/www/html:ro
+    labels:
+      - "traefik.enable=true"
+      #### Prrx1  #############################################################
+      - "traefik.http.routers.nginx-prrx1-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-prrx1-rtr.tls=true"
+      - "traefik.http.routers.nginx-prrx1-rtr.rule=Host(`prrx1.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-prrx1-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.nginx-prrx1-rtr.service=nginx-prrx1-svc"
+      - "traefik.http.services.nginx-prrx1-svc.loadbalancer.server.port=8080"

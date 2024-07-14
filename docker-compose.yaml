@@ -467,11 +467,11 @@ services:
       - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
 
-      # Matomo
-      - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
-      - "traefik.http.routers.nginx-matomo-rtr.tls=true"
-      - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`matomo.$DOMAINNAME`)"
-      - "traefik.http.routers.nginx-matomo-rtr.priority=95"
+      # # Matomo
+      # - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
+      # - "traefik.http.routers.nginx-matomo-rtr.tls=true"
+      # - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`matomo.$DOMAINNAME`)"
+      # - "traefik.http.routers.nginx-matomo-rtr.priority=95"
 
       ## Middlewares
 
@@ -480,26 +480,10 @@ services:
       # - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
       - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=chain-authelia@file" #OPCache requring HTTP authentication
 
-      #### Preparedx
-      - "traefik.http.routers.nginx-preparedx-testing-rtr.middlewares=chain-authelia@file"
-      ####Matomo
-      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-authelia@file"
-
       ## HTTP Services
       - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
       - "traefik.http.routers.nginx-wordpress-auth-rtr.service=nginx-svc"
       - "traefik.http.services.nginx-svc.loadbalancer.server.port=80"
-
-      ####Matomo
-      - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
-
-      #### Prrx1  #############################################################
-      - "traefik.http.routers.nginx-prrx1-rtr.entrypoints=https"
-      - "traefik.http.routers.nginx-prrx1-rtr.tls=true"
-      - "traefik.http.routers.nginx-prrx1-rtr.rule=Host(`prrx1.$DOMAINNAME`)"
-      - "traefik.http.routers.nginx-prrx1-rtr.priority=95"
-      - "traefik.http.routers.nginx-prrx1-rtr.middlewares=chain-authelia@file"
-      - "traefik.http.routers.nginx-prrx1-rtr.service=nginx-svc"
 
       #### BFGI  #############################################################
       - "traefik.http.routers.nginx-bfgi-rtr.entrypoints=https"
@@ -508,17 +492,6 @@ services:
       - "traefik.http.routers.nginx-bfgi-rtr.priority=95"
       - "traefik.http.routers.nginx-bfgi-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.nginx-bfgi-rtr.service=nginx-svc"
-
-      # #### Research Reference#################################################
-      # - "traefik.http.routers.nginx-research-ref.entrypoints=https"
-      # - "traefik.http.routers.nginx-research-ref.tls=true"
-      # - "traefik.http.routers.nginx-research-ref.rule=Host(`ref.$DOMAINNAME`)"
-      # - "traefik.http.routers.nginx-research-ref.priority=95"
-      # - "traefik.http.routers.nginx-research-ref.middlewares=chain-no-auth@file"
-      # - "traefik.http.routers.nginx-research-ref.service=nginx-svc"
-
-      ##########################################################################
-
 
 
   # Redis - Key-value Store
