@@ -255,7 +255,7 @@ services:
   # MariaDB - MySQL Database
   mariadb:
     container_name: mariadb
-    image: linuxserver/mariadb:110.4.14mariabionic-ls77
+    image: linuxserver/macd riadb:110.4.14mariabionic-ls77
     restart: always
     networks:
       t2_proxy:
