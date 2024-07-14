@@ -5,6 +5,7 @@
 [submodule "sites/bfgi-notebook"]
 	path = sites/bfgi-notebook
 	url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
+	datalad-url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
 
 [submodule "sites/oa-ptoa-notebook"]
 	path = sites/oa-ptoa-notebook
