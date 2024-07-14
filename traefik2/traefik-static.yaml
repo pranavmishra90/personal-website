@@ -1,0 +1,52 @@
+global:
+  checkNewVersion=true
+  sendAnonymousUsage=false
+
+entryPoints:
+  http:
+    address=:80
+  https:
+    address=:443
+  # traefik:
+  #   address=:8080
+  matrix-federation:
+    address=:8448
+
+api:
+  dashboard=true
+
+providers:
+  docker:
+    endpoint=unix:///var/run/docker.sock
+    defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.drpranavmishra.com`)
+    exposedByDefault=false
+    network=t2_proxy
+    swarmMode=false
+  file:
+    directory=/rules # Load dynamic configuration from one or more .toml or .yml files in a directory.
+    watch=true # Only works on top level files in the rules folder
+
+
+certificatesResolvers:
+  dns-cloudflare:
+    acme:
+      email:pmishra0102@gmail.com
+      storage=/acme.json
+      dnsChallenge:
+        provider=cloudflare
+        resolvers=1.1.1.1:53,1.0.0.1:53
+
+
+
+
+
+
+
+log:
+  level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
+
+
+accessLog:
+  filePath: "/traefik-access.log"
+  bufferingSize: 100
+
