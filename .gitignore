@@ -20,6 +20,12 @@ secrets/
 *.tar
 
 
+## Secrets Folder ###########
+/secrets/*
+!/secrets/folder_notes.yaml
+!/secrets/.gitignore
+#############################
+
 #Folders
 .ipynb_checkpoints/
 /authelia/config/
@@ -36,8 +42,6 @@ secrets/
 /overleaf/*
 /redis/*
 /portainer/data/*
-/secrets/*
-!/secrets/folder_notes.yaml
 /sites/wordpress/html/*
 /sites/matomo/*
 /statping/*
@@ -50,6 +54,8 @@ secrets/
 
 
 #### Allow files
+!**/.gitignore
+
 !*/folder_notes.yaml
 !**LICENSE*
 !*/conf.d/custom.cnf
