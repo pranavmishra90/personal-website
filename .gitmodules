@@ -9,3 +9,8 @@
 [submodule "sites/oa-ptoa-notebook"]
 	path = sites/oa-ptoa-notebook
 	url = git@github.com:FacsimiLab-Rush/oa-ptoa-notebook.git
+[submodule "sites/research-reference"]
+	path = sites/research-reference
+	url = git@github.com:pranavmishra90/research-reference.git
+	datalad-id = 3d6beff7-a55d-43a2-ab44-6def6a79bde5
+	datalad-url = git@github.com:pranavmishra90/research-reference.git
