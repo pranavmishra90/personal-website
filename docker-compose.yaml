@@ -458,8 +458,6 @@ services:
       - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
 
-
-
       ## Middlewares
       - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
       - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring authelia
