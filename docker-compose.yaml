@@ -414,38 +414,20 @@ services:
       #Matomo
       - $DOCKERDIR/sites/prrx1-notebook/:/var/www/html/prrx1:ro
 
-  # # Nginx - Web Server
-  # nginx:
-  #   container_name: nginx
-  #   image: nginx:1.25.3
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - php7
-
-  nginx-php8:
-    container_name: nginx-php8
-    image: trafex/php-nginx:3.6.0
+  # Nginx - Web Server
+  nginx:
+    container_name: nginx
+    image: nginx:1.25.3
     restart: unless-stopped
     depends_on:
-      - authelia
+      - php7
     networks:
       - t2_proxy
-    ports:
-
-      - 8081:8080
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-      # - /var/log/nginx:/var/log/nginx
-
-
-      #Nginx
-      - $DOCKERDIR/nginx-php8/nginx:/etc/nginx
-      - $DOCKERDIR/nginx-php8/nginx/logs/nginx.log:/var/lib/nginx/logs/error.log
-      #PHP
-      - $DOCKERDIR/php/php.ini:/etc/php83/conf.d/settings.ini
-
-      # - $DOCKERDIR/nginx:/etc/nginx
+      - /var/log/nginx:/var/log/nginx
+      - $DOCKERDIR/nginx:/etc/nginx
       - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
       - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
 
@@ -485,11 +467,6 @@ services:
       - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
 
-      # ## HTTP Routers PREPAREDx routing
-      # - "traefik.http.routers.nginx-preparedx-testing-rtr.entrypoints=https"
-      # - "traefik.http.routers.nginx-preparedx-testing-rtr.tls=true"
-      # - "traefik.http.routers.nginx-preparedx-testing-rtr.rule=Host(`www.$DOMAINNAME`) && Path(`/preparedx-*)"
-
       # Matomo
       - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
       - "traefik.http.routers.nginx-matomo-rtr.tls=true"
@@ -511,7 +488,7 @@ services:
       ## HTTP Services
       - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
       - "traefik.http.routers.nginx-wordpress-auth-rtr.service=nginx-svc"
-      - "traefik.http.services.nginx-svc.loadbalancer.server.port=8080"
+      - "traefik.http.services.nginx-svc.loadbalancer.server.port=80"
 
       ####Matomo
       - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
