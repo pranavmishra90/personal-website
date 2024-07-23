@@ -386,157 +386,144 @@ services:
       - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
 
   # PHP - Hypertext Preprocessor
-  # php8:
-  #   image: php:8-fpm
-  #   container_name: MishraCloud-PHP8
-  #   restart: unless-stopped
-  #   networks:
-  #     - t2_proxy
-  #   volumes:
-  #     - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
-  #     - $DOCKERDIR/php/php7:/usr/local/etc/php
-  #     #Matomo
-  #     - $DOCKERDIR/sites/matomo:/var/www/html/matomo
+  php7:
+    container_name: php7
+    image: pranavmishra90/php:latest
+    restart: unless-stopped
+    user: $PUID:$PGID # allows upgrading WP and plugins
+    networks:
+      - t2_proxy
+    volumes:
+      - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
+      - $DOCKERDIR/php/php7:/usr/local/etc/php
+      #Matomo
+      - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
-  # # PHP - Hypertext Preprocessor
-  # php7:
-  #   container_name: php7
-  #   image: pranavmishra90/php:latest
-  #   restart: unless-stopped
-  #   user: $PUID:$PGID # allows upgrading WP and plugins
-  #   networks:
-  #     - t2_proxy
-  #   volumes:
-  #     - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
-  #     - $DOCKERDIR/php/php7:/usr/local/etc/php
-  #     #Matomo
-  #     - $DOCKERDIR/sites/matomo:/var/www/html/matomo
+      #Matomo
+      - $DOCKERDIR/sites/prrx1-notebook/:/var/www/html/prrx1:ro
 
-  #     #Matomo
-  #     - $DOCKERDIR/sites/prrx1-notebook/:/var/www/html/prrx1:ro
+  # Nginx - Web Server
+  nginx:
+    container_name: nginx
+    image: nginx:1.25.3
+    restart: unless-stopped
+    depends_on:
+      - php7
+    networks:
+      - t2_proxy
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /var/log/nginx:/var/log/nginx
+      - $DOCKERDIR/nginx:/etc/nginx
+      - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
+      - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
 
-  # # Nginx - Web Server
-  # nginx:
-  #   container_name: nginx
-  #   image: nginx:1.25.3
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - php7
-  #   networks:
-  #     - t2_proxy
-  #   volumes:
-  #     - /etc/localtime:/etc/localtime:ro
-  #     - /etc/timezone:/etc/timezone:ro
-  #     - /var/log/nginx:/var/log/nginx
-  #     - $DOCKERDIR/nginx:/etc/nginx
-  #     - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
-  #     - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
+      # Matomo
+      - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
-  #     # Matomo
-  #     - $DOCKERDIR/sites/matomo:/var/www/html/matomo
+    labels:
+      - "traefik.enable=true"
 
-  #   labels:
-  #     - "traefik.enable=true"
+      # Redirect Wordpress non-www to www middleware
+      - "traefik.http.middlewares.wordpress-redirect.redirectregex.regex=^https?://$DOMAINNAME/(.*)"
+      - "traefik.http.middlewares.wordpress-redirect.redirectregex.replacement=https://www.$DOMAINNAME/$${1}"
+      - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
 
-  #     # Redirect Wordpress non-www to www middleware
-  #     - "traefik.http.middlewares.wordpress-redirect.redirectregex.regex=^https?://$DOMAINNAME/(.*)"
-  #     - "traefik.http.middlewares.wordpress-redirect.redirectregex.replacement=https://www.$DOMAINNAME/$${1}"
-  #     - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
+      ## HTTP Routers Wordpress (Dr. Pranav Mishra) Authenticated Access
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.tls=true"
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.rule=Host(`www.$DOMAINNAME`) && Path(`/wp-login.php`)"
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.priority=100"
+      ## HTTP Routers Wordpress (Dr. Pranav Mishra) PHP OpCache Authenticated Access
+      - "traefik.http.routers.nginx-wordpress-opcache-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-wordpress-opcache-rtr.tls=true"
+      - "traefik.http.routers.nginx-wordpress-opcache-rtr.rule=Host(`www.$DOMAINNAME`) && Path(`/opcache.php`)"
+      - "traefik.http.routers.nginx-wordpress-opcache-rtr.priority=98"
+      ## HTTP Routers Wordpress (Dr. Pranav Mishra) Bypass - Anyone can access
+      - "traefik.http.routers.nginx-wordpress-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-wordpress-rtr.tls=true"
+      - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
 
-  #     ## HTTP Routers Wordpress (Dr. Pranav Mishra) Authenticated Access
-  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.entrypoints=https"
-  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.tls=true"
-  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.rule=Host(`www.$DOMAINNAME`) && Path(`/wp-login.php`)"
-  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.priority=100"
-  #     ## HTTP Routers Wordpress (Dr. Pranav Mishra) PHP OpCache Authenticated Access
-  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.entrypoints=https"
-  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.tls=true"
-  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.rule=Host(`www.$DOMAINNAME`) && Path(`/opcache.php`)"
-  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.priority=98"
-  #     ## HTTP Routers Wordpress (Dr. Pranav Mishra) Bypass - Anyone can access
-  #     - "traefik.http.routers.nginx-wordpress-rtr.entrypoints=https"
-  #     - "traefik.http.routers.nginx-wordpress-rtr.tls=true"
-  #     - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
-  #     - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
+      ## Middlewares
+      - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring authelia
+      # - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
+      - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=chain-authelia@file" #OPCache requring HTTP authentication
 
-  #     ## Middlewares
-  #     - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
-  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring authelia
-  #     # - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
-  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=chain-authelia@file" #OPCache requring HTTP authentication
-
-  #     ## HTTP Services
-  #     - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
-  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.service=nginx-svc"
-  #     - "traefik.http.services.nginx-svc.loadbalancer.server.port=80"
+      ## HTTP Services
+      - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.service=nginx-svc"
+      - "traefik.http.services.nginx-svc.loadbalancer.server.port=80"
 
 
-  #     # Matomo
-  #     - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
-  #     - "traefik.http.routers.nginx-matomo-rtr.tls=true"
-  #     - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`matomo.$DOMAINNAME`)"
-  #     - "traefik.http.routers.nginx-matomo-rtr.priority=95"
-  #     - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-authelia@file"
-  #     - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
+      # Matomo
+      - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-matomo-rtr.tls=true"
+      - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`matomo.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-matomo-rtr.priority=95"
+      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
 
 
 
 
-  # # Redis - Key-value Store
-  # redis:
-  #   container_name: redis
-  #   image: redis:6.0.6
-  #   restart: unless-stopped
-  #   # entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
-  #   entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
-  #   networks:
-  #     # t2_proxy:
-  #     #     ipv4_address: 10.1.3.210
-  #     - t2_proxy
-  #     - default
-  #   security_opt:
-  #     - no-new-privileges:true
-  #   ports:
-  #     - 6379:6379
-  #   sysctls:
-  #     - net.core.somaxconn=1024
-  #   volumes:
-  #     - $DOCKERDIR/redis/data:/data
-  #     - /etc/timezone:/etc/timezone:ro
-  #     - /etc/localtime:/etc/localtime:ro
+  # Redis - Key-value Store
+  redis:
+    container_name: redis
+    image: redis:6.0.6
+    restart: unless-stopped
+    # entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
+    entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      # t2_proxy:
+      #     ipv4_address: 10.1.3.210
+      - t2_proxy
+      - default
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 6379:6379
+    sysctls:
+      - net.core.somaxconn=1024
+    volumes:
+      - $DOCKERDIR/redis/data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
 
-  # # Wiki.js - a Wiki site built on JS
-  # wiki:
-  #   image: ghcr.io/linuxserver/wikijs
-  #   container_name: wikijs
-  #   # links:
-  #   #   - mariadb
-  #   environment:
-  #     - PUID=0
-  #     - PGID=0
-  #     - TZ=$TZ
-  #   volumes:
-  #     - $DOCKERDIR/wiki/config:/config
-  #     - $DOCKERDIR/wiki/data:/data
-  #   ports:
-  #     - 3000:3000
-  #   restart: unless-stopped
-  #   networks:
-  #     - t2_proxy
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.wiki-rtr.entrypoints=https"
-  #     - "traefik.http.routers.wiki-rtr.tls=true"
-  #     - "traefik.http.routers.wiki-rtr.rule=Host(`wiki.$DOMAINNAME`)"
-  #     ## Middlewares
-  #     - "traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file"
-  #     # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
-  #     # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
+  # Wiki.js - a Wiki site built on JS
+  wiki:
+    image: ghcr.io/linuxserver/wikijs
+    container_name: wikijs
+    # links:
+    #   - mariadb
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=$TZ
+    volumes:
+      - $DOCKERDIR/wiki/config:/config
+      - $DOCKERDIR/wiki/data:/data
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.wiki-rtr.entrypoints=https"
+      - "traefik.http.routers.wiki-rtr.tls=true"
+      - "traefik.http.routers.wiki-rtr.rule=Host(`wiki.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.wiki-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+      # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
 
-  #     ## HTTP Services
-  #     - "traefik.http.routers.wiki-rtr.service=wiki-svc"
-  #     - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"
+      ## HTTP Services
+      - "traefik.http.routers.wiki-rtr.service=wiki-svc"
+      - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"
 
   # duplicati:
   #   image: ghcr.io/linuxserver/duplicati
