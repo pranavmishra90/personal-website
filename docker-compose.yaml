@@ -120,11 +120,12 @@ services:
       - --global.sendAnonymousUsage=false
       - --entryPoints.http.address=:80
       - --entryPoints.https.address=:443
+      - --entryPoints.matrix-federation.address=:8448
       - --api=true
       - --api.dashboard=true
       - --log=true
       - --log.level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
-      - --accessLog=false
+      - --accessLog=true
       - --accessLog.filePath=/traefik-access.log
       - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
       - --accessLog.filters.statusCodes=400-520
@@ -308,41 +309,41 @@ services:
   #       - t2_proxy
 
 
-# # Portainer - WebUI for Containers
-#   portainer:
-#     container_name: portainer
-#     image: portainer/portainer:latest
-#     restart: unless-stopped
-#     command: -H unix:///var/run/docker.sock
-#     depends_on:
-#       - mariadb
-#     networks:
-#       - t2_proxy
-#     security_opt:
-#       - no-new-privileges:true
-#     # ports:
-#     #  - "$PORTAINER_PORT:9000"
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock:ro
-#       - $DOCKERDIR/portainer/data:/data
-#     environment:
-#       - TZ=$TZ
-#     labels:
-#       - "traefik.enable=true"
-#       ## HTTP Routers
-#       - "traefik.http.routers.portainer-rtr.entrypoints=https"
-#       - "traefik.http.routers.portainer-rtr.rule=Host(`portainer.$DOMAINNAME`)"
-#       - "traefik.http.routers.portainer-rtr.tls=true"
-#       ## Middlewares
-#       # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
-#       # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-#       - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
-#       # Redirect to https
-#       - "traefik.http.middlewares.test-redirectscheme.redirectscheme.scheme=https"
-#       - "traefik.http.middlewares.test-redirectscheme.redirectscheme.permanent=true"
-#       ## HTTP Services
-#       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
-#       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+# Portainer - WebUI for Containers
+  portainer:
+    container_name: portainer
+    image: portainer/portainer:latest
+    restart: unless-stopped
+    command: -H unix:///var/run/docker.sock
+    depends_on:
+      - mariadb
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    # ports:
+    #  - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - $DOCKERDIR/portainer/data:/data
+    environment:
+      - TZ=$TZ
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.portainer-rtr.entrypoints=https"
+      - "traefik.http.routers.portainer-rtr.rule=Host(`portainer.$DOMAINNAME`)"
+      - "traefik.http.routers.portainer-rtr.tls=true"
+      ## Middlewares
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
+      # # Redirect to https
+      # - "traefik.http.middlewares.test-redirectscheme.redirectscheme.scheme=https"
+      # - "traefik.http.middlewares.test-redirectscheme.redirectscheme.permanent=true"
+      ## HTTP Services
+      - "traefik.http.routers.portainer-rtr.service=portainer-svc"
+      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
 
 
   # phpMyAdmin - Database management
@@ -572,30 +573,30 @@ services:
   #     - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
   #     - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
 
-  # # #######################################################
-  # # # Homer - Dashboard
-  # # #######################################################
-  # # homer:
-  #   image: b4bz/homer:v23.10.1
-  #   container_name: Homer
-  #   volumes:
-  #     - ./homer/config:/www/assets
-  #   # ports:
-  #   #   - 8082:8080
-  #   environment:
-  #     - PUID=1001
-  #     - PGID=1001
-  #   restart: unless-stopped
-  #   networks:
-  #     - t2_proxy
-  #   labels:
-  #     - "traefik.enable=true"
-  #     ## HTTP Routers
-  #     - "traefik.http.routers.homer-rtr.entrypoints=https"
-  #     - "traefik.http.routers.homer-rtr.tls=true"
-  #     - "traefik.http.routers.homer-rtr.rule=Host(`start.$DOMAINNAME`)"
-  #     ## Middlewares
-  #     - "traefik.http.routers.homer-rtr.middlewares=chain-authelia@file"
-  #     ## HTTP Services
-  #     - "traefik.http.routers.homer-rtr.service=homer-svc"
-  #     - "traefik.http.services.homer-svc.loadbalancer.server.port=8080"
+  # #######################################################
+  # # Homer - Dashboard
+  # #######################################################
+  homer:
+    image: b4bz/homer:v23.10.1
+    container_name: Homer
+    volumes:
+      - ./homer/config:/www/assets
+    # ports:
+    #   - 8082:8080
+    environment:
+      - PUID=1001
+      - PGID=1001
+    restart: unless-stopped
+    networks:
+      - t2_proxy
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.homer-rtr.entrypoints=https"
+      - "traefik.http.routers.homer-rtr.tls=true"
+      - "traefik.http.routers.homer-rtr.rule=Host(`start.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.homer-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.homer-rtr.service=homer-svc"
+      - "traefik.http.services.homer-svc.loadbalancer.server.port=8080"
