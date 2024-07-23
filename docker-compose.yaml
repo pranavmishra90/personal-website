@@ -156,6 +156,14 @@ services:
         published: 443
         protocol: tcp
         mode: host
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+      - target: 8448
+        published: 8448
+        protocol: tcp
+        mode: host
     volumes:
       - $DOCKERDIR/traefik2/rules:/rules
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -308,41 +316,41 @@ services:
   #       - t2_proxy
 
 
-# # Portainer - WebUI for Containers
-#   portainer:
-#     container_name: portainer
-#     image: portainer/portainer:latest
-#     restart: unless-stopped
-#     command: -H unix:///var/run/docker.sock
-#     depends_on:
-#       - mariadb
-#     networks:
-#       - t2_proxy
-#     security_opt:
-#       - no-new-privileges:true
-#     # ports:
-#     #  - "$PORTAINER_PORT:9000"
-#     volumes:
-#       - /var/run/docker.sock:/var/run/docker.sock:ro
-#       - $DOCKERDIR/portainer/data:/data
-#     environment:
-#       - TZ=$TZ
-#     labels:
-#       - "traefik.enable=true"
-#       ## HTTP Routers
-#       - "traefik.http.routers.portainer-rtr.entrypoints=https"
-#       - "traefik.http.routers.portainer-rtr.rule=Host(`portainer.$DOMAINNAME`)"
-#       - "traefik.http.routers.portainer-rtr.tls=true"
-#       ## Middlewares
-#       # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
-#       # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-#       - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
-#       # Redirect to https
-#       - "traefik.http.middlewares.test-redirectscheme.redirectscheme.scheme=https"
-#       - "traefik.http.middlewares.test-redirectscheme.redirectscheme.permanent=true"
-#       ## HTTP Services
-#       - "traefik.http.routers.portainer-rtr.service=portainer-svc"
-#       - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+# Portainer - WebUI for Containers
+  portainer:
+    container_name: portainer
+    image: portainer/portainer:latest
+    restart: unless-stopped
+    command: -H unix:///var/run/docker.sock
+    depends_on:
+      - mariadb
+    networks:
+      - t2_proxy
+    security_opt:
+      - no-new-privileges:true
+    # ports:
+    #  - "$PORTAINER_PORT:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - $DOCKERDIR/portainer/data:/data
+    environment:
+      - TZ=$TZ
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.portainer-rtr.entrypoints=https"
+      - "traefik.http.routers.portainer-rtr.rule=Host(`portainer.$DOMAINNAME`)"
+      - "traefik.http.routers.portainer-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
+      # - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
+      # Redirect to https
+      - "traefik.http.middlewares.test-redirectscheme.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.test-redirectscheme.redirectscheme.permanent=true"
+      ## HTTP Services
+      - "traefik.http.routers.portainer-rtr.service=portainer-svc"
+      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
 
 
   # phpMyAdmin - Database management
