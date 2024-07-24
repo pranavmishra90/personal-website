@@ -536,7 +536,6 @@ services:
     volumes:
       - ~/duplicati/config:/config
       # - ~/backups:/backups #will not be storing local backups
-      - /home/pranav/restore:/restore
       - $DOCKERDIR/:/drpm-website:ro #website backup
       - /home/pranav/research:/drpm-research:ro #research directory backup
       - /home/pranav/github-profile:/github-profile:ro #github profile page backup
