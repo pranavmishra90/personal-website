@@ -394,8 +394,7 @@ services:
     networks:
       - t2_proxy
     volumes:
-      # - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
-      - /home/pranav/personal-website/sites/wordpress_restored/html:/var/www/html/wordpress:rw
+      - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
       - $DOCKERDIR/php/php7:/usr/local/etc/php
       #Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
@@ -418,8 +417,8 @@ services:
       - /var/log/nginx:/var/log/nginx
       - $DOCKERDIR/nginx:/etc/nginx
       - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
-      # - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
-      - /home/pranav/personal-website/sites/wordpress_restored/html:/var/www/html/wordpress:rw
+      - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
+
       # Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
