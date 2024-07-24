@@ -418,7 +418,7 @@ services:
       - $DOCKERDIR/nginx:/etc/nginx
       - $DOCKERDIR/shared/.htpassd:/shared/.htpasswd
       # - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress:rw
-      - /home/pranav/personal-website/sites/wordpress_old/html:/var/www/html/wordpress:rw
+      - /home/pranav/personal-website/sites/wordpress/html:/var/www/html/wordpress:rw
       # Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
@@ -536,6 +536,7 @@ services:
     volumes:
       - ~/duplicati/config:/config
       # - ~/backups:/backups #will not be storing local backups
+      - /home/pranav/restore:/restore
       - $DOCKERDIR/:/drpm-website:ro #website backup
       - /home/pranav/research:/drpm-research:ro #research directory backup
       - /home/pranav/github-profile:/github-profile:ro #github profile page backup
