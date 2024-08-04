@@ -1,8 +1,11 @@
 #Specific files
-**/.htpasswd
-**/.visitorhtpasswd
+.htpasswd
+.visitorhtpasswd
 
-**/acme.json
+acme.json
+
+secrets/
+
 
 #Types of files
 *.aof
@@ -24,7 +27,7 @@
 #############################
 
 #Folders
-**/.ipynb_checkpoints/
+.ipynb_checkpoints/
 /authelia/config/
 !/authelia/config/configuration.yml
 /duplicati/*
@@ -60,5 +63,4 @@
 !/sites/wordpress/html/wp-content/themes/myself/template-parts/content.php
 nginx/on
 
-**/sites/*wordpress*/
-**/**_bak/
+**/sites_bak/
