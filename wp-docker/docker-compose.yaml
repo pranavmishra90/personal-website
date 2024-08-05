@@ -1,0 +1,69 @@
+####################################
+#            Networks              #
+####################################
+
+networks:
+  t2_proxy:
+    external: true
+    name: t2_proxy
+  default:
+      driver: bridge
+
+####################################
+#            Secrets               #
+####################################
+secrets:
+
+  mysql_root_password:
+    file: $SECRETSDIR/mysql_root_password
+  mysql_wordpress_password:
+    file: $SECRETSDIR/mysql_wordpress_password
+
+
+####################################
+#            Services              #
+####################################
+services:
+
+  wordpress:
+    image: wordpress:latest
+    container_name: Wordpress-Docker
+    volumes:
+      - /home/pranav/personal-website/wp-docker/html:/var/www/html
+    ports:
+      - "8090:80"
+    restart: unless-stopped
+    depends_on:
+      - wordpressdb
+    networks:
+      - t2_proxy
+      - default
+    environment:
+      WORDPRESS_DB_HOST: wordpressdb:3306
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: $MARIA_ROOT_PASSWORD
+      WORDPRESS_DB_NAME: wordpress20240723
+    # labels:
+    #   - "traefik.enable=true"
+
+  wordpressdb:
+    image: linuxserver/mariadb:110.4.14mariabionic-ls77
+    container_name: Wordpress-DB
+    restart: unless-stopped
+    networks:
+      t2_proxy:
+        ipv4_address: 10.1.3.251
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+      - $DOCKERDIR/wp-docker/db:/config
+      - $DOCKERDIR/wp-docker/config/mariadb/custom.cnf:/etc/mysql/conf.d/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
+    environment:
+      - PUID=$PUID
+      - PGID=$PGID
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password # Not taking this pw during initialization
+    secrets:
+      - mysql_root_password
