@@ -606,6 +606,7 @@ services:
       - /home/pranav/github-profile:/github-profile:ro #github profile page backup
       - /home/pranav/backup/matrix:/drpm-matrix-postgresql:ro # Matrix PostgreSQL database local backup
       - /home/pranav/matrix:/drpm-matrix:ro # Matrix server
+      - /home/pranav/restore:/drpm-restore:rw # Restore folder for duplicati
     # ports:
     #   - 8200:8200
     restart: unless-stopped
