@@ -122,6 +122,7 @@ services:
       - --global.sendAnonymousUsage=false
       - --entryPoints.http.address=:80
       - --entryPoints.https.address=:443
+      - --entrypoints.matrix-internal-matrix-client-api.address=:8008
       - --api=true
       - --api.dashboard=true
       - --log=true
