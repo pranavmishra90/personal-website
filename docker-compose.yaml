@@ -132,10 +132,13 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - $DOCKERDIR/traefik2/rules:/rules
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - $DOCKERDIR/traefik2/traefik-static.yaml:/etc/traefik/traefik.yaml # Comment out to use CLI static configuration
+
+      - $DOCKERDIR/traefik2/traefik3-static.yaml:/etc/traefik/traefik.yaml
+      - $DOCKERDIR/traefik2/rules:/rules
+
       - $DOCKERDIR/traefik2/acme/acme.json:/acme.json
+
       - $DOCKERDIR/traefik2/traefik.log:/traefik.log
       - $DOCKERDIR/traefik2/traefik-access.log:/traefik-access.log
       - $DOCKERDIR/shared:/shared
