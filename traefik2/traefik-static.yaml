@@ -1,52 +1,48 @@
+# Traefik Static Configuration
+
 global:
-  checkNewVersion=true
-  sendAnonymousUsage=false
+  checkNewVersion: true
+  sendAnonymousUsage: false
 
 entryPoints:
   http:
-    address=:80
+    address: ":80"
   https:
-    address=:443
-  # traefik:
-  #   address=:8080
-  matrix-federation:
-    address=:8448
+    address: ":443"
+  matrix-internal-matrix-client-api:
+    address: ":8008"
 
 api:
-  dashboard=true
+  dashboard: true
+  insecure: false
+
+log:
+  level: ERROR
+
+accessLog:
+  filePath: /traefik-access.log
+  bufferingSize: 100
+  filters:
+    statusCodes: ["400-520"]
 
 providers:
   docker:
-    endpoint=unix:///var/run/docker.sock
-    defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.drpranavmishra.com`)
-    exposedByDefault=false
-    network=t2_proxy
-    swarmMode=false
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    defaultRule: "Host(`{{ index .Labels \"com.docker.compose.service\" }}.$DOMAINNAME`)"
+    network: t2_proxy
+    swarmMode: false
   file:
-    directory=/rules # Load dynamic configuration from one or more .toml or .yml files in a directory.
-    watch=true # Only works on top level files in the rules folder
-
+    directory: /rules
+    watch: true
 
 certificatesResolvers:
   dns-cloudflare:
     acme:
-      email:pmishra0102@gmail.com
-      storage=/acme.json
+      email: $CLOUDFLARE_EMAIL
+      storage: /acme.json
       dnsChallenge:
-        provider=cloudflare
-        resolvers=1.1.1.1:53,1.0.0.1:53
-
-
-
-
-
-
-
-log:
-  level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
-
-
-accessLog:
-  filePath: "/traefik-access.log"
-  bufferingSize: 100
-
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"
