@@ -27,7 +27,11 @@ echo "Directory is now" $PWD
 git reset --hard
 
 # Pull down updates from GitHub
-git pull
+datalad update --how merge
+
+git checkout main
+
+datalad get .
 
 
 # BFGI
@@ -40,6 +44,8 @@ git reset --hard
 
 # Pull down updates from GitHub
 datalad update --how merge
+
+git checkout main
 
 datalad get .
 
@@ -55,6 +61,8 @@ git reset --hard
 
 # Pull down updates from GitHub
 datalad update --how merge
+
+git checkout main
 
 datalad get .
 
