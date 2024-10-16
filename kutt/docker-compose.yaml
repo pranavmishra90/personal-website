@@ -1,0 +1,73 @@
+# Kutt is a link shortener https://kutt.it/
+
+####################################
+#            Services              #
+####################################
+
+services:
+  kutt:
+    image: kutt/kutt:2.7.1
+    depends_on:
+      - kutt_postgres
+      - kutt_redis
+    command: ["./wait-for-it.sh", "kutt_postgres:5432", "--", "npm", "start"]
+    # ports:
+    #   - "3000:3003"
+    env_file:
+      - .env
+    environment:
+      DB_HOST: kutt_postgres
+      DB_NAME: kutt
+      DB_USER: kutt
+      DB_PASSWORD: pass
+      REDIS_HOST: kutt_redis
+    networks:
+      - t2_proxy
+      - default
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.kutt-rtr.entrypoints=https"
+      - "traefik.http.routers.kutt-rtr.tls=true"
+      - "traefik.http.routers.kutt-rtr.rule=Host(`link.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.kutt-rtr.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.kutt-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+      # - "traefik.http.routers.kutt-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
+      ## HTTP Services
+      - "traefik.http.routers.kutt-rtr.service=kutt-svc"
+      - "traefik.http.services.kutt-svc.loadbalancer.server.port=3000"
+
+  kutt_redis:
+    image: redis:6.0-alpine
+    volumes:
+      - redis_data:/data
+
+  kutt_postgres:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_USER: kutt
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: kutt
+    volumes:
+      - kutt_postgres:/var/lib/postgresql/data
+
+####################################
+#            Networks              #
+####################################
+
+networks:
+  t2_proxy:
+    external: true
+    name: t2_proxy
+  default:
+    driver: bridge
+
+####################################
+#            Volumes               #
+####################################
+
+volumes:
+  redis_data:
+  kutt_postgres:
