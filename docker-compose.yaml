@@ -61,10 +61,10 @@
 ####################################
 
 networks:
-  t2_proxy:
+  traefik_external:
     external: true
-    name: t2_proxy
-    #Created with docker network create --gateway 10.1.3.1 --subnet 10.1.3.0/24 t2_proxy
+    name: traefik_external
+    #Created with docker network create --gateway 10.1.4.1 --subnet 10.1.4.0/24 traefik_external
   default:
     driver: bridge
 
@@ -118,8 +118,8 @@ services:
         max-file: "5" # number of files or file count
         max-size: "10m" # file size
     networks:
-      t2_proxy:
-        ipv4_address: 10.1.3.245
+      traefik_external:
+        ipv4_address: 10.1.4.245
     security_opt:
       - no-new-privileges:true
     ports:
@@ -180,7 +180,7 @@ services:
     depends_on:
       - mariadb
     networks:
-      - t2_proxy
+      - traefik_external
       - default
     # ports:
     #   - "9091:9091"
@@ -236,8 +236,8 @@ services:
     image: linuxserver/mariadb:110.4.14mariabionic-ls77
     restart: always
     networks:
-      t2_proxy:
-        ipv4_address: 10.1.3.250
+      traefik_external:
+        ipv4_address: 10.1.4.250
     security_opt:
       - no-new-privileges:true
     volumes:
@@ -283,7 +283,7 @@ services:
   #       - DEFAULT_MYSQL_MAX_ALLOWED_PACKET:64M
   #     restart: unless-stopped
   #     networks:
-  #       - t2_proxy
+  #       - traefik_external
 
 
 # Portainer - WebUI for Containers
@@ -295,7 +295,7 @@ services:
     depends_on:
       - mariadb
     networks:
-      - t2_proxy
+      - traefik_external
     security_opt:
       - no-new-privileges:true
     # ports:
@@ -333,7 +333,7 @@ services:
     links:
       - mariadb
     networks:
-      - t2_proxy
+      - traefik_external
     security_opt:
       - no-new-privileges:true
     # volumes:
@@ -370,7 +370,7 @@ services:
   #     - "8088:80"
   #   restart: unless-stopped
   #   networks:
-  #     - t2_proxy
+  #     - traefik_external
   #     - default
   #   environment:
   #     WORDPRESS_DB_HOST: "mariadb:3306"
@@ -419,7 +419,7 @@ services:
   #   container_name: MishraCloud-PHP8
   #   restart: unless-stopped
   #   networks:
-  #     - t2_proxy
+  #     - traefik_external
   #   volumes:
   #     - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
   #     - $DOCKERDIR/php/php7:/usr/local/etc/php
@@ -433,7 +433,7 @@ services:
     restart: unless-stopped
     user: $PUID:$PGID # allows upgrading WP and plugins
     networks:
-      - t2_proxy
+      - traefik_external
     volumes:
       - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
       - $DOCKERDIR/php/php7:/usr/local/etc/php
@@ -451,7 +451,7 @@ services:
     depends_on:
       - php7
     networks:
-      - t2_proxy
+      - traefik_external
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -518,9 +518,9 @@ services:
     # entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
     entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
-      # t2_proxy:
-      #     ipv4_address: 10.1.3.210
-      - t2_proxy
+      # traefik_external:
+      #     ipv4_address: 10.1.4.210
+      - traefik_external
       - default
     security_opt:
       - no-new-privileges:true
@@ -550,7 +550,7 @@ services:
       - 3000:3000
     restart: unless-stopped
     networks:
-      - t2_proxy
+      - traefik_external
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -587,7 +587,7 @@ services:
     #   - 8200:8200
     restart: unless-stopped
     networks:
-      - t2_proxy
+      - traefik_external
       - default
     labels:
       - "traefik.enable=true"
@@ -617,7 +617,7 @@ services:
       - PGID=1001
     restart: unless-stopped
     networks:
-      - t2_proxy
+      - traefik_external
     labels:
       - "traefik.enable=true"
       ## HTTP Routers

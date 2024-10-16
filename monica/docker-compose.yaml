@@ -4,9 +4,9 @@
 ####################################
 
 networks:
-  t2_proxy:
+  traefik_external:
     external: true
-    name: t2_proxy
+    name: traefik_external
 
 
 ####################################
@@ -39,7 +39,7 @@ services:
       - data:/var/www/html/storage:ro
     restart: always
     networks:
-      - t2_proxy
+      - traefik_external
       - default
     labels:
       - "traefik.enable=true"

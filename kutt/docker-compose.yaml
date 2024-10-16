@@ -22,7 +22,7 @@ services:
       DB_PASSWORD: pass
       REDIS_HOST: kutt_redis
     networks:
-      - t2_proxy
+      - traefik_external
       - default
     labels:
       - "traefik.enable=true"
@@ -58,9 +58,9 @@ services:
 ####################################
 
 networks:
-  t2_proxy:
+  traefik_external:
     external: true
-    name: t2_proxy
+    name: traefik_external
   default:
     driver: bridge
 
