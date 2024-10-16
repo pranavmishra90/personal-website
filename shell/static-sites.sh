@@ -74,7 +74,7 @@ git config user.signingkey /home/pranav/.ssh/automated_ed25519.pub
 
 # git checkout develop
 git add ./sites
-git commit -a -m 'Auto update of static sites'
+git commit ./sites -m 'Auto update of static sites'
 
 git push origin develop
 
