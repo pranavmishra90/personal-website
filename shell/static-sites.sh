@@ -43,7 +43,7 @@ datalad update --how merge
 
 datalad get .
 
-datalad unlock .
+# datalad unlock .
 
 # OA-PTOA
 #-------------------------------------------------------
@@ -58,7 +58,7 @@ datalad update --how merge
 
 datalad get .
 
-datalad unlock .
+# datalad unlock .
 
 
 
