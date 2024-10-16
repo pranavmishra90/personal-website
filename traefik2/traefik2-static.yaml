@@ -1,5 +1,8 @@
 # Traefik Static Configuration
 
+core:
+  defaultRuleSyntax: v2
+
 global:
   checkNewVersion: true
   sendAnonymousUsage: false

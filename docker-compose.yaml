@@ -108,7 +108,7 @@ services:
   # Traefik 2 - Reverse Proxy
   traefik:
     container_name: Traefik
-    image: traefik:v2.10.7
+    image: traefik:v3.1
     restart: unless-stopped
     depends_on:
       - authelia
