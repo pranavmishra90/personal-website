@@ -55,6 +55,8 @@ secrets/
 #### Allow files
 !**/.gitignore
 
+!/traefik2/traefik-static.yaml
+
 !*/folder_notes.yaml
 !**LICENSE*
 !*/conf.d/custom.cnf
