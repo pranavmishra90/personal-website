@@ -136,7 +136,6 @@ services:
 
       - $DOCKERDIR/traefik2/traefik3-static.yaml:/etc/traefik/traefik.yaml
       - $DOCKERDIR/traefik2/rules:/rules
-
       - $DOCKERDIR/traefik2/acme/acme.json:/acme.json
 
       - $DOCKERDIR/traefik2/traefik.log:/traefik.log
@@ -145,6 +144,7 @@ services:
     environment:
       - CF_API_EMAIL=$CLOUDFLARE_EMAIL
       - CF_API_KEY=$CLOUDFLARE_API_KEY
+      - TZ=$TZ
     labels:
       - "traefik.enable=true"
       # HTTP-to-HTTPS Redirect
