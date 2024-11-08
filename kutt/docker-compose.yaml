@@ -22,7 +22,7 @@ services:
       DB_PASSWORD: pass
       REDIS_HOST: kutt_redis
     networks:
-      - t2_proxy
+      - traefik_external
       - default
     labels:
       - "traefik.enable=true"
@@ -51,16 +51,17 @@ services:
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: kutt
     volumes:
-      - kutt_postgres:/var/lib/postgresql/data
+      # - kutt_postgres:/var/lib/postgresql/data
+      - /home/pranav/personal-website/kutt/kutt_postgres/_data:/var/lib/postgresql/data
 
 ####################################
 #            Networks              #
 ####################################
 
 networks:
-  t2_proxy:
+  traefik_external:
     external: true
-    name: t2_proxy
+    name: traefik_external
   default:
     driver: bridge
 

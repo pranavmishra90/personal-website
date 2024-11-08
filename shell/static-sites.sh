@@ -17,48 +17,52 @@ fi
 
 ssh-add /home/pranav/.ssh/automated_ed25519
 
-# Prrx1
-#-------------------------------------------------------
+datalad update -s origin -r --merge
 
-cd /home/pranav/personal-website/sites/prrx1-notebook
-echo "Directory is now" $PWD
+# # Prrx1
+# #-------------------------------------------------------
 
-# Discard current changes in the static website
-git reset --hard
+# cd /home/pranav/personal-website/sites/prrx1-notebook
+# echo "Directory is now" $PWD
 
-# Pull down updates from GitHub
-git pull
+# # Discard current changes in the static website
+# git reset --hard
+
+# # Pull down updates from GitHub
+# datalad update --how merge
+
+# datalad get .
 
 
-# BFGI
-#-------------------------------------------------------
-cd /home/pranav/personal-website/sites/bfgi-notebook
-echo "Directory is now" $PWD
+# # BFGI
+# #-------------------------------------------------------
+# cd /home/pranav/personal-website/sites/bfgi-notebook
+# echo "Directory is now" $PWD
 
-# Discard current changes in the static website
-git reset --hard
+# # Discard current changes in the static website
+# git reset --hard
 
-# Pull down updates from GitHub
-datalad update --how merge
+# # Pull down updates from GitHub
+# datalad update --how merge
 
-datalad get .
+# datalad get .
 
-datalad unlock .
+# # datalad unlock .
 
-# OA-PTOA
-#-------------------------------------------------------
-cd /home/pranav/personal-website/sites/oa-ptoa-notebook
-echo "Directory is now" $PWD
+# # OA-PTOA
+# #-------------------------------------------------------
+# cd /home/pranav/personal-website/sites/oa-ptoa-notebook
+# echo "Directory is now" $PWD
 
-# Discard current changes in the static website
-git reset --hard
+# # Discard current changes in the static website
+# git reset --hard
 
-# Pull down updates from GitHub
-datalad update --how merge
+# # Pull down updates from GitHub
+# datalad update --how merge
 
-datalad get .
+# datalad get .
 
-datalad unlock .
+# # datalad unlock .
 
 
 
@@ -74,7 +78,7 @@ git config user.signingkey /home/pranav/.ssh/automated_ed25519.pub
 
 # git checkout develop
 git add ./sites
-git commit -a -m 'Auto update of static sites'
+git commit ./sites -m 'Auto update of static sites'
 
 git push origin develop
 

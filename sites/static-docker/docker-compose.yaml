@@ -3,9 +3,9 @@
 ####################################
 
 networks:
-  t2_proxy:
+  traefik_external:
     external: true
-    name: t2_proxy
+    name: traefik_external
   default:
     driver: bridge
 
@@ -23,7 +23,7 @@ services:
     image: trafex/php-nginx:latest
     restart: unless-stopped
     networks:
-      - t2_proxy
+      - traefik_external
     volumes:
       - $DOCKERDIR/sites/research-reference/_site:/var/www/html
     labels:
@@ -42,7 +42,7 @@ services:
     image: trafex/php-nginx:latest
     restart: unless-stopped
     networks:
-      - t2_proxy
+      - traefik_external
     volumes:
       - $DOCKERDIR/sites/prrx1-notebook/_site:/var/www/html
     labels:
@@ -63,7 +63,7 @@ services:
     image: trafex/php-nginx:latest
     restart: unless-stopped
     networks:
-      - t2_proxy
+      - traefik_external
     volumes:
       - $DOCKERDIR/sites/bfgi-notebook/_site:/var/www/html
     labels:
@@ -84,7 +84,7 @@ services:
 #     image: trafex/php-nginx:latest
 #     restart: unless-stopped
 #     networks:
-#       - t2_proxy
+#       - traefik_external
 #     volumes:
 #       - $DOCKERDIR/sites/oa-ptoa-notebook/_site:/var/www/html
 #     labels:

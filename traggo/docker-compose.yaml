@@ -8,9 +8,9 @@ version: "3.7"
 ####################################
 
 networks:
-  t2_proxy:
+  traefik_external:
     external:
-      name: t2_proxy
+      name: traefik_external
   default:
     driver: bridge
 
@@ -33,7 +33,7 @@ services:
     volumes:
       - $DOCKERDIR/traggo/data:/opt/traggo/data
     networks:
-      - t2_proxy
+      - traefik_external
     labels:
       - "traefik.enable=true"
       ## HTTP Routers

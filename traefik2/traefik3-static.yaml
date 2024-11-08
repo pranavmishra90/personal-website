@@ -1,5 +1,7 @@
 # Traefik Static Configuration
 
+
+
 global:
   checkNewVersion: true
   sendAnonymousUsage: false
@@ -30,8 +32,7 @@ providers:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
     defaultRule: "Host(`{{ index .Labels \"com.docker.compose.service\" }}.$DOMAINNAME`)"
-    network: t2_proxy
-    swarmMode: false
+    network: traefik_external
   file:
     directory: /rules
     watch: true

@@ -1,5 +1,8 @@
 # Traefik Static Configuration
 
+core:
+  defaultRuleSyntax: v2
+
 global:
   checkNewVersion: true
   sendAnonymousUsage: false
@@ -31,7 +34,6 @@ providers:
     exposedByDefault: false
     defaultRule: "Host(`{{ index .Labels \"com.docker.compose.service\" }}.$DOMAINNAME`)"
     network: t2_proxy
-    swarmMode: false
   file:
     directory: /rules
     watch: true

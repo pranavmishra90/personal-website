@@ -3,9 +3,9 @@
 ####################################
 
 networks:
-  t2_proxy:
+  traefik_external:
     external: true
-    name: t2_proxy
+    name: traefik_external
 
 
 ####################################
@@ -16,7 +16,7 @@ services:
     image: frooodle/s-pdf:latest
     container_name: Sterling-PDF
     networks:
-      - t2_proxy
+      - traefik_external
     # ports:
     #   - '8998:8080'
     volumes:
