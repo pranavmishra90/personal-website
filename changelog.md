@@ -1,6 +1,57 @@
 # CHANGELOG
 
 
+## v2.0.0 (2024-11-08)
+
+### Features
+
+* feat: add ntfy ([`8e8ac64`](https://github.com/pranavmishra90/personal-website/commit/8e8ac6435526d3d524959b95388f186b90c31e04))
+
+* feat: add semvar github action ([`3377728`](https://github.com/pranavmishra90/personal-website/commit/33777284da78e824814a690646ee2d8333f0091a))
+
+* feat: upgrade to Traefik 3, improvements to Authelia, static website updates (#18) ([`72795ef`](https://github.com/pranavmishra90/personal-website/commit/72795ef0339b9aa9c5e5fa55b5392f50c34dd65c))
+
+* feat: ensure secrets are not tracked by git ([`7b3c43f`](https://github.com/pranavmishra90/personal-website/commit/7b3c43f05dc5c62268e327431cbd188e52625015))
+
+* feat: pass in timezone into traefik for logs ([`1f062f9`](https://github.com/pranavmishra90/personal-website/commit/1f062f9f53c49a7492bd5b7293e32b489f9e8562))
+
+* feat: migrate to mounted volume for persistance ([`cf57893`](https://github.com/pranavmishra90/personal-website/commit/cf57893110daaafc7be858238941761d19098372))
+
+* feat: migration to traefik3, changing docker network name ([`cd2703d`](https://github.com/pranavmishra90/personal-website/commit/cd2703df7fb0c1b41fcc1a39b59d789ecb38eb2b))
+
+* feat: upgrading Traefik 2 to Traefik 3 [WIP] ([`3c524a7`](https://github.com/pranavmishra90/personal-website/commit/3c524a7f55a8bea44ea19ee906865a6ba26764d3))
+
+### Fixes
+
+* fix: remove hardcoded path in pyproject.toml ([`ab00b47`](https://github.com/pranavmishra90/personal-website/commit/ab00b47aa03673eb7f850ce038890b6ff5c72d1f))
+
+* fix: remove hardcoded path in pyproject.toml ([`b2b0e1e`](https://github.com/pranavmishra90/personal-website/commit/b2b0e1ed5e68e1d6e21f8c549391fc6a849cb27c))
+
+* fix: change all t2_proxy to traefik_external ([`0270e23`](https://github.com/pranavmishra90/personal-website/commit/0270e231e073a21602f7c344f8ae9f5045f9eb60))
+
+* fix: use recursive datalad update ([`6b5c155`](https://github.com/pranavmishra90/personal-website/commit/6b5c155522ac896ffa0fa656e0d79468c6eea84b))
+
+* fix: checkout main branch in each static site ([`d2a1893`](https://github.com/pranavmishra90/personal-website/commit/d2a1893f4e112637dc1abbdea21a03e1091b1132))
+
+* fix: explicitly commit the static sites directory ([`8cc0dab`](https://github.com/pranavmishra90/personal-website/commit/8cc0dab8fa2f8801211cdf6dc933b10e9e394454))
+
+* fix: do not unlock datalad files ([`41e7e02`](https://github.com/pranavmishra90/personal-website/commit/41e7e0259ff6b426006675193393e8ca65ba6bc5))
+
+* fix: disable crontab script to update static sites ([`5d07782`](https://github.com/pranavmishra90/personal-website/commit/5d077820e20b9f8854d15d641919998b3c5a38ef))
+
+### Unknown
+
+* Add semantic versioning and ntfy (#19) ([`cb6920f`](https://github.com/pranavmishra90/personal-website/commit/cb6920f11bc447459aedc1b14449ec3d27416f72))
+
+* Merge pull request #17 from pranavmishra90/feat/minio
+
+feat: ensure secrets are not tracked by git ([`26038a9`](https://github.com/pranavmishra90/personal-website/commit/26038a918c03289530c8e91bcf59f3e935ed35d7))
+
+* Traefik 3, authelia improvements ([`654ba3e`](https://github.com/pranavmishra90/personal-website/commit/654ba3ed85a1efd56ac34b53feb79fc70d3609c3))
+
+* Auto update of static sites ([`685cbd1`](https://github.com/pranavmishra90/personal-website/commit/685cbd10a5a5104d146e1ec3437a49a00a791a6b))
+
+
 ## v1.0.0 (2024-10-15)
 
 ### Features
