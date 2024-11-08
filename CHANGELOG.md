@@ -1,10 +1,26 @@
 # CHANGELOG
 
-## v2.1.0-beta.1 (2024-11-08)
 
-### Feature
+## v2.1.0 (2024-11-08)
+
+### Chores
+
+* chore: Merge branch 'develop' ([`5d8b55e`](https://github.com/pranavmishra90/personal-website/commit/5d8b55edef8ad12265b40af96f12e70d28854f19))
+
+### Features
 
 * feat: add more explicit commands for semvar ([`4a52241`](https://github.com/pranavmishra90/personal-website/commit/4a522415eb3931b0a40e669da2f71169d5d8dea1))
+
+### Refactoring
+
+* refactor: update location of changelog per future warning ([`0f312f4`](https://github.com/pranavmishra90/personal-website/commit/0f312f455a3f166f7098d14147f120370679006d))
+
+* refactor: update location of changelog per future warning ([`54cef1b`](https://github.com/pranavmishra90/personal-website/commit/54cef1b10ce5e2d17953781d602a296310c08f6e))
+
+
+## v2.0.0 (2024-11-08)
+
+### Features
 
 * feat: add ntfy ([`8e8ac64`](https://github.com/pranavmishra90/personal-website/commit/8e8ac6435526d3d524959b95388f186b90c31e04))
 
@@ -22,7 +38,9 @@
 
 * feat: upgrading Traefik 2 to Traefik 3 [WIP] ([`3c524a7`](https://github.com/pranavmishra90/personal-website/commit/3c524a7f55a8bea44ea19ee906865a6ba26764d3))
 
-### Fix
+### Fixes
+
+* fix: remove hardcoded path in pyproject.toml ([`ab00b47`](https://github.com/pranavmishra90/personal-website/commit/ab00b47aa03673eb7f850ce038890b6ff5c72d1f))
 
 * fix: remove hardcoded path in pyproject.toml ([`b2b0e1e`](https://github.com/pranavmishra90/personal-website/commit/b2b0e1ed5e68e1d6e21f8c549391fc6a849cb27c))
 
@@ -38,11 +56,9 @@
 
 * fix: disable crontab script to update static sites ([`5d07782`](https://github.com/pranavmishra90/personal-website/commit/5d077820e20b9f8854d15d641919998b3c5a38ef))
 
-### Refactor
-
-* refactor: update location of changelog per future warning ([`54cef1b`](https://github.com/pranavmishra90/personal-website/commit/54cef1b10ce5e2d17953781d602a296310c08f6e))
-
 ### Unknown
+
+* Add semantic versioning and ntfy (#19) ([`cb6920f`](https://github.com/pranavmishra90/personal-website/commit/cb6920f11bc447459aedc1b14449ec3d27416f72))
 
 * Merge pull request #17 from pranavmishra90/feat/minio
 
@@ -52,9 +68,10 @@ feat: ensure secrets are not tracked by git ([`26038a9`](https://github.com/pran
 
 * Auto update of static sites ([`685cbd1`](https://github.com/pranavmishra90/personal-website/commit/685cbd10a5a5104d146e1ec3437a49a00a791a6b))
 
+
 ## v1.0.0 (2024-10-15)
 
-### Feature
+### Features
 
 * feat: add semvar tracking ([`658b9e3`](https://github.com/pranavmishra90/personal-website/commit/658b9e3db178c9791a885dfde3a7dbb2f9651469))
 
@@ -96,13 +113,13 @@ feat: ensure secrets are not tracked by git ([`26038a9`](https://github.com/pran
 
 * Auto update of static sites ([`6613549`](https://github.com/pranavmishra90/personal-website/commit/6613549ae25235f9d81b36658fe9971b84a5eda0))
 
-* Merge branch &#39;wp-docker&#39; into develop ([`bc45519`](https://github.com/pranavmishra90/personal-website/commit/bc4551916c8d99d5172ee9412ced4d365d8a558b))
+* Merge branch 'wp-docker' into develop ([`bc45519`](https://github.com/pranavmishra90/personal-website/commit/bc4551916c8d99d5172ee9412ced4d365d8a558b))
 
 * Auto update of static sites ([`6f8e669`](https://github.com/pranavmishra90/personal-website/commit/6f8e66991bb1b1e3ebb1cf87a34159fc5529596f))
 
 * switch branch back to develop, using older containers ([`e6eb8ce`](https://github.com/pranavmishra90/personal-website/commit/e6eb8cec2fb724a7392ea42905896385e15abbd2))
 
-* Merge branch &#39;develop&#39; of github.com:pranavmishra90/personal-website into fix/leak ([`36063d9`](https://github.com/pranavmishra90/personal-website/commit/36063d9b4bd6ac1b426135c480f76d8d137e60b4))
+* Merge branch 'develop' of github.com:pranavmishra90/personal-website into fix/leak ([`36063d9`](https://github.com/pranavmishra90/personal-website/commit/36063d9b4bd6ac1b426135c480f76d8d137e60b4))
 
 * Merge pull request #15 from pranavmishra90/fix/leak
 
@@ -320,7 +337,7 @@ Fixing a security leak issue ([`5cee03d`](https://github.com/pranavmishra90/pers
 
 * Fix: Changed directory permissions to get matomo working on new VPS
 
-Why: it wasn&#39;t working before
+Why: it wasn't working before
 
 How: chmod
 
@@ -353,7 +370,7 @@ Tags: ([`db3e794`](https://github.com/pranavmishra90/personal-website/commit/db3
 
 * Auto update of static sites ([`550faf2`](https://github.com/pranavmishra90/personal-website/commit/550faf246d183d1259009983ab4f924427d2a824))
 
-* Merge branch &#39;main&#39; into develop ([`022b5cf`](https://github.com/pranavmishra90/personal-website/commit/022b5cf05f5b44f84de2b74592aee3901108ace0))
+* Merge branch 'main' into develop ([`022b5cf`](https://github.com/pranavmishra90/personal-website/commit/022b5cf05f5b44f84de2b74592aee3901108ace0))
 
 * July 2023 Update (#13)
 
@@ -393,7 +410,7 @@ Tags: ([`db3e794`](https://github.com/pranavmishra90/personal-website/commit/db3
 
 Why: Was not allowing authelia to boot
 
-How: Attempted using newer authelia tag --&gt; container crashed,
+How: Attempted using newer authelia tag --> container crashed,
 Then reverted back, added duo configuration parameters,
 using smtp for notification
 
@@ -427,7 +444,7 @@ Tags: authelia ([`b198d3c`](https://github.com/pranavmishra90/personal-website/c
 
 Why: Was not allowing authelia to boot
 
-How: Attempted using newer authelia tag --&gt; container crashed,
+How: Attempted using newer authelia tag --> container crashed,
 Then reverted back, added duo configuration parameters,
 using smtp for notification
 
@@ -465,7 +482,7 @@ Tags: authelia ([`b9d5654`](https://github.com/pranavmishra90/personal-website/c
 
 * Upgraded to PHP 8 ([`e915a74`](https://github.com/pranavmishra90/personal-website/commit/e915a746aa8fa76a15d901e1e62334932ac8d902))
 
-* Merge branch &#39;main&#39; into develop ([`6ba07a4`](https://github.com/pranavmishra90/personal-website/commit/6ba07a4f77ecaa81623b3f43cc45bf8bbb618b43))
+* Merge branch 'main' into develop ([`6ba07a4`](https://github.com/pranavmishra90/personal-website/commit/6ba07a4f77ecaa81623b3f43cc45bf8bbb618b43))
 
 * fixed removal of leantime ([`b3058aa`](https://github.com/pranavmishra90/personal-website/commit/b3058aae820e07b5731b03affc4425d58d2cdbb5))
 
@@ -480,7 +497,7 @@ Tags: authelia ([`b9d5654`](https://github.com/pranavmishra90/personal-website/c
 Squashed commit of the following:
 
 commit 5638bd3d87318f1ae9f700f8f6f31113ab5a43f1
-Author: Pranav Kumar Mishra &lt;62562712+pranavmishra90@users.noreply.github.com&gt;
+Author: Pranav Kumar Mishra <62562712+pranavmishra90@users.noreply.github.com>
 Date:   Sat Sep 10 04:05:47 2022 +0000
 
     Add: uncomment and enable Duplicati for backups
@@ -492,7 +509,7 @@ Date:   Sat Sep 10 04:05:47 2022 +0000
     Tags: duplicati
 
 commit 75a303d54de1fa88c2565e166b7df2672a26bc5f
-Author: Pranav Kumar Mishra &lt;62562712+pranavmishra90@users.noreply.github.com&gt;
+Author: Pranav Kumar Mishra <62562712+pranavmishra90@users.noreply.github.com>
 Date:   Sat Sep 10 03:07:17 2022 +0000
 
     Drop: Cloudflare companion and VSCode - not being used
@@ -518,7 +535,7 @@ Tags: duplicati ([`e3e2ef5`](https://github.com/pranavmishra90/personal-website/
 Why: After performing my first duplicati restoration, I documented a
 quick comment regarding an area I spent a few minutes figuring out:
 
-- Duplicati&#39;s docker container is set to read-only permissions (ro) for
+- Duplicati's docker container is set to read-only permissions (ro) for
 each of the directories that the container is attempting to monitor
 and backup
 
@@ -542,8 +559,8 @@ Tags: documentation, duplicati, docker-compose ([`7131b25`](https://github.com/p
 Why: Was using an outdated Traefik, was time to update. Pinned to the
 current version of latest, which is 2.9.10.
 
-Removed enbizcad because it doesn&#39;t save the previously made card
-as I was hoping. Not sure if there&#39;s any reason to actively self-host
+Removed enbizcad because it doesn't save the previously made card
+as I was hoping. Not sure if there's any reason to actively self-host
 this
 
 Tags: traefik, enbizcard, docker ([`d893550`](https://github.com/pranavmishra90/personal-website/commit/d89355061e5adcd040e15b6ea92e03f8ba8248fe))
@@ -563,7 +580,7 @@ Tags: traefik, enbizcard, docker ([`d893550`](https://github.com/pranavmishra90/
 Squashed commit of the following:
 
 commit 5638bd3d87318f1ae9f700f8f6f31113ab5a43f1
-Author: Pranav Kumar Mishra &lt;62562712+pranavmishra90@users.noreply.github.com&gt;
+Author: Pranav Kumar Mishra <62562712+pranavmishra90@users.noreply.github.com>
 Date:   Sat Sep 10 04:05:47 2022 +0000
 
     Add: uncomment and enable Duplicati for backups
@@ -575,7 +592,7 @@ Date:   Sat Sep 10 04:05:47 2022 +0000
     Tags: duplicati
 
 commit 75a303d54de1fa88c2565e166b7df2672a26bc5f
-Author: Pranav Kumar Mishra &lt;62562712+pranavmishra90@users.noreply.github.com&gt;
+Author: Pranav Kumar Mishra <62562712+pranavmishra90@users.noreply.github.com>
 Date:   Sat Sep 10 03:07:17 2022 +0000
 
     Drop: Cloudflare companion and VSCode - not being used
@@ -623,7 +640,7 @@ Tags: duplicati
 Squashed commit of the following:
 
 commit 5638bd3d87318f1ae9f700f8f6f31113ab5a43f1
-Author: Pranav Kumar Mishra &lt;62562712+pranavmishra90@users.noreply.github.com&gt;
+Author: Pranav Kumar Mishra <62562712+pranavmishra90@users.noreply.github.com>
 Date:   Sat Sep 10 04:05:47 2022 +0000
 
     Add: uncomment and enable Duplicati for backups
@@ -635,7 +652,7 @@ Date:   Sat Sep 10 04:05:47 2022 +0000
     Tags: duplicati
 
 commit 75a303d54de1fa88c2565e166b7df2672a26bc5f
-Author: Pranav Kumar Mishra &lt;62562712+pranavmishra90@users.noreply.github.com&gt;
+Author: Pranav Kumar Mishra <62562712+pranavmishra90@users.noreply.github.com>
 Date:   Sat Sep 10 03:07:17 2022 +0000
 
     Drop: Cloudflare companion and VSCode - not being used
@@ -655,8 +672,8 @@ Date:   Sat Sep 10 03:07:17 2022 +0000
 Why: Was using an outdated Traefik, was time to update. Pinned to the
 current version of latest, which is 2.9.10.
 
-Removed enbizcad because it doesn&#39;t save the previously made card
-as I was hoping. Not sure if there&#39;s any reason to actively self-host
+Removed enbizcad because it doesn't save the previously made card
+as I was hoping. Not sure if there's any reason to actively self-host
 this
 
 Tags: traefik, enbizcard, docker
@@ -666,7 +683,7 @@ Tags: traefik, enbizcard, docker
 Why: After performing my first duplicati restoration, I documented a
 quick comment regarding an area I spent a few minutes figuring out:
 
-- Duplicati&#39;s docker container is set to read-only permissions (ro) for
+- Duplicati's docker container is set to read-only permissions (ro) for
 each of the directories that the container is attempting to monitor
 and backup
 
@@ -690,7 +707,7 @@ Tags: documentation, duplicati, docker-compose ([`6ccf8c1`](https://github.com/p
 Why: After performing my first duplicati restoration, I documented a
 quick comment regarding an area I spent a few minutes figuring out:
 
-- Duplicati&#39;s docker container is set to read-only permissions (ro) for
+- Duplicati's docker container is set to read-only permissions (ro) for
 each of the directories that the container is attempting to monitor
 and backup
 
@@ -714,13 +731,13 @@ Tags: documentation, duplicati, docker-compose ([`833a312`](https://github.com/p
 Why: Was using an outdated Traefik, was time to update. Pinned to the
 current version of latest, which is 2.9.10.
 
-Removed enbizcad because it doesn&#39;t save the previously made card
-as I was hoping. Not sure if there&#39;s any reason to actively self-host
+Removed enbizcad because it doesn't save the previously made card
+as I was hoping. Not sure if there's any reason to actively self-host
 this
 
 Tags: traefik, enbizcard, docker ([`c68f9b1`](https://github.com/pranavmishra90/personal-website/commit/c68f9b1b5bb3a21743f2ed8eb9e7a3b1d462ddc6))
 
-* Merge branch &#39;main&#39; into develop ([`2869bd9`](https://github.com/pranavmishra90/personal-website/commit/2869bd92f83f82021e61f960107933bae4bceb4c))
+* Merge branch 'main' into develop ([`2869bd9`](https://github.com/pranavmishra90/personal-website/commit/2869bd92f83f82021e61f960107933bae4bceb4c))
 
 * pre-commit hook changes on these files ([`a02b426`](https://github.com/pranavmishra90/personal-website/commit/a02b426ee000f21f0baf62b9890690b1f2a16bba))
 
@@ -728,14 +745,14 @@ Tags: traefik, enbizcard, docker ([`c68f9b1`](https://github.com/pranavmishra90/
 
 * updated wiki subdomain ([`7f64723`](https://github.com/pranavmishra90/personal-website/commit/7f64723ad6dcc321f6ec2a748a264e0a03d13559))
 
-* Merge branch &#39;main&#39; into develop ([`f6a8206`](https://github.com/pranavmishra90/personal-website/commit/f6a8206b06f74bc249b15cc62949fc213fabee9a))
+* Merge branch 'main' into develop ([`f6a8206`](https://github.com/pranavmishra90/personal-website/commit/f6a8206b06f74bc249b15cc62949fc213fabee9a))
 
 * Enabled duplicati, removed cloudflare-companion and VSCode
 
 Squashed commit of the following:
 
 commit 5638bd3d87318f1ae9f700f8f6f31113ab5a43f1
-Author: Pranav Kumar Mishra &lt;62562712+pranavmishra90@users.noreply.github.com&gt;
+Author: Pranav Kumar Mishra <62562712+pranavmishra90@users.noreply.github.com>
 Date:   Sat Sep 10 04:05:47 2022 +0000
 
     Add: uncomment and enable Duplicati for backups
@@ -747,7 +764,7 @@ Date:   Sat Sep 10 04:05:47 2022 +0000
     Tags: duplicati
 
 commit 75a303d54de1fa88c2565e166b7df2672a26bc5f
-Author: Pranav Kumar Mishra &lt;62562712+pranavmishra90@users.noreply.github.com&gt;
+Author: Pranav Kumar Mishra <62562712+pranavmishra90@users.noreply.github.com>
 Date:   Sat Sep 10 03:07:17 2022 +0000
 
     Drop: Cloudflare companion and VSCode - not being used
@@ -776,7 +793,7 @@ How: deleted from docker compose (was previously commented out) ([`75a303d`](htt
 
 * test ([`2a659d0`](https://github.com/pranavmishra90/personal-website/commit/2a659d0f9c8de69d4a6fca0d3ef4c41fa50ac5df))
 
-* add lfs for &gt;5MB ([`0f92e69`](https://github.com/pranavmishra90/personal-website/commit/0f92e69caebd26a67dbf3c27875bd355e4b2d9f3))
+* add lfs for >5MB ([`0f92e69`](https://github.com/pranavmishra90/personal-website/commit/0f92e69caebd26a67dbf3c27875bd355e4b2d9f3))
 
 * pulling features/docker-containers into devevelop ([`66e6b45`](https://github.com/pranavmishra90/personal-website/commit/66e6b45ae40e42b02ba4bba494143d48aecac4d3))
 
@@ -800,7 +817,7 @@ WIP: roll back to c16ff6c on Jun 12, with mods ([`9b1c361`](https://github.com/p
 
 fixing docker changes ([`7291329`](https://github.com/pranavmishra90/personal-website/commit/7291329dc6195203081dc62df1c368038cf47cf8))
 
-* Merge branch &#39;develop&#39; into features/pre-commit ([`5ccc26e`](https://github.com/pranavmishra90/personal-website/commit/5ccc26eca521485f98f1575a5bf9a439e16d7385))
+* Merge branch 'develop' into features/pre-commit ([`5ccc26e`](https://github.com/pranavmishra90/personal-website/commit/5ccc26eca521485f98f1575a5bf9a439e16d7385))
 
 * Merge pull request #7 from pranavmishra90/features/linode-migration
 
@@ -842,7 +859,7 @@ How:
 
 Tags: ([`83ce8dd`](https://github.com/pranavmishra90/personal-website/commit/83ce8dd72223796543751e2384aba7f5348f3db2))
 
-* Merge branch &#39;main&#39; of github.com:pranavmishra90/personal-website into main ([`4bb07da`](https://github.com/pranavmishra90/personal-website/commit/4bb07da7f120fe0970cbe594bfd103427cf5f522))
+* Merge branch 'main' of github.com:pranavmishra90/personal-website into main ([`4bb07da`](https://github.com/pranavmishra90/personal-website/commit/4bb07da7f120fe0970cbe594bfd103427cf5f522))
 
 * Merge pull request #4 from pranavmishra90/develop
 
@@ -898,7 +915,7 @@ docker-compose updated ([`4ea688b`](https://github.com/pranavmishra90/personal-w
 
 * update .gitignore ([`a058405`](https://github.com/pranavmishra90/personal-website/commit/a0584058bd0298b87678224f0598f73cd6a4e346))
 
-* Merge branch &#39;master&#39; of github.com:pranavmishra90/personal-website ([`cf4eb8a`](https://github.com/pranavmishra90/personal-website/commit/cf4eb8a3b20b0b73cdd2b7f4ef0aae4f8de711c1))
+* Merge branch 'master' of github.com:pranavmishra90/personal-website ([`cf4eb8a`](https://github.com/pranavmishra90/personal-website/commit/cf4eb8a3b20b0b73cdd2b7f4ef0aae4f8de711c1))
 
 * Merge pull request #2 from pranavmishra90/master
 
@@ -906,7 +923,7 @@ Master ([`3f7cda7`](https://github.com/pranavmishra90/personal-website/commit/3f
 
 * updated dockerfile for PHP7. moved mariadb up due to weird error ([`453913b`](https://github.com/pranavmishra90/personal-website/commit/453913beb5bb9b59a659fed746160709c79edbb3))
 
-* Merge pull request &#39;linode-initial-run&#39; (#2) from linode into master
+* Merge pull request 'linode-initial-run' (#2) from linode into master
 
 Reviewed-on: http://gitea.mishracloud.com/pranav/DrPM-website/pulls/2 ([`2593a33`](https://github.com/pranavmishra90/personal-website/commit/2593a339bb1d3b8e6ef4bba285577d749dd6fbdb))
 
@@ -927,7 +944,7 @@ independently started and stopped ([`6cf1d30`](https://github.com/pranavmishra90
 * Removed unused containers from docker-compose (details below)
 
 Node-Red: no longer required for preparedx testing
-Statping: can&#39;t test against itself (need to migrate to another server)
+Statping: can't test against itself (need to migrate to another server)
 Glances: never used
 KHInfo gateway: no longer at Manipal ([`e358a5c`](https://github.com/pranavmishra90/personal-website/commit/e358a5c1e4e8fd0e61184d33cd807cbf0a4601f5))
 
@@ -951,7 +968,7 @@ KHInfo gateway: no longer at Manipal ([`e358a5c`](https://github.com/pranavmishr
 
 * matomo http auth ([`a08f483`](https://github.com/pranavmishra90/personal-website/commit/a08f483ed6b3afd7e4c8edbc426252d3f22b533f))
 
-* mat --&gt; matomo ([`f280405`](https://github.com/pranavmishra90/personal-website/commit/f280405696f69d4e145ec7a35448c05896e41b13))
+* mat --> matomo ([`f280405`](https://github.com/pranavmishra90/personal-website/commit/f280405696f69d4e145ec7a35448c05896e41b13))
 
 * adding brave rewards .well-known ([`5a4882a`](https://github.com/pranavmishra90/personal-website/commit/5a4882abc3eea96bba9127adcd21bc4cc1077f6b))
 
