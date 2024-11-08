@@ -20,8 +20,11 @@ prerelease = true
 
 [tool.semantic_release.changelog]
 template_dir = "templates"
-changelog_file = "changelog.md"
 exclude_commit_patterns = []
+
+[tool.semantic_release.default_templates]
+changelog_file = "changelog.md"
+
 
 [tool.semantic_release.changelog.environment]
 block_start_string = "{%"
@@ -50,7 +53,7 @@ default_bump_level = 0
 [tool.semantic_release.remote]
 name = "origin"
 type = "github"
-ignore_token_for_push = true
+ignore_token_for_push = false
 insecure = false
 
 [tool.semantic_release.publish]
