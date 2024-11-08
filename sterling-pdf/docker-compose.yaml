@@ -1,0 +1,39 @@
+####################################
+#            Networks              #
+####################################
+
+networks:
+  traefik_external:
+    external: true
+    name: traefik_external
+
+
+####################################
+#            Services              #
+####################################
+services:
+  stirling-pdf:
+    image: frooodle/s-pdf:latest
+    container_name: Sterling-PDF
+    networks:
+      - traefik_external
+    # ports:
+    #   - '8998:8080'
+    volumes:
+      # - /location/of/trainingData:/usr/share/tesseract-ocr/4.00/tessdata #Required for extra OCR languages
+      - /home/pranav/personal-website/sterling-pdf/config:/configs
+#      - /location/of/customFiles:/customFiles/
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.pdf-rtr.entrypoints=https"
+      - "traefik.http.routers.pdf-rtr.tls=true"
+      - "traefik.http.routers.pdf-rtr.rule=Host(`pdf.$DOMAINNAME`)"
+      ## Middlewares
+      # - "traefik.http.routers.pdf-rtr.middlewares=chain-no-auth@file"
+      # - "traefik.http.routers.pdf-rtr.middlewares=chain-basic-auth@file" ## Website HTTP authentication
+      - "traefik.http.routers.pdf-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
+      ## HTTP Services
+      - "traefik.http.routers.pdf-rtr.service=pdf-svc"
+      - "traefik.http.services.pdf-svc.loadbalancer.server.port=8080"

@@ -1,8 +1,10 @@
 #Specific files
-.htpasswd
-.visitorhtpasswd
+**/.htpasswd
 
-acme.json
+*.secrets
+**/*.secrets
+
+**/acme.json
 
 secrets/
 
@@ -20,13 +22,20 @@ secrets/
 *.tar
 
 
+## Secrets Folder ###########
+/secrets/*
+!/secrets/folder_notes.yaml
+!/secrets/.gitignore
+#############################
+
 #Folders
-.ipynb_checkpoints/
+**/.ipynb_checkpoints/
 /authelia/config/
 !/authelia/config/configuration.yml
 /duplicati/*
 /logs/
 /env
+/homer
 /mongodb/data/*
 /mariadb/data/*
 /overleaf/*
@@ -35,21 +44,27 @@ secrets/
 /overleaf/*
 /redis/*
 /portainer/data/*
-/secrets/*
-!/secrets/folder_notes.yaml
 /sites/wordpress/html/*
 /sites/matomo/*
 /statping/*
 /trash/
+/traefik2/acme
 /vscode/*
+/vcard/*
 /wiki/config/*
 /wiki/data/*
 
 
 #### Allow files
+!**/.gitignore
+
+!/traefik2/traefik2-static.yaml
+
 !*/folder_notes.yaml
 !**LICENSE*
 !*/conf.d/custom.cnf
 !/sites/wordpress/html/wp-content/themes/myself
 !/sites/wordpress/html/wp-content/themes/myself/template-parts/content.php
 nginx/on
+
+**/sites_bak/

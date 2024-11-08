@@ -4,7 +4,7 @@
 
 # MIT License
 
-# Copyright (c) 2020 Pranav Mishra
+# Copyright (c) 2020-2024 Pranav Mishra
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -56,17 +56,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-version: "3.7"
-
 ####################################
 #            Networks              #
 ####################################
 
 networks:
-  t2_proxy:
+  traefik_external:
     external: true
-    name: t2_proxy
-    #Created with docker network create --gateway 10.1.3.1 --subnet 10.1.3.0/24 t2_proxy
+    name: traefik_external
+    #Created with docker network create --gateway 10.1.4.1 --subnet 10.1.4.0/24 traefik_external
   default:
     driver: bridge
 
@@ -81,6 +79,8 @@ secrets:
     file: $SECRETSDIR/cloudflare_api_key
   mysql_root_password:
     file: $SECRETSDIR/mysql_root_password
+  mysql_wordpress_password:
+    file: $SECRETSDIR/mysql_wordpress_password
 
   cloudflare_api_token:
     file: $SECRETSDIR/cloudflare_api_token
@@ -107,49 +107,19 @@ services:
 
   # Traefik 2 - Reverse Proxy
   traefik:
-    container_name: traefik
-    image: traefik:latest
+    container_name: Traefik
+    image: traefik:v3.1
     restart: unless-stopped
+    depends_on:
+      - authelia
     logging:
       driver: "json-file"
       options:
         max-file: "5" # number of files or file count
         max-size: "10m" # file size
-    command: # CLI arguments
-      - --global.checkNewVersion=true
-      - --global.sendAnonymousUsage=false
-      - --entryPoints.http.address=:80
-      - --entryPoints.https.address=:443
-        # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
-      # - --entrypoints.https.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/12,172.64.0.0/13,131.0.72.0/22
-      - --entryPoints.traefik.address=:8080
-      - "--entrypoints.federation.address=:8448" # Matrix federation
-      - --api=true
-      #      - --api.insecure=true
-      #      - --serversTransport.insecureSkipVerify=true
-      - --log=true
-      - --log.level=ERROR # (Default: error) DEBUG, INFO, WARN, ERROR, FATAL, PANIC
-      - --accessLog=false
-      - --accessLog.filePath=/traefik.log
-      - --accessLog.bufferingSize=100 # Configuring a buffer of 100 lines
-      - --accessLog.filters.statusCodes=400-520
-      - --providers.docker=true
-      - --providers.docker.endpoint=unix:///var/run/docker.sock
-      - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$DOMAINNAME`)
-      - --providers.docker.exposedByDefault=false
-      - --providers.docker.network=t2_proxy
-      - --providers.docker.swarmMode=false
-      - --providers.file.directory=/rules # Load dynamic configuration from one or more .toml or .yml files in a directory.
-      - --providers.file.watch=true # Only works on top level files in the rules folder
-      # Staging caServer commented out, time to get the real certificates
-      # - --certificatesResolvers.dns-cloudflare.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory # LetsEncrypt Staging Server - uncomment when testing
-      - --certificatesResolvers.dns-cloudflare.acme.email=$CLOUDFLARE_EMAIL
-      - --certificatesResolvers.dns-cloudflare.acme.storage=/acme.json
-      - --certificatesResolvers.dns-cloudflare.acme.dnsChallenge.provider=cloudflare
-      - --certificatesResolvers.dns-cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
     networks:
-      t2_proxy:
-        ipv4_address: 10.1.3.245
+      traefik_external:
+        ipv4_address: 10.1.4.245
     security_opt:
       - no-new-privileges:true
     ports:
@@ -161,23 +131,20 @@ services:
         published: 443
         protocol: tcp
         mode: host
-      - target: 8080
-        published: 8080
-        protocol: tcp
-        mode: host
-      - target: 8448
-        published: 8448
-        protocol: tcp
-        mode: host
     volumes:
-      - $DOCKERDIR/traefik2/rules:/rules
       - /var/run/docker.sock:/var/run/docker.sock:ro
+
+      - $DOCKERDIR/traefik2/traefik3-static.yaml:/etc/traefik/traefik.yaml
+      - $DOCKERDIR/traefik2/rules:/rules
       - $DOCKERDIR/traefik2/acme/acme.json:/acme.json
+
       - $DOCKERDIR/traefik2/traefik.log:/traefik.log
+      - $DOCKERDIR/traefik2/traefik-access.log:/traefik-access.log
       - $DOCKERDIR/shared:/shared
     environment:
       - CF_API_EMAIL=$CLOUDFLARE_EMAIL
       - CF_API_KEY=$CLOUDFLARE_API_KEY
+      - TZ=$TZ
     labels:
       - "traefik.enable=true"
       # HTTP-to-HTTPS Redirect
@@ -213,14 +180,15 @@ services:
     depends_on:
       - mariadb
     networks:
-      - t2_proxy
+      - traefik_external
       - default
     # ports:
     #   - "9091:9091"
     volumes:
-      - $DOCKERDIR/authelia/config/configuration.yml:/config/configuration.yml:rw
-      - $DOCKERDIR/authelia/config/users_database.yml:/config/users_database.yml:rw
-      - $DOCKERDIR/authelia/config/notification.txt:/config/notification.txt:rw
+      # - $DOCKERDIR/authelia/config/configuration.yml:/config/configuration.yml:rw
+      # - $DOCKERDIR/authelia/config/users_database.yml:/config/users_database.yml:rw
+      # - $DOCKERDIR/authelia/config/notification.txt:/config/notification.txt:rw
+      - $DOCKERDIR/authelia/config:/config:rw
     environment:
       - TZ=$TZ
       - AUTHELIA_JWT_SECRET_FILE=/run/secrets/authelia_jwt_secret
@@ -268,8 +236,8 @@ services:
     image: linuxserver/mariadb:110.4.14mariabionic-ls77
     restart: always
     networks:
-      t2_proxy:
-        ipv4_address: 10.1.3.250
+      traefik_external:
+        ipv4_address: 10.1.4.250
     security_opt:
       - no-new-privileges:true
     volumes:
@@ -284,14 +252,50 @@ services:
     secrets:
       - mysql_root_password
 
+  #######################################################
+  # Database Backup
+  #######################################################
+  # dbbackup:
+  #     image: docker.io/tiredofit/db-backup:latest
+  #     container_name: DB-Backup
+  #     depends_on: 
+  #       - mariadb
+  #     volumes:
+  #       - /home/pranav/personal-website/db-backup/backup:/logs
+  #       - ./db-backup/backup:/backup
+  #     environment:
+  #       - DEFAULT_BACKUP_LOCATION:FILESYSTEM
+  #       - USER_DBBACKUP=1001
+  #       - GROUP_DBBACKUP=1001
+  #       - LOG_PATH="/logs"
+  #       - DEFAULT_FILESYSTEM_PATH:"/backup"
+  #       - DEFAULT_CREATE_LATEST_SYMLINK:TRUE
+  #       - DEFAULT_CHECKSUM:MD5
+  #       - DEFAULT_LOG_LEVEL:DEBUG
+  #       - DEFAULT_GZ_RSYNCABLE:TRUE 
+  #       - DEFAULT_BACKUP_INTERVAL:1440 #min, 1440 = daily
+  #       - DEFAULT_BACKUP_BEGIN:"+1"
+  #       # MariaDB
+  #       - DB01_HOST:mariadb
+  #       - DB01_TYPE:mysql
+  #       - DB01_BACKUP_BEGIN:"+0"
+  #       - DB01_NAME:ALL
+  #       - DEFAULT_MYSQL_MAX_ALLOWED_PACKET:64M
+  #     restart: unless-stopped
+  #     networks:
+  #       - traefik_external
+
+
 # Portainer - WebUI for Containers
   portainer:
     container_name: portainer
     image: portainer/portainer:latest
     restart: unless-stopped
     command: -H unix:///var/run/docker.sock
+    depends_on:
+      - mariadb
     networks:
-      - t2_proxy
+      - traefik_external
     security_opt:
       - no-new-privileges:true
     # ports:
@@ -324,12 +328,12 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin
     restart: unless-stopped
+    depends_on:
+      - mariadb
     links:
       - mariadb
     networks:
-      - t2_proxy
-    #depends_on:
-    #  - mariadb
+      - traefik_external
     security_opt:
       - no-new-privileges:true
     # volumes:
@@ -355,6 +359,59 @@ services:
       ## HTTP Services
       - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
       - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
+  
+  # wordpress:
+  #   depends_on:
+  #     - mariadb
+  #   image: wordpress:latest
+  #   volumes:
+  #     - $DOCKERDIR/sites/wordpress-docker/html:/var/www/html
+  #   ports:
+  #     - "8088:80"
+  #   restart: unless-stopped
+  #   networks:
+  #     - traefik_external
+  #     - default
+  #   environment:
+  #     WORDPRESS_DB_HOST: "mariadb:3306"
+  #     WORDPRESS_DB_USER: wordpress-test
+  #     WORDPRESS_DB_PASSWORD: $MYSQL_WORDPRESS_PASS
+  #     WORDPRESS_DB_NAME: wordpress20240723
+  #   labels:
+  #     - "traefik.enable=true"
+
+  #     # Redirect Wordpress non-www to www middleware
+  #     - "traefik.http.middlewares.wordpress-redirect.redirectregex.regex=^https?://$DOMAINNAME/(.*)"
+  #     - "traefik.http.middlewares.wordpress-redirect.redirectregex.replacement=https://www.$DOMAINNAME/$${1}"
+  #     - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
+
+  #     ## HTTP Routers Wordpress (Dr. Pranav Mishra) Authenticated Access
+  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.entrypoints=https"
+  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.tls=true"
+  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.rule=Host(`www.$DOMAINNAME`) && Path(`/wp-login.php`)"
+  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.priority=100"
+  #     ## HTTP Routers Wordpress (Dr. Pranav Mishra) PHP OpCache Authenticated Access
+  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.entrypoints=https"
+  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.tls=true"
+  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.rule=Host(`www.$DOMAINNAME`) && Path(`/opcache.php`)"
+  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.priority=98"
+  #     ## HTTP Routers Wordpress (Dr. Pranav Mishra) Bypass - Anyone can access
+  #     - "traefik.http.routers.nginx-wordpress-rtr.entrypoints=https"
+  #     - "traefik.http.routers.nginx-wordpress-rtr.tls=true"
+  #     - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
+  #     - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
+
+  #     ## Middlewares
+  #     - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
+  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring authelia
+  #     # - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
+  #     - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=chain-authelia@file" #OPCache requring HTTP authentication
+
+  #     ## HTTP Services
+  #     - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
+  #     - "traefik.http.routers.nginx-wordpress-auth-rtr.service=nginx-svc"
+  #     - "traefik.http.services.nginx-svc.loadbalancer.server.port=80"
+
 
   # PHP - Hypertext Preprocessor
   # php8:
@@ -362,7 +419,7 @@ services:
   #   container_name: MishraCloud-PHP8
   #   restart: unless-stopped
   #   networks:
-  #     - t2_proxy
+  #     - traefik_external
   #   volumes:
   #     - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
   #     - $DOCKERDIR/php/php7:/usr/local/etc/php
@@ -376,7 +433,7 @@ services:
     restart: unless-stopped
     user: $PUID:$PGID # allows upgrading WP and plugins
     networks:
-      - t2_proxy
+      - traefik_external
     volumes:
       - $DOCKERDIR/sites/wordpress/html:/var/www/html/wordpress
       - $DOCKERDIR/php/php7:/usr/local/etc/php
@@ -389,12 +446,12 @@ services:
   # Nginx - Web Server
   nginx:
     container_name: nginx
-    image: nginx:1.18
+    image: nginx:1.25.3
     restart: unless-stopped
     depends_on:
       - php7
     networks:
-      - t2_proxy
+      - traefik_external
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -405,9 +462,6 @@ services:
 
       # Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
-
-      # Prrx1
-      - $DOCKERDIR/sites/prrx1-notebook/:/var/www/html/prrx1:ro
 
     labels:
       - "traefik.enable=true"
@@ -433,47 +487,27 @@ services:
       - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
       - "traefik.http.routers.nginx-wordpress-rtr.priority=99"
 
-      # ## HTTP Routers PREPAREDx routing
-      # - "traefik.http.routers.nginx-preparedx-testing-rtr.entrypoints=https"
-      # - "traefik.http.routers.nginx-preparedx-testing-rtr.tls=true"
-      # - "traefik.http.routers.nginx-preparedx-testing-rtr.rule=Host(`www.$DOMAINNAME`) && Path(`/preparedx-*)"
-
-      # Matomo
-      - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
-      - "traefik.http.routers.nginx-matomo-rtr.tls=true"
-      - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`matomo.$DOMAINNAME`)"
-      - "traefik.http.routers.nginx-matomo-rtr.priority=95"
-
       ## Middlewares
-
       - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect,chain-no-auth@file" ##Website open to everyone, no auth
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-no-auth@file" #Backend requiring authelia
+      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-authelia@file" #Backend requiring authelia
       # - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect,chain-basic-auth@file" #Backend requiring HTTP authentication
       - "traefik.http.routers.nginx-wordpress-opcache-rtr.middlewares=chain-authelia@file" #OPCache requring HTTP authentication
-
-      #### Preparedx
-      - "traefik.http.routers.nginx-preparedx-testing-rtr.middlewares=chain-authelia@file"
-      ####Matomo
-      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-authelia@file"
 
       ## HTTP Services
       - "traefik.http.routers.nginx-wordpress-rtr.service=nginx-svc"
       - "traefik.http.routers.nginx-wordpress-auth-rtr.service=nginx-svc"
       - "traefik.http.services.nginx-svc.loadbalancer.server.port=80"
 
-      ####Matomo
+
+      # Matomo
+      - "traefik.http.routers.nginx-matomo-rtr.entrypoints=https"
+      - "traefik.http.routers.nginx-matomo-rtr.tls=true"
+      - "traefik.http.routers.nginx-matomo-rtr.rule=Host(`matomo.$DOMAINNAME`)"
+      - "traefik.http.routers.nginx-matomo-rtr.priority=95"
+      - "traefik.http.routers.nginx-matomo-rtr.middlewares=chain-authelia@file"
       - "traefik.http.routers.nginx-matomo-rtr.service=nginx-svc"
 
 
-      #### prrx1  ############
-      - "traefik.http.routers.nginx-prrx1-rtr.entrypoints=https"
-      - "traefik.http.routers.nginx-prrx1-rtr.tls=true"
-      - "traefik.http.routers.nginx-prrx1-rtr.rule=Host(`prrx1.$DOMAINNAME`)"
-      - "traefik.http.routers.nginx-prrx1-rtr.priority=95"
-      - "traefik.http.routers.nginx-prrx1-rtr.middlewares=chain-authelia@file"
-      - "traefik.http.routers.nginx-prrx1-rtr.service=nginx-svc"
-
-      ##############################################################
 
 
   # Redis - Key-value Store
@@ -484,9 +518,9 @@ services:
     # entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
     entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
-      # t2_proxy:
-      #     ipv4_address: 10.1.3.210
-      - t2_proxy
+      # traefik_external:
+      #     ipv4_address: 10.1.4.210
+      - traefik_external
       - default
     security_opt:
       - no-new-privileges:true
@@ -516,7 +550,7 @@ services:
       - 3000:3000
     restart: unless-stopped
     networks:
-      - t2_proxy
+      - traefik_external
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -546,11 +580,14 @@ services:
       - $DOCKERDIR/:/drpm-website:ro #website backup
       - /home/pranav/research:/drpm-research:ro #research directory backup
       - /home/pranav/github-profile:/github-profile:ro #github profile page backup
+      - /home/pranav/backup/matrix:/drpm-matrix-postgresql:ro # Matrix PostgreSQL database local backup
+      - /home/pranav/matrix:/drpm-matrix:ro # Matrix server
+      - /home/pranav/restore:/drpm-restore:rw # Restore folder for duplicati
     # ports:
     #   - 8200:8200
     restart: unless-stopped
     networks:
-      - t2_proxy
+      - traefik_external
       - default
     labels:
       - "traefik.enable=true"
@@ -564,3 +601,31 @@ services:
       ## HTTP Services
       - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
       - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
+
+  #######################################################
+  # Homer - Dashboard
+  #######################################################
+  homer:
+    image: b4bz/homer:v23.10.1
+    container_name: Homer
+    volumes:
+      - ./homer/config:/www/assets
+    # ports:
+    #   - 8082:8080
+    environment:
+      - PUID=1001
+      - PGID=1001
+    restart: unless-stopped
+    networks:
+      - traefik_external
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.homer-rtr.entrypoints=https"
+      - "traefik.http.routers.homer-rtr.tls=true"
+      - "traefik.http.routers.homer-rtr.rule=Host(`start.$DOMAINNAME`)"
+      ## Middlewares
+      - "traefik.http.routers.homer-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.homer-rtr.service=homer-svc"
+      - "traefik.http.services.homer-svc.loadbalancer.server.port=8080"

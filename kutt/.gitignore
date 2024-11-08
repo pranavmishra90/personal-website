@@ -1,0 +1,3 @@
+**/kutt_postgres
+*.env
+**/db

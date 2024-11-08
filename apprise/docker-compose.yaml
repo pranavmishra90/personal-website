@@ -1,0 +1,43 @@
+# Apprise: send notifications to multiple services
+
+####################################
+#            Networks              #
+####################################
+
+networks:
+  traefik_external:
+    external: true
+    name: traefik_external
+    #Created with docker network create --gateway 10.1.4.1 --subnet 10.1.4.0/24 traefik_external
+  default:
+    driver: bridge
+
+####################################
+#            Services              #
+####################################
+
+services:
+  apprise:
+    container_name: Apprise
+    image: caronc/apprise:latest
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5" # number of files or file count
+        max-size: "10m" # file size
+    networks:
+      - traefik_external
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.apprise-rtr.entrypoints=https"
+      - "traefik.http.routers.apprise-rtr.rule=Host(`apprise.$DOMAINNAME`)"
+      - "traefik.http.routers.apprise-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.apprise-rtr.middlewares=chain-authelia@file"
+      ## HTTP Services
+      - "traefik.http.routers.apprise-rtr.service=apprise-svc"
+      - "traefik.http.services.apprise-svc.loadbalancer.server.port=8000"
+        
+      

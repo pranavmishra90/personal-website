@@ -1,6 +1,15 @@
 [submodule "prrx1-notebook"]
-	path = prrx1-notebook
-	url = git@github.com:SinguLab-Rush/prrx1-notebook.git
-[submodule "sites/prrx1-notebook"]
 	path = sites/prrx1-notebook
-	url = git@github.com:SinguLab-Rush/prrx1-notebook.git
+	url = git@github.com:FacsimiLab-Rush/prrx1-notebook.git
+
+[submodule "sites/bfgi-notebook"]
+	path = sites/bfgi-notebook
+	url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
+	datalad-url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
+	datalad-id = 6761fae7-e6e1-4490-a11c-95288d784d11
+
+[submodule "sites/research-reference"]
+	path = sites/research-reference
+	url = git@github.com:pranavmishra90/research-reference.git
+	datalad-id = 3d6beff7-a55d-43a2-ab44-6def6a79bde5
+	datalad-url = git@github.com:pranavmishra90/research-reference.git

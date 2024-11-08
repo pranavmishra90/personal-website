@@ -1,0 +1,76 @@
+# Run Monica with fpm+nginx backend
+####################################
+#            Networks              #
+####################################
+
+networks:
+  traefik_external:
+    external: true
+    name: traefik_external
+
+
+####################################
+#            Services              #
+####################################
+services:
+  app:
+    image: monica:4.1.2-fpm
+    container_name: Monica
+    environment:
+      - APP_ENV=production
+      - DB_HOST=db
+      - DB_DATABASE=monica
+      - DB_USERNAME=monica
+      - DB_PASSWORD=$MYSQL_MONICA_PASSWORD
+      - LOG_CHANNEL=stderr
+      - CACHE_DRIVER=database
+      - SESSION_DRIVER=database
+      - QUEUE_DRIVER=sync
+    volumes:
+      - data:/var/www/html/storage
+    restart: always
+  
+  web:
+    build: ./web
+    container_name: Monica-Nginx
+    ports:
+      - 3580:80
+    volumes:
+      - data:/var/www/html/storage:ro
+    restart: always
+    networks:
+      - traefik_external
+      - default
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.monica-rtr.entrypoints=https"
+      - "traefik.http.routers.monica-rtr.rule=Host(`monica.$DOMAINNAME`)"
+      - "traefik.http.routers.monica-rtr.tls=true"
+      ## Middlewares
+      - "traefik.http.routers.monica-rtr.middlewares=chain-authelia@file" # Authelia authentication
+      # Redirect to https
+      - "traefik.http.middlewares.test-redirectscheme.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.test-redirectscheme.redirectscheme.permanent=true"
+      ## HTTP Services
+      - "traefik.http.routers.monica-rtr.service=monica-svc"
+      - "traefik.http.services.monica-svc.loadbalancer.server.port=80"
+
+
+  db:
+    image: mysql:5.7
+    container_name: Monica-DB
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MYSQL_DATABASE=monica
+      - MYSQL_USER=monica
+      - MYSQL_PASSWORD=$MYSQL_MONICA_PASSWORD
+    volumes:
+      - mysql:/var/lib/mysql
+    restart: always
+
+volumes:
+  data:
+    name: data
+  mysql:
+    name: mysql
