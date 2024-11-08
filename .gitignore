@@ -1,6 +1,9 @@
 #Specific files
 **/.htpasswd
 
+*.secrets
+**/*.secrets
+
 **/acme.json
 
 secrets/
