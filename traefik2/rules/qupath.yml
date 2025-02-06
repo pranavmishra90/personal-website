@@ -1,0 +1,17 @@
+http:
+  routers:
+    qupath-rtr:
+      entryPoints:
+        - https
+      rule: Host(`qupath.drpranavmishra.com`)
+      service: qupath-svc
+      middlewares:
+        - chain-authelia
+      tls:
+        certresolver: dns-cloudflare
+  services:
+    qupath-svc:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          - url: "http://100.71.75.12:3100/"
