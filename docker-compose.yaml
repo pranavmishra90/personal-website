@@ -4,7 +4,7 @@
 
 # MIT License
 
-# Copyright (c) 2020-2024 Pranav Mishra
+# Copyright (c) 2020-2025 Pranav Mishra
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -105,7 +105,7 @@ secrets:
 services:
   # All services / apps go below this line
 
-  # Traefik 2 - Reverse Proxy
+  # Traefik 3 - Reverse Proxy
   traefik:
     container_name: Traefik
     image: traefik:v3.1
@@ -546,8 +546,8 @@ services:
     volumes:
       - $DOCKERDIR/wiki/config:/config
       - $DOCKERDIR/wiki/data:/data
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000
     restart: unless-stopped
     networks:
       - traefik_external
