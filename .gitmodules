@@ -13,3 +13,7 @@
 	url = git@github.com:pranavmishra90/research-reference.git
 	datalad-id = 3d6beff7-a55d-43a2-ab44-6def6a79bde5
 	datalad-url = git@github.com:pranavmishra90/research-reference.git
+[submodule "dashboard"]
+	path = dashboard
+	url = ./dashboard
+	datalad-id = 7fa22c33-8ef8-4370-a7bd-9c153f734caa
