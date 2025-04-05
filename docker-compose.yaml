@@ -102,6 +102,11 @@ secrets:
 #            Services              #
 ####################################
 
+
+include:
+  - dashboard/docker-compose.yaml
+
+
 services:
   # All services / apps go below this line
 
@@ -601,31 +606,3 @@ services:
       ## HTTP Services
       - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
       - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
-
-  #######################################################
-  # Homer - Dashboard
-  #######################################################
-  homer:
-    image: b4bz/homer:v23.10.1
-    container_name: Homer
-    volumes:
-      - ./homer/config:/www/assets
-    # ports:
-    #   - 8082:8080
-    environment:
-      - PUID=1001
-      - PGID=1001
-    restart: unless-stopped
-    networks:
-      - traefik_external
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.homer-rtr.entrypoints=https"
-      - "traefik.http.routers.homer-rtr.tls=true"
-      - "traefik.http.routers.homer-rtr.rule=Host(`start.$DOMAINNAME`)"
-      ## Middlewares
-      - "traefik.http.routers.homer-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.homer-rtr.service=homer-svc"
-      - "traefik.http.services.homer-svc.loadbalancer.server.port=8080"
