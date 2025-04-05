@@ -10,6 +10,7 @@ services:
     depends_on:
       - kutt_postgres
       - kutt_redis
+      - traefik
     command: ["./wait-for-it.sh", "kutt_postgres:5432", "--", "npm", "start"]
     # ports:
     #   - "3000:3003"

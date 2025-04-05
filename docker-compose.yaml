@@ -105,6 +105,7 @@ secrets:
 
 include:
   - dashboard/docker-compose.yaml
+  - kutt/docker-compose.yaml
 
 
 services:
