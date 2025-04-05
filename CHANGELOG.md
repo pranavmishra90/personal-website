@@ -1,8 +1,10 @@
 # CHANGELOG
 
-## v2.1.0-beta.1 (2024-11-08)
+## v2.2.0-beta.1 (2024-12-13)
 
 ### Feature
+
+* feat: add spaceranger ui ([`0fb5000`](https://github.com/pranavmishra90/personal-website/commit/0fb500012940e5c8304328ec9e9f0b1f776d62c2))
 
 * feat: add more explicit commands for semvar ([`4a52241`](https://github.com/pranavmishra90/personal-website/commit/4a522415eb3931b0a40e669da2f71169d5d8dea1))
 
