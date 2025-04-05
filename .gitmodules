@@ -17,3 +17,7 @@
 	path = dashboard
 	url = ./dashboard
 	datalad-id = 7fa22c33-8ef8-4370-a7bd-9c153f734caa
+[submodule "authelia"]
+	path = authelia
+	url = ./authelia
+	datalad-id = b1716114-49d5-49b4-b8ec-e1988174619a
