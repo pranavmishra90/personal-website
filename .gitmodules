@@ -17,3 +17,7 @@
 	path = authelia
 	url = git@gitea:Dr.PranavMishra/authelia.git
 	datalad-id = b1716114-49d5-49b4-b8ec-e1988174619a
+[submodule "traefik2"]
+	path = traefik2
+	url = ./traefik2
+	datalad-id = 5ae842a9-0bb1-4331-8d69-ca72469ce58f
