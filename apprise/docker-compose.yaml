@@ -21,6 +21,8 @@ services:
     container_name: Apprise
     image: caronc/apprise:latest
     restart: unless-stopped
+    depends_on:
+      - traefik
     logging:
       driver: "json-file"
       options:

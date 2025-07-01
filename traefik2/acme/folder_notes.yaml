@@ -1,6 +1,0 @@
-# Folder Notes for /traefik2/acme
-
-# The following files are not synced by GitHub in this folder
-
-# ./acme.json
-# It contains the private key for the LetsEncrypt certificate

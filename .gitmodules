@@ -8,8 +8,16 @@
 	datalad-url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
 	datalad-id = 6761fae7-e6e1-4490-a11c-95288d784d11
 
-[submodule "sites/research-reference"]
-	path = sites/research-reference
-	url = git@github.com:pranavmishra90/research-reference.git
-	datalad-id = 3d6beff7-a55d-43a2-ab44-6def6a79bde5
-	datalad-url = git@github.com:pranavmishra90/research-reference.git
+[submodule "dashboard"]
+	path = dashboard
+	url = git@gitea:Dr.PranavMishra/Dashboard.git
+	datalad-id = 7fa22c33-8ef8-4370-a7bd-9c153f734caa
+
+[submodule "authelia"]
+	path = authelia
+	url = git@gitea:Dr.PranavMishra/authelia.git
+	datalad-id = b1716114-49d5-49b4-b8ec-e1988174619a
+[submodule "traefik2"]
+	path = traefik2
+	url = ./traefik2
+	datalad-id = 5ae842a9-0bb1-4331-8d69-ca72469ce58f
