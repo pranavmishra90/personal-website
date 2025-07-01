@@ -1,14 +1,44 @@
 # CHANGELOG
 
+## v2.2.0-beta.3 (2025-07-01)
+
+### Feature
+
+* feat: bump to traefik 3.4 ([`e2f7588`](https://github.com/pranavmishra90/personal-website/commit/e2f7588eae7a7ff00b858ea6549276225dfef356))
+
+### Unknown
+
+* Merge branch &#39;develop&#39; of github.com:pranavmishra90/personal-website into develop ([`96569b6`](https://github.com/pranavmishra90/personal-website/commit/96569b621368ea5589268a2c2c56157a190f4748))
+
 ## v2.2.0-beta.2 (2025-04-05)
 
 ### Chore
+
+* chore: tmp remove traefik2, making subdataset ([`4055a1c`](https://github.com/pranavmishra90/personal-website/commit/4055a1c02905b1f1c286af7a549cdafe28d3bf8e))
 
 * chore: Merge branch &#39;develop&#39; of github.com:pranavmishra90/personal-website into develop ([`e3b0811`](https://github.com/pranavmishra90/personal-website/commit/e3b0811f2e170c3875dde3e84c421f8e34fafc0c))
 
 ### Ci
 
+* ci(semantic-release): Tag and Release v2.2.0-beta.2 ([`b5d59c3`](https://github.com/pranavmishra90/personal-website/commit/b5d59c34e13a0d6efba1b4156715f7e036ad24fd))
+
 * ci: update PSR and workflow to facsimilab ([`1712bb8`](https://github.com/pranavmishra90/personal-website/commit/1712bb810fbd85d4fb81c389a3876d53c76da1a7))
+
+### Feature
+
+* feat: link apprise and kutt to the main docker-compose.yaml file ([`6c64ba0`](https://github.com/pranavmishra90/personal-website/commit/6c64ba0239062037864a6f67b7fea8a500cf825c))
+
+* feat: WIP moving authelia to a subdataset ([`2cf55fc`](https://github.com/pranavmishra90/personal-website/commit/2cf55fc9ba99f82e85a3d258710a99eeaf33d334))
+
+### Fix
+
+* fix: gitmodules and git config ([`807c235`](https://github.com/pranavmishra90/personal-website/commit/807c235f1c0cb2f9b4806d5a0c3acbf20eb3d8ae))
+
+### Unknown
+
+* [DATALAD] Recorded changes ([`28952f7`](https://github.com/pranavmishra90/personal-website/commit/28952f70d23253c14cd5a38934f7cfe36b39260a))
+
+* [DATALAD] Recorded changes ([`ead3108`](https://github.com/pranavmishra90/personal-website/commit/ead3108e92f8dbeb3da24eb6130931320a9380ca))
 
 ## v2.2.0-beta.1 (2024-12-13)
 
