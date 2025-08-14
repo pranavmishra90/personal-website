@@ -21,3 +21,8 @@
 	url = git@github.com:FacsimiLab-Rush/prrx1-notebook.git
 	datalad-id = a0412601-a822-469c-bb7f-0f080034d14d
 	datalad-url = git@github.com:FacsimiLab-Rush/prrx1-notebook.git
+[submodule "notebook/bfgi-notebook"]
+	path = notebook/bfgi-notebook
+	url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
+	datalad-id = 6761fae7-e6e1-4490-a11c-95288d784d11
+	datalad-url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
