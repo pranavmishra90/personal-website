@@ -106,6 +106,7 @@ secrets:
 include:
   - dashboard/docker-compose.yaml
   - kutt/docker-compose.yaml
+  - notebook/docker-compose.yaml
 
 
 services:
@@ -446,8 +447,6 @@ services:
       #Matomo
       - $DOCKERDIR/sites/matomo:/var/www/html/matomo
 
-      #Matomo
-      - $DOCKERDIR/sites/prrx1-notebook/:/var/www/html/prrx1:ro
 
   # Nginx - Web Server
   nginx:
