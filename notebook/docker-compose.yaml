@@ -27,13 +27,13 @@ services:
       - /etc/timezone:/etc/timezone:ro
       
       # BFGI Notebook
-      - $DOCKERDIR/sites/bfgi-notebook/_site:/var/www/html/bfgi:ro
+      - $DOCKERDIR/notebook/bfgi-notebook/_site:/var/www/html/bfgi:ro
 
       # Prrx1 Notebook
-      - $DOCKERDIR/sites/prrx1-notebook/_site:/var/www/html/prrx1:ro
+      - $DOCKERDIR/notebook/prrx1-notebook/_site:/var/www/html/prrx1:ro
 
       # Bariatric Sociome Notebook
-      - $DOCKERDIR/sites/bariatric-notebook/notebook/_site:/var/www/html/bariatric:ro
+      - $DOCKERDIR/notebook/bariatric-notebook/notebook/_site:/var/www/html/bariatric:ro
 
     labels:
       - "traefik.enable=true"
