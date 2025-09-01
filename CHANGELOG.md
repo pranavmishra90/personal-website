@@ -9,6 +9,8 @@
 
 ### Continuous Integration
 
+* ci(semantic-release): Tag and Release v2.3.0 ([`fade59f`](https://github.com/pranavmishra90/personal-website/commit/fade59f33544406f306ea4e8c99ee5cd8c1a8e1d))
+
 * ci(semantic-release): Tag and Release v2.3.0 ([`e57aaa7`](https://github.com/pranavmishra90/personal-website/commit/e57aaa7e2bd8e7a839e844f1bdad8558867fe1b0))
 
 * ci: change to automated signature key ([`603a72c`](https://github.com/pranavmishra90/personal-website/commit/603a72cadf1e20869b2108988660b98cc443717e))
