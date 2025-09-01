@@ -1,0 +1,50 @@
+####################################
+#            Networks              #
+####################################
+
+networks:
+  traefik_external:
+    external: true
+    name: traefik_external
+  default:
+    driver: bridge
+
+
+####################################
+#            Services              #
+####################################
+
+services:
+
+  nginx-php:
+    container_name: notebook-php-nginx
+    image: trafex/php-nginx
+    restart: unless-stopped
+    networks:
+      - traefik_external
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      
+      # BFGI Notebook
+      - $DOCKERDIR/notebook/bfgi-notebook/_site:/var/www/html/bfgi:ro
+
+      # Prrx1 Notebook
+      - $DOCKERDIR/notebook/prrx1-notebook/_site:/var/www/html/prrx1:ro
+
+      # Bariatric Sociome Notebook
+      - $DOCKERDIR/notebook/bariatric-notebook/notebook/_site:/var/www/html/bariatric:ro
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.notebook-rtr.entrypoints=https"
+      - "traefik.http.routers.notebook-rtr.tls=true"
+      - "traefik.http.routers.notebook-rtr.rule=Host(`notes.$DOMAINNAME`)"
+      - "traefik.http.routers.notebook-rtr.middlewares=chain-authelia@file"
+      - "traefik.http.routers.notebook-rtr.service=notebook-svc"
+      - "traefik.http.services.notebook-svc.loadbalancer.server.port=8080"
+      
+    deploy:
+      resources:
+        limits:
+          memory: 512M

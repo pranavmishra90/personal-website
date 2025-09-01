@@ -1,13 +1,3 @@
-[submodule "prrx1-notebook"]
-	path = sites/prrx1-notebook
-	url = git@github.com:FacsimiLab-Rush/prrx1-notebook.git
-
-[submodule "sites/bfgi-notebook"]
-	path = sites/bfgi-notebook
-	url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
-	datalad-url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
-	datalad-id = 6761fae7-e6e1-4490-a11c-95288d784d11
-
 [submodule "dashboard"]
 	path = dashboard
 	url = git@gitea:Dr.PranavMishra/Dashboard.git
@@ -21,3 +11,19 @@
 	path = traefik2
 	url = ./traefik2
 	datalad-id = 5ae842a9-0bb1-4331-8d69-ca72469ce58f
+
+[submodule "notebook/prrx1-notebook"]
+	path = notebook/prrx1-notebook
+	url = git@github.com:FacsimiLab-Rush/prrx1-notebook.git
+	datalad-id = a0412601-a822-469c-bb7f-0f080034d14d
+	datalad-url = git@github.com:FacsimiLab-Rush/prrx1-notebook.git
+[submodule "notebook/bfgi-notebook"]
+	path = notebook/bfgi-notebook
+	url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
+	datalad-id = 6761fae7-e6e1-4490-a11c-95288d784d11
+	datalad-url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
+[submodule "notebook/bariatric-notebook"]
+	path = notebook/bariatric-notebook
+	url = git@github.com:FacsimiLab-Rush/surgery-outcomes-bariatric-sociome.git
+	datalad-id = 11578745-39c8-482f-82e8-09c7938819e7
+	datalad-url = git@github.com:FacsimiLab-Rush/surgery-outcomes-bariatric-sociome.git
