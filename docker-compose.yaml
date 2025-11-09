@@ -106,7 +106,7 @@ secrets:
 include:
   - dashboard/docker-compose.yaml
   - kutt/docker-compose.yaml
-  - notebook/docker-compose.yaml
+  # - notebook/docker-compose.yaml
 
 
 services:
@@ -114,8 +114,8 @@ services:
 
   # Traefik 3 - Reverse Proxy
   traefik:
-    container_name: Traefik
-    image: traefik:v3.4
+    container_name: traefik
+    image: traefik:v3.5
     restart: unless-stopped
     depends_on:
       - authelia
@@ -141,12 +141,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
-      - $DOCKERDIR/traefik2/traefik3-static.yaml:/etc/traefik/traefik.yaml
-      - $DOCKERDIR/traefik2/rules:/rules
-      - $DOCKERDIR/traefik2/acme/acme.json:/acme.json
+      - $DOCKERDIR/traefik3/traefik3-static.yaml:/etc/traefik/traefik.yaml
+      - $DOCKERDIR/traefik3/rules:/rules
+      - $DOCKERDIR/traefik3/acme/acme.json:/acme.json
 
-      - $DOCKERDIR/traefik2/traefik.log:/traefik.log
-      - $DOCKERDIR/traefik2/traefik-access.log:/traefik-access.log
+
+      - $DOCKERDIR/traefik3/logs:/logs
       - $DOCKERDIR/shared:/shared
     environment:
       - CF_API_EMAIL=$CLOUDFLARE_EMAIL
@@ -164,7 +164,7 @@ services:
       - "traefik.http.routers.traefik-rtr.entrypoints=https"
       - "traefik.http.routers.traefik-rtr.rule=Host(`traefik.$DOMAINNAME`)"
       - "traefik.http.routers.traefik-rtr.tls=true"
-      # - "traefik.http.routers.traefik-rtr.tls.certresolver=dns-cloudflare" # Comment out this line after first run of traefik to force the use of wildcard certs
+      - "traefik.http.routers.traefik-rtr.tls.certresolver=dns-cloudflare" # Comment out this line after first run of traefik to force the use of wildcard certs
       - "traefik.http.routers.traefik-rtr.tls.domains[0].main=$DOMAINNAME"
       - "traefik.http.routers.traefik-rtr.tls.domains[0].sans=*.$DOMAINNAME"
 
