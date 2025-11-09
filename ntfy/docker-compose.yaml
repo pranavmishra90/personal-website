@@ -21,8 +21,6 @@ services:
     image: binwiederhier/ntfy
     container_name: ntfy
     restart: unless-stopped
-    command:
-      - serve
     environment:
       - TZ=America/Chicago    # optional: set desired timezone
     user: 1001:1001
@@ -33,6 +31,8 @@ services:
     #   - 80:80
     networks:
       - traefik_external
+    command:
+      - serve
     labels:
       - "traefik.enable=true"
       ## HTTP Routers
@@ -52,4 +52,4 @@ services:
       interval: 60s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 30s
