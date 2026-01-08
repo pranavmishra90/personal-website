@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v2.5.0 (2026-01-08)
+
+### Documentation
+
+- Update readme for 2026
+  ([`f9458df`](https://github.com/pranavmishra90/personal-website/commit/f9458dfb085d74ca46d8e6655565c6fd04198daa))
+
+
 ## v2.4.0 (2026-01-08)
 
 ### Bug Fixes
