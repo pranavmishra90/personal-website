@@ -32,4 +32,7 @@
 	path = notebook/prrx1-manuscript-draft
 	url = git@github.com:FacsimiLab-Rush/prrx1-manuscript-draft.git
 	datalad-id = f5da0d15-33d4-4439-8b06-0c7eb9f3c4df
-	datalad-url = git@github.com:FacsimiLab-Rush/prrx1-manuscript-draft.git
+	datalad-url = git@github.com:FacsimiLab-Rush/prrx1-manuscript-draft.git[submodule "sites/bariatric-notebook"]
+	path = sites/bariatric-notebook
+	url = git@github.com:FacsimiLab-Rush/surgery-outcomes-bariatric-sociome.git
+	datalad-id = 11578745-39c8-482f-82e8-09c7938819e7
