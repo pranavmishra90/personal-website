@@ -12,11 +12,6 @@
 	url = ./traefik2
 	datalad-id = 5ae842a9-0bb1-4331-8d69-ca72469ce58f
 
-[submodule "notebook/prrx1-notebook"]
-	path = notebook/prrx1-notebook
-	url = git@github.com:FacsimiLab-Rush/prrx1-notebook.git
-	datalad-id = a0412601-a822-469c-bb7f-0f080034d14d
-	datalad-url = git@github.com:FacsimiLab-Rush/prrx1-notebook.git
 [submodule "notebook/bfgi-notebook"]
 	path = notebook/bfgi-notebook
 	url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
