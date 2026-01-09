@@ -36,3 +36,6 @@
 	path = sites/bariatric-notebook
 	url = git@github.com:FacsimiLab-Rush/surgery-outcomes-bariatric-sociome.git
 	datalad-id = 11578745-39c8-482f-82e8-09c7938819e7
+[submodule "traefik3"]
+	path = traefik3
+	url = ssh://git@gitea/Dr.PranavMishra/traefik.git
