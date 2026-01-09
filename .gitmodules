@@ -22,12 +22,6 @@
 	url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
 	datalad-id = 6761fae7-e6e1-4490-a11c-95288d784d11
 	datalad-url = git@github.com:FacsimiLab-Rush/bfgi-notebook.git
-[submodule "notebook/bariatric-notebook"]
-	path = notebook/bariatric-notebook
-	url = git@github.com:FacsimiLab-Rush/surgery-outcomes-bariatric-sociome.git
-	datalad-id = 11578745-39c8-482f-82e8-09c7938819e7
-	datalad-url = git@github.com:FacsimiLab-Rush/surgery-outcomes-bariatric-sociome.git
-
 [submodule "notebook/prrx1-manuscript-draft"]
 	path = notebook/prrx1-manuscript-draft
 	url = git@github.com:FacsimiLab-Rush/prrx1-manuscript-draft.git
