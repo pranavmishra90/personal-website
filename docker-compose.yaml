@@ -4,7 +4,7 @@
 
 # MIT License
 
-# Copyright (c) 2020-2025 Pranav Mishra
+# Copyright (c) 2020-2026 Pranav Mishra
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -245,6 +245,8 @@ services:
     networks:
       traefik_external:
         ipv4_address: 10.1.4.250
+    # ports:
+    #   - 3305:3306
     security_opt:
       - no-new-privileges:true
     volumes:
@@ -263,7 +265,7 @@ services:
 # Portainer - WebUI for Containers
   portainer:
     container_name: portainer
-    image: portainer/portainer:latest
+    image: portainer/portainer-ce:lts
     restart: unless-stopped
     command: -H unix:///var/run/docker.sock
     depends_on:
@@ -352,7 +354,7 @@ services:
   # Nginx - Web Server
   nginx:
     container_name: nginx
-    image: nginx:1.25.3
+    image: nginx:1.28.3
     restart: unless-stopped
     depends_on:
       - php7
