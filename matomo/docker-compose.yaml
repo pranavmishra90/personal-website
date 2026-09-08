@@ -1,0 +1,33 @@
+####################################
+#            Services              #
+####################################
+
+services:
+  matomo:
+    # image: matomo@sha256:650f4f205b0b8968f430b0fc924e8b37e8ff023948c4db08ea300d154054b257
+    build:
+      dockerfile_inline: |
+          FROM matomo@sha256:650f4f205b0b8968f430b0fc924e8b37e8ff023948c4db08ea300d154054b257
+          RUN apt update && apt install -y iputils-ping mariadb-client galera-4
+    container_name: matomo-new
+    ports:
+      - 8181:80
+    env_file:
+      - .env
+    networks:
+      - traefik_external
+
+####################################
+#            Networks              #
+####################################
+
+networks:
+  traefik_external:
+    external: true
+    name: traefik_external
+  default:
+    driver: bridge
+
+####################################
+#            Volumes               #
+####################################
