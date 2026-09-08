@@ -417,7 +417,6 @@ services:
 
 
 
-
   # Redis - Key-value Store
   redis:
     container_name: redis
