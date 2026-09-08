@@ -440,6 +440,11 @@ services:
       - $DOCKERDIR/redis/data:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 50M
 
   # Wiki.js - a Wiki site built on JS
   wiki:
