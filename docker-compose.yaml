@@ -238,19 +238,20 @@ services:
       - DNS_SERVER=1.1.1.1
 
   # MariaDB - MySQL Database
-  mariadb:
-    container_name: mariadb
+  mariadb-old:
+    container_name: mariadb-old
     image: linuxserver/mariadb:110.4.14mariabionic-ls77
     restart: always
     networks:
       traefik_external:
         ipv4_address: 10.1.4.250
-    # ports:
-    #   - 3305:3306
+    ports:
+      - 3305:3306
     security_opt:
       - no-new-privileges:true
     volumes:
       - $DOCKERDIR/mariadb/data:/config
+      - $DOCKERDIR/mariadb/data/export:/export:rw
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - $DOCKERDIR/mariadb/conf.d/custom.cnf:/etc/mysql/conf.d/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
@@ -262,41 +263,30 @@ services:
       - mysql_root_password
 
 
-# Portainer - WebUI for Containers
-  portainer:
-    container_name: portainer
-    image: portainer/portainer-ce:lts
-    restart: unless-stopped
-    command: -H unix:///var/run/docker.sock
-    depends_on:
-      - mariadb
+  # MariaDB - MySQL Database
+  mariadb:
+    container_name: mariadb                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+    image: linuxserver/mariadb
+    # restart: unless-stopped
     networks:
-      - traefik_external
-    security_opt:
-      - no-new-privileges:true
-    # ports:
-    #  - "$PORTAINER_PORT:9000"
+      traefik_external:
+        ipv4_address: 10.1.4.249
+    ports:
+      - 3306:3306
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - $DOCKERDIR/portainer/data:/data
+      - $DOCKERDIR/mariadb/new/data:/config
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - $DOCKERDIR/mariadb/data/export:/export:rw
+      - $DOCKERDIR/mariadb/new/conf.d/custom.cnf:/etc/mysql/conf.d/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
     environment:
-      - TZ=$TZ
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.portainer-rtr.entrypoints=https"
-      - "traefik.http.routers.portainer-rtr.rule=Host(`portainer.$DOMAINNAME`)"
-      - "traefik.http.routers.portainer-rtr.tls=true"
-      ## Middlewares
-      # - "traefik.http.routers.portainer-rtr.middlewares=chain-no-auth@file" # No Authentication
-      # - "traefik.http.routers.portainer-rtr.middlewares=chain-basic-auth@file" # Basic Authentication
-      - "traefik.http.routers.portainer-rtr.middlewares=chain-authelia@file" # Authelia authentication
-      # Redirect to https
-      - "traefik.http.middlewares.test-redirectscheme.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.test-redirectscheme.redirectscheme.permanent=true"
-      ## HTTP Services
-      - "traefik.http.routers.portainer-rtr.service=portainer-svc"
-      - "traefik.http.services.portainer-svc.loadbalancer.server.port=9000"
+      - PUID=$PUID
+      - PGID=$PGID
+      - MARIADB_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password # Not taking this pw during initialization
+    secrets:
+      - mysql_root_password
+
+
 
 
   # phpMyAdmin - Database management
