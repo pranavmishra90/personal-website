@@ -81,6 +81,8 @@ secrets:
     file: $SECRETSDIR/mysql_root_password
   mysql_wordpress_password:
     file: $SECRETSDIR/mysql_wordpress_password
+  mariadb_root_password:
+    file: $SECRETSDIR/mariadb_root_password
 
   cloudflare_api_token:
     file: $SECRETSDIR/cloudflare_api_token
@@ -239,12 +241,12 @@ services:
 
   # MariaDB - MySQL Database
   mariadb-old:
-    container_name: mariadb-old
+    # container_name: mariadb
     image: linuxserver/mariadb:110.4.14mariabionic-ls77
     restart: always
     networks:
       traefik_external:
-        ipv4_address: 10.1.4.250
+        ipv4_address: 10.1.4.251
     ports:
       - 3305:3306
     security_opt:
@@ -270,7 +272,7 @@ services:
     # restart: unless-stopped
     networks:
       traefik_external:
-        ipv4_address: 10.1.4.249
+        ipv4_address: 10.1.4.250
     ports:
       - 3306:3306
     volumes:
@@ -278,16 +280,18 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - $DOCKERDIR/mariadb/data/export:/export:rw
-      - $DOCKERDIR/mariadb/new/conf.d/custom.cnf:/etc/mysql/conf.d/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
+      - $DOCKERDIR/mariadb/new/conf.d/custom.cnf:/config/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
     environment:
+      - TZ=America/Chicago
       - PUID=$PUID
       - PGID=$PGID
-      - MARIADB_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password # Not taking this pw during initialization
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mariadb_root_password
+      - MYSQL_DATABASE=$MATOMO_DATABASE_DBNAME
+      - MYSQL_PASSWORD=$MATOMO_DATABASE_PASSWORD
+      - MYSQL_USER=$MATOMO_DATABASE_USERNAME
+       # Not taking this pw during initialization
     secrets:
-      - mysql_root_password
-
-
-
+      - mariadb_root_password
 
   # phpMyAdmin - Database management
   phpmyadmin:
