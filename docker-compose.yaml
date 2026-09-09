@@ -121,6 +121,13 @@ services:
     restart: unless-stopped
     depends_on:
       - authelia
+    dns:
+      - 100.100.10.18   # Technitium DNS
+      - 1.1.1.1        # fallback (Cloudflare DNS)
+    dns_search:
+      - lab.mishracloud.com
+      - int.mishracloud.com
+      - mishracloud.com
     logging:
       driver: "json-file"
       options:
@@ -267,7 +274,7 @@ services:
 
   # MariaDB - MySQL Database
   mariadb:
-    container_name: mariadb                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+    container_name: mariadb
     image: linuxserver/mariadb
     # restart: unless-stopped
     networks:
@@ -349,7 +356,7 @@ services:
   # nginx:
   #   container_name: nginx
   #   image: nginx:1.28.3
-#   restart: unless-stopped
+  #   restart: unless-stopped
   #   depends_on:
   #     - php7
   #   networks:
