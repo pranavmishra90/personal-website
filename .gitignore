@@ -62,7 +62,7 @@ secrets/
 
 !*/folder_notes.yaml
 !**LICENSE*
-!*/conf.d/custom.cnf
+# !*/conf.d/custom.cnf
 !/sites/wordpress/html/wp-content/themes/myself
 !/sites/wordpress/html/wp-content/themes/myself/template-parts/content.php
 nginx/on
