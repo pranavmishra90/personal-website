@@ -292,13 +292,14 @@ services:
       - TZ=America/Chicago
       - PUID=$PUID
       - PGID=$PGID
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mariadb_root_password
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password
       - MYSQL_DATABASE=$MATOMO_DATABASE_DBNAME
       - MYSQL_PASSWORD=$MATOMO_DATABASE_PASSWORD
       - MYSQL_USER=$MATOMO_DATABASE_USERNAME
        # Not taking this pw during initialization
     secrets:
       - mariadb_root_password
+      - mysql_root_password
 
   # phpMyAdmin - Database management
   phpmyadmin:
