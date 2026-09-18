@@ -1,0 +1,53 @@
+services:
+  docuseal:
+    image: docuseal/docuseal:latest
+    # ports:
+    #   - 3000:3000
+    volumes:
+      - ./data:/data/docuseal
+    # environment:
+      # - FORCE_SSL=${HOST}
+      # - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/docuseal
+    networks:
+      - traefik_external
+    labels:
+      - "traefik.enable=true"
+      ## HTTP Routers
+      - "traefik.http.routers.docuseal-rtr.entrypoints=https"
+      - "traefik.http.routers.docuseal-rtr.tls=true"
+      - "traefik.http.routers.docuseal-rtr.rule=Host(`docuseal.drpranavmishra.com`)"
+      # - "traefik.http.routers.docuseal-restricted-rtr.rule=Host(`docuseal.drpranavmishra.com`)
+      ## Middlewares
+      - "traefik.http.routers.docuseal-rtr.middlewares=chain-no-auth@file"
+      - "traefik.http.routers.docuseal-restricted-rtr.middlewares=chain-authelia@file" # Authelia authentication
+
+      ## HTTP Services
+      - "traefik.http.routers.docuseal-rtr.service=docuseal-svc"
+      - "traefik.http.routers.docuseal-restricted-rtr.service=docuseal-svc"
+      - "traefik.http.services.docuseal-svc.loadbalancer.server.port=3000"
+
+  # postgres:
+  #   image: postgres:18
+  #   volumes:
+  #     - './db:/var/lib/postgresql/18/docker'
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: docuseal
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+
+
+####################################
+#            Networks              #
+####################################
+
+networks:
+  traefik_external:
+    external: true
+    name: traefik_external
+  default:
+    driver: bridge
