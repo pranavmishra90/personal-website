@@ -26,21 +26,6 @@ services:
       - "traefik.http.routers.docuseal-restricted-rtr.service=docuseal-svc"
       - "traefik.http.services.docuseal-svc.loadbalancer.server.port=3000"
 
-  # postgres:
-  #   image: postgres:18
-  #   volumes:
-  #     - './db:/var/lib/postgresql/18/docker'
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: docuseal
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 5
-
-
 ####################################
 #            Networks              #
 ####################################
