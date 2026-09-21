@@ -246,31 +246,6 @@ services:
       - DELETE_ON_STOP=false
       - DNS_SERVER=1.1.1.1
 
-  # # MariaDB - MySQL Database
-  # mariadb-old:
-  #   # container_name: mariadb
-  #   image: linuxserver/mariadb:110.4.14mariabionic-ls77
-  #   restart: always
-  #   networks:
-  #     traefik_external:
-  #       ipv4_address: 10.1.4.251
-  #   ports:
-  #     - 3305:3306
-  #   security_opt:
-  #     - no-new-privileges:true
-  #   volumes:
-  #     - $DOCKERDIR/mariadb/data:/config
-  #     - $DOCKERDIR/mariadb/data/export:/export:rw
-  #     - /etc/timezone:/etc/timezone:ro
-  #     - /etc/localtime:/etc/localtime:ro
-  #     - $DOCKERDIR/mariadb/conf.d/custom.cnf:/etc/mysql/conf.d/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
-  #   environment:
-  #     - PUID=$PUID
-  #     - PGID=$PGID
-  #     - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password # Not taking this pw during initialization
-  #   secrets:
-  #     - mysql_root_password
-
 
   # MariaDB - MySQL Database
   mariadb:
