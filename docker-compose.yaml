@@ -312,8 +312,6 @@ services:
       - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
   
 
-
-
   # Wordpress - Content Management System
   wordpress:
     container_name: wordpress
@@ -324,21 +322,16 @@ services:
       - mariadb
     networks:
       - traefik_external
-    ports:
-      - 9999:80
     environment:
       WORDPRESS_DB_HOST: mariadb
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: ${MYSQL_WORDPRESS_PASS}
       WORDPRESS_DB_NAME: wordpress20240723
     volumes:
-      # - /etc/localtime:/etc/localtime:ro
-      # - /etc/timezone:/etc/timezone:ro
-      # - /var/log/nginx:/var/log/nginx
-      - $DOCKERDIR/sites/wordpress/html:/var/www/html:ro
-
-      # Matomo
-      - $DOCKERDIR/sites/matomo:/var/www/matomo
+      # Wordpress Site Files
+      # Mounted as rw, but the host filesystem is read-only
+      # Reference: https://drpranavmishra.com/tech/2023/securely-updating-wordpress-core-plugins-and-themes/
+      - $DOCKERDIR/sites/wordpress/html:/var/www/html:rw
 
     labels:
       - "traefik.enable=true"
