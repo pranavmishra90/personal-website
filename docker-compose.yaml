@@ -318,6 +318,8 @@ services:
     image: wordpress:php8.5-apache
     hostname: wordpress.lab.drpranavmishra.com
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - mariadb
     networks:
@@ -368,17 +370,16 @@ services:
     container_name: redis
     image: redis:8.10.1 #redis:6.0.6
     restart: unless-stopped
-    # entrypoint: redis-server --appendonly yes --requirepass $REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
+    security_opt:
+      - no-new-privileges:true
     entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
     networks:
       # traefik_external:
       #     ipv4_address: 10.1.4.210
       - traefik_external
       - default
-    security_opt:
-      - no-new-privileges:true
-    ports:
-      - 6379:6379
+    # ports:
+    #   - 6379:6379
     sysctls:
       - net.core.somaxconn=1024
     volumes:
@@ -397,6 +398,8 @@ services:
     container_name: wikijs
     # links:
     #   - mariadb
+    security_opt:
+      - no-new-privileges:true
     environment:
       - PUID=0
       - PGID=0
@@ -427,6 +430,8 @@ services:
   duplicati:
     image: ghcr.io/linuxserver/duplicati
     container_name: duplicati
+    security_opt:
+      - no-new-privileges:true
     environment:
       - PUID=0 #need to be root in order to read the files
       - PGID=0
