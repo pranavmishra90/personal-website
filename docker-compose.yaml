@@ -349,29 +349,26 @@ services:
       - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
 
       ## HTTP Routers Wordpress (Dr. Pranav Mishra) Authenticated Access
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.entrypoints=https"
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.tls=true"
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.rule=(Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)) && Path(`/wp-login.php`)"
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.priority=100"
+      - "traefik.http.routers.wordpress-auth-rtr.entrypoints=https"
+      - "traefik.http.routers.wordpress-auth-rtr.tls=true"
+      - "traefik.http.routers.wordpress-auth-rtr.rule=(Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)) && Path(`/wp-login.php`)"
+      - "traefik.http.routers.wordpress-auth-rtr.priority=100"
+
       ## HTTP Routers Wordpress (Dr. Pranav Mishra) Bypass - Anyone can access
-      - "traefik.http.routers.nginx-wordpress-rtr.entrypoints=https"
-      - "traefik.http.routers.nginx-wordpress-rtr.tls=true"
-      - "traefik.http.routers.nginx-wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
-      - "traefik.http.routers.nginx-wordpress-rtr.priority=5"
+      - "traefik.http.routers.wordpress-rtr.entrypoints=https"
+      - "traefik.http.routers.wordpress-rtr.tls=true"
+      - "traefik.http.routers.wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
+      - "traefik.http.routers.wordpress-rtr.priority=5"
 
       ## Middlewares
-      - "traefik.http.routers.nginx-wordpress-rtr.middlewares=wordpress-redirect" ##Website open to everyone, no auth
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.middlewares=wordpress-redirect"
+      - "traefik.http.routers.wordpress-rtr.middlewares=wordpress-redirect" ##Website open to everyone, no auth
+      - "traefik.http.routers.wordpress-auth-rtr.middlewares=wordpress-redirect"
 
 
       ## HTTP Services
-      - "traefik.http.routers.nginx-wordpress-rtr.service=wordpress-svc"
-      - "traefik.http.routers.nginx-wordpress-auth-rtr.service=wordpress-svc"
+      - "traefik.http.routers.wordpress-rtr.service=wordpress-svc"
+      - "traefik.http.routers.wordpress-auth-rtr.service=wordpress-svc"
       - "traefik.http.services.wordpress-svc.loadbalancer.server.port=80"
-
-
-
-
 
   # Redis - Key-value Store
   redis:
