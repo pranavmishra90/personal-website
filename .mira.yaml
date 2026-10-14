@@ -2,3 +2,4 @@
 llm:
   review_model: "nemotron-3-super-120b"
   indexing_model: "gpt-oss-20b"
+  security_model: "auto:chain-large-context"
