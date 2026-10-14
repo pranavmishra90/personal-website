@@ -18,6 +18,10 @@ jobs:
   continuous-integration:
     name: Continuous Integration
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
     
     steps:
       # Note: we need to checkout the repository at the workflow sha in case during the workflow
