@@ -431,6 +431,7 @@ services:
       - PGID=0
       - TZ=$TZ
       # - CLI_ARGS= #optional
+      - SETTINGS_ENCRYPTION_KEY=$DUPLICATI_ENCRYPTION_KEY
     volumes:
       - ~/duplicati/config:/config
       # - ~/backups:/backups #will not be storing local backups
