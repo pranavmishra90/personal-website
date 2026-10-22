@@ -136,7 +136,7 @@ jobs:
       - name: Install uv
         run: |
               curl -LsSf https://astral.sh/uv/install.sh | sh
-              source $HOME/.local/bin/env || true
+              echo "$HOME/.local/bin" >> "$GITHUB_PATH"
          
       - name: Install Python-Semantic-Release
         run: |
