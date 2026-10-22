@@ -244,32 +244,32 @@ services:
   #     - DNS_SERVER=1.1.1.1
 
 
-  # # MariaDB - MySQL Database
-  # mariadb:
-  #   container_name: mariadb
-  #   image: linuxserver/mariadb
-  #   restart: unless-stopped
-  #   networks:
-  #     traefik_external:
-  #       ipv4_address: 10.1.4.250
-  #   # ports:
-  #   #   - 3306:3306
-  #   volumes:
-  #     - $DOCKERDIR/mariadb/new/data:/config
-  #     - /etc/timezone:/etc/timezone:ro
-  #     - /etc/localtime:/etc/localtime:ro
-  #     - $DOCKERDIR/mariadb/data/export:/export:rw
-  #     - $DOCKERDIR/mariadb/new/conf.d/custom.cnf:/config/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
-  #   environment:
-  #     - TZ=America/Chicago
-  #     - PUID=$PUID
-  #     - PGID=$PGID
-  #     - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password
-  #     - MYSQL_DATABASE=$MATOMO_DATABASE_DBNAME
-  #     - MYSQL_PASSWORD=$MATOMO_DATABASE_PASSWORD
-  #     - MYSQL_USER=$MATOMO_DATABASE_USERNAME
-  #   secrets:
-  #     - mysql_root_password
+  # MariaDB - MySQL Database
+  mariadb:
+    container_name: mariadb
+    image: linuxserver/mariadb
+    restart: unless-stopped
+    networks:
+      traefik_external:
+        ipv4_address: 10.1.4.250
+    # ports:
+    #   - 3306:3306
+    volumes:
+      - $DOCKERDIR/mariadb/new/data:/config
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - $DOCKERDIR/mariadb/data/export:/export:rw
+      - $DOCKERDIR/mariadb/new/conf.d/custom.cnf:/config/custom.cnf:rw #Allow editing of custom.cnf MariaDB settings
+    environment:
+      - TZ=America/Chicago
+      - PUID=$PUID
+      - PGID=$PGID
+      - FILE__MYSQL_ROOT_PASSWORD=/run/secrets/mysql_root_password
+      - MYSQL_DATABASE=$MATOMO_DATABASE_DBNAME
+      - MYSQL_PASSWORD=$MATOMO_DATABASE_PASSWORD
+      - MYSQL_USER=$MATOMO_DATABASE_USERNAME
+    secrets:
+      - mysql_root_password
 
   # # phpMyAdmin - Database management
   # phpmyadmin:
