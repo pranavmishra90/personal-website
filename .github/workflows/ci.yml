@@ -1,11 +1,10 @@
 name: Continuous Integration
 
 on:
-  push:
-    branches:
-      - 'feat/*'
-      - 'fix/*'
-      - 'ci/*'
+  # push:
+  #   branches:
+  #     - 'feat/*'
+  #     - 'fix/*'
   pull_request:
     branches:
       - main
