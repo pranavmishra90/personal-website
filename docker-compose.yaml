@@ -369,7 +369,7 @@ services:
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
-    entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    entrypoint: redis-server --appendonly yes --maxmemory 50mb --maxmemory-policy allkeys-lru
     networks:
       - traefik_external
       - default
