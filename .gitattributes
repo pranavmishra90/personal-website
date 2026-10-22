@@ -1,8 +1,8 @@
 
 
 # Forgejo Language Detection
-*.gitignore=Dotfiles
-*.gitattributes=Dotfiles
-*.gitmodules=Dotfiles
+*.gitignore linguist-language=Dotfiles
+*.gitattributes linguist-language=Dotfiles
+*.gitmodules linguist-language=Dotfiles
 
 .mira.yaml linguist-vendored
