@@ -105,10 +105,10 @@ secrets:
 ####################################
 
 
-include:
-  - dashboard/docker-compose.yaml
-  - kutt/docker-compose.yaml
-  # - notebook/docker-compose.yaml
+# include:
+#   - dashboard/docker-compose.yaml
+#   - kutt/docker-compose.yaml
+#   - notebook/docker-compose.yaml
 
 
 services:
