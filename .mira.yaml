@@ -1,5 +1,0 @@
-# .mira.yaml repository override
-llm:
-  review_model: "nvidia/nemotron-3.5-lightning-30b-a3b"
-  indexing_model: "nvidia/nemotron-3.5-lightning-30b-a3b"
-  security_model: "nvidia/nemotron-3.5-lightning-30b-a3b"
