@@ -10,8 +10,8 @@
 #     #       FROM matomo@sha256:650f4f205b0b8968f430b0fc924e8b37e8ff023948c4db08ea300d154054b257
 #     #       RUN apt update && apt install -y iputils-ping mariadb-client galera-4 nano
 #     container_name: matomo
-#     ports:
-#       - 8181:80
+#     #ports:
+#     #  - 8181:80
 #     volumes:
 #       - /home/pranav/personal-website/sites/matomo/config:/var/www/html/config
 #     env_file:
