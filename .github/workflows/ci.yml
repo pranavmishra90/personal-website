@@ -6,6 +6,9 @@ on:
       - 'feat/*'
       - 'fix/*'
       - 'ci/*'
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 
