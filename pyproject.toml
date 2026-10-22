@@ -39,8 +39,8 @@ match = "develop"
 prerelease_token = "beta"
 prerelease = true
 
-[tool.semantic_release.branches.feat]
-match = "feat/*"
+[tool.semantic_release.branches.featfix]
+match = "^(feat|fix)/.+"
 prerelease_token = "alpha"
 prerelease = true
 

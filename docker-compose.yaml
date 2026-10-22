@@ -105,10 +105,10 @@ secrets:
 ####################################
 
 
-include:
-  - dashboard/docker-compose.yaml
-  - kutt/docker-compose.yaml
-  # - notebook/docker-compose.yaml
+# include:
+#   - dashboard/docker-compose.yaml
+#   - kutt/docker-compose.yaml
+#   - notebook/docker-compose.yaml
 
 
 services:
@@ -231,17 +231,17 @@ services:
 
   # Cloudflare DDNS - Dynamic DNS Updater - Update IP address of the VM automatically
 
-  cf-ddns:
-    container_name: Cloudflare-DDNS
-    image: oznu/cloudflare-ddns:latest
-    restart: always
-    environment:
-      - API_KEY=$CLOUDFLARE_API_TOKEN
-      - ZONE=$DOMAINNAME
-      - PROXIED=true
-      - RRTYPE=A
-      - DELETE_ON_STOP=false
-      - DNS_SERVER=1.1.1.1
+  # cf-ddns:
+  #   container_name: Cloudflare-DDNS
+  #   image: oznu/cloudflare-ddns:latest
+  #   restart: always
+  #   environment:
+  #     - API_KEY=$CLOUDFLARE_API_TOKEN
+  #     - ZONE=$DOMAINNAME
+  #     - PROXIED=true
+  #     - RRTYPE=A
+  #     - DELETE_ON_STOP=false
+  #     - DNS_SERVER=1.1.1.1
 
 
   # MariaDB - MySQL Database
@@ -264,103 +264,103 @@ services:
       - TZ=America/Chicago
       - PUID=$PUID
       - PGID=$PGID
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password
+      - FILE__MYSQL_ROOT_PASSWORD=/run/secrets/mysql_root_password
       - MYSQL_DATABASE=$MATOMO_DATABASE_DBNAME
       - MYSQL_PASSWORD=$MATOMO_DATABASE_PASSWORD
       - MYSQL_USER=$MATOMO_DATABASE_USERNAME
     secrets:
       - mysql_root_password
 
-  # phpMyAdmin - Database management
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
-    restart: unless-stopped
-    depends_on:
-      - mariadb
-    links:
-      - mariadb
-    networks:
-      - traefik_external
-    security_opt:
-      - no-new-privileges:true
-    # volumes:
-    #  - $DOCKERDIR/phpmyadmin:/etc/phpmyadmin
-    environment:
-      - PMA_HOST=mariadb
-      - MYSQL_USER=pranav
-      - PMA_PORT=3306
-      # - PMA_ARBITRARY=1
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password
-    secrets:
-      - mysql_root_password
-    labels:
-      - "traefik.enable=true"
+  # # phpMyAdmin - Database management
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin:latest
+  #   container_name: phpmyadmin
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - mariadb
+  #   links:
+  #     - mariadb
+  #   networks:
+  #     - traefik_external
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   # volumes:
+  #   #  - $DOCKERDIR/phpmyadmin:/etc/phpmyadmin
+  #   environment:
+  #     - PMA_HOST=mariadb
+  #     - MYSQL_USER=pranav
+  #     - PMA_PORT=3306
+  #     # - PMA_ARBITRARY=1
+  #     - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql_root_password
+  #   secrets:
+  #     - mysql_root_password
+  #   labels:
+  #     - "traefik.enable=true"
 
-      ## HTTP Routers
-      - "traefik.http.routers.phpmyadmin-rtr.entrypoints=https"
-      - "traefik.http.routers.phpmyadmin-rtr.tls=true"
-      - "traefik.http.routers.phpmyadmin-rtr.rule=Host(`pma.$DOMAINNAME`)"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.phpmyadmin-rtr.entrypoints=https"
+  #     - "traefik.http.routers.phpmyadmin-rtr.tls=true"
+  #     - "traefik.http.routers.phpmyadmin-rtr.rule=Host(`pma.$DOMAINNAME`)"
 
-      ## Middlewares
-      - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file"
+  #     ## Middlewares
+  #     - "traefik.http.routers.phpmyadmin-rtr.middlewares=chain-authelia@file"
 
-      ## HTTP Services
-      - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
-      - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
+  #     ## HTTP Services
+  #     - "traefik.http.routers.phpmyadmin-rtr.service=phpmyadmin-svc"
+  #     - "traefik.http.services.phpmyadmin-svc.loadbalancer.server.port=80"
   
 
-  # Wordpress - Content Management System
-  wordpress:
-    container_name: wordpress
-    image: wordpress:php8.5-apache
-    hostname: wordpress.lab.drpranavmishra.com
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    depends_on:
-      - mariadb
-    networks:
-      - traefik_external
-    environment:
-      WORDPRESS_DB_HOST: mariadb
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: ${MYSQL_WORDPRESS_PASS}
-      WORDPRESS_DB_NAME: wordpress20240723
-    volumes:
-      # Wordpress Site Files
-      # Mounted as rw, but the host filesystem is read-only
-      # Reference: https://drpranavmishra.com/tech/2023/securely-updating-wordpress-core-plugins-and-themes/
-      - $DOCKERDIR/sites/wordpress/html:/var/www/html:rw
+  # # Wordpress - Content Management System
+  # wordpress:
+  #   container_name: wordpress
+  #   image: wordpress:php8.5-apache
+  #   hostname: wordpress.lab.drpranavmishra.com
+  #   restart: unless-stopped
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   depends_on:
+  #     - mariadb
+  #   networks:
+  #     - traefik_external
+  #   environment:
+  #     WORDPRESS_DB_HOST: mariadb
+  #     WORDPRESS_DB_USER: wordpress
+  #     WORDPRESS_DB_PASSWORD: ${MYSQL_WORDPRESS_PASS}
+  #     WORDPRESS_DB_NAME: wordpress20240723
+  #   volumes:
+  #     # Wordpress Site Files
+  #     # Mounted as rw, but the host filesystem is read-only
+  #     # Reference: https://drpranavmishra.com/tech/2023/securely-updating-wordpress-core-plugins-and-themes/
+  #     - $DOCKERDIR/sites/wordpress/html:/var/www/html:rw
 
-    labels:
-      - "traefik.enable=true"
+  #   labels:
+  #     - "traefik.enable=true"
 
-      # Redirect Wordpress www to non-www middleware
-      - "traefik.http.middlewares.wordpress-redirect.redirectregex.regex=^https?://www\\.$DOMAINNAME/(.*)"
-      - "traefik.http.middlewares.wordpress-redirect.redirectregex.replacement=https://$DOMAINNAME/$${1}"
-      - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
+  #     # Redirect Wordpress www to non-www middleware
+  #     - "traefik.http.middlewares.wordpress-redirect.redirectregex.regex=^https?://www\\.$DOMAINNAME/(.*)"
+  #     - "traefik.http.middlewares.wordpress-redirect.redirectregex.replacement=https://$DOMAINNAME/$${1}"
+  #     - "traefik.http.middlewares.wordpress-redirect.redirectregex.permanent=true"
 
-      ## HTTP Routers Wordpress (Dr. Pranav Mishra) Authenticated Access
-      - "traefik.http.routers.wordpress-auth-rtr.entrypoints=https"
-      - "traefik.http.routers.wordpress-auth-rtr.tls=true"
-      - "traefik.http.routers.wordpress-auth-rtr.rule=(Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)) && Path(`/wp-login.php`)"
-      - "traefik.http.routers.wordpress-auth-rtr.priority=100"
+  #     ## HTTP Routers Wordpress (Dr. Pranav Mishra) Authenticated Access
+  #     - "traefik.http.routers.wordpress-auth-rtr.entrypoints=https"
+  #     - "traefik.http.routers.wordpress-auth-rtr.tls=true"
+  #     - "traefik.http.routers.wordpress-auth-rtr.rule=(Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)) && Path(`/wp-login.php`)"
+  #     - "traefik.http.routers.wordpress-auth-rtr.priority=100"
 
-      ## HTTP Routers Wordpress (Dr. Pranav Mishra) Bypass - Anyone can access
-      - "traefik.http.routers.wordpress-rtr.entrypoints=https"
-      - "traefik.http.routers.wordpress-rtr.tls=true"
-      - "traefik.http.routers.wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
-      - "traefik.http.routers.wordpress-rtr.priority=5"
+  #     ## HTTP Routers Wordpress (Dr. Pranav Mishra) Bypass - Anyone can access
+  #     - "traefik.http.routers.wordpress-rtr.entrypoints=https"
+  #     - "traefik.http.routers.wordpress-rtr.tls=true"
+  #     - "traefik.http.routers.wordpress-rtr.rule=Host(`$DOMAINNAME`) || Host(`www.$DOMAINNAME`)"
+  #     - "traefik.http.routers.wordpress-rtr.priority=5"
 
-      ## Middlewares
-      - "traefik.http.routers.wordpress-rtr.middlewares=wordpress-redirect" ##Website open to everyone, no auth
-      - "traefik.http.routers.wordpress-auth-rtr.middlewares=wordpress-redirect"
+  #     ## Middlewares
+  #     - "traefik.http.routers.wordpress-rtr.middlewares=wordpress-redirect" ##Website open to everyone, no auth
+  #     - "traefik.http.routers.wordpress-auth-rtr.middlewares=wordpress-redirect"
 
-      ## HTTP Services
-      - "traefik.http.routers.wordpress-rtr.service=wordpress-svc"
-      - "traefik.http.routers.wordpress-auth-rtr.service=wordpress-svc"
-      - "traefik.http.services.wordpress-svc.loadbalancer.server.port=80"
+  #     ## HTTP Services
+  #     - "traefik.http.routers.wordpress-rtr.service=wordpress-svc"
+  #     - "traefik.http.routers.wordpress-auth-rtr.service=wordpress-svc"
+  #     - "traefik.http.services.wordpress-svc.loadbalancer.server.port=80"
 
   # Redis - Key-value Store
   redis:
@@ -369,7 +369,7 @@ services:
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
-    entrypoint: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    entrypoint: redis-server --appendonly yes --maxmemory 50mb --maxmemory-policy allkeys-lru
     networks:
       - traefik_external
       - default
@@ -385,77 +385,77 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: 50M
+          memory: 64M
 
-  # Wiki.js - a Wiki site built on JS
-  wiki:
-    image: ghcr.io/linuxserver/wikijs
-    container_name: wikijs
-    # links:
-    #   - mariadb
-    security_opt:
-      - no-new-privileges:true
-    environment:
-      - PUID=0
-      - PGID=0
-      - TZ=$TZ
-    volumes:
-      - $DOCKERDIR/wiki/config:/config
-      - $DOCKERDIR/wiki/data:/data
-    # ports:
-    #   - 3000:3000
-    restart: unless-stopped
-    networks:
-      - traefik_external
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.wiki-rtr.entrypoints=https"
-      - "traefik.http.routers.wiki-rtr.tls=true"
-      - "traefik.http.routers.wiki-rtr.rule=Host(`wiki.$DOMAINNAME`)"
-      ## Middlewares
-      - "traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file"
-      # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
+  # # Wiki.js - a Wiki site built on JS
+  # wiki:
+  #   image: ghcr.io/linuxserver/wikijs
+  #   container_name: wikijs
+  #   # links:
+  #   #   - mariadb
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   environment:
+  #     - PUID=0
+  #     - PGID=0
+  #     - TZ=$TZ
+  #   volumes:
+  #     - $DOCKERDIR/wiki/config:/config
+  #     - $DOCKERDIR/wiki/data:/data
+  #   # ports:
+  #   #   - 3000:3000
+  #   restart: unless-stopped
+  #   networks:
+  #     - traefik_external
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.wiki-rtr.entrypoints=https"
+  #     - "traefik.http.routers.wiki-rtr.tls=true"
+  #     - "traefik.http.routers.wiki-rtr.rule=Host(`wiki.$DOMAINNAME`)"
+  #     ## Middlewares
+  #     - "traefik.http.routers.wiki-rtr.middlewares=chain-no-auth@file"
+  #     # - "traefik.http.routers.wiki-rtr.middlewares=chain-authelia@file" # Authelia authentication
 
-      ## HTTP Services
-      - "traefik.http.routers.wiki-rtr.service=wiki-svc"
-      - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"
+  #     ## HTTP Services
+  #     - "traefik.http.routers.wiki-rtr.service=wiki-svc"
+  #     - "traefik.http.services.wiki-svc.loadbalancer.server.port=3000"
 
-  duplicati:
-    image: ghcr.io/linuxserver/duplicati
-    container_name: duplicati
-    security_opt:
-      - no-new-privileges:true
-    environment:
-      - PUID=0 #need to be root in order to read the files
-      - PGID=0
-      - TZ=$TZ
-      # - CLI_ARGS= #optional
-      - SETTINGS_ENCRYPTION_KEY=$DUPLICATI_ENCRYPTION_KEY
-    volumes:
-      - ~/duplicati/config:/config
-      # - ~/backups:/backups #will not be storing local backups
-      - $DOCKERDIR/:/drpm-website:ro #website backup
-      - /home/pranav/research:/drpm-research:ro #research directory backup
-      - /home/pranav/github-profile:/github-profile:ro #github profile page backup
-      - /home/pranav/backup/matrix:/drpm-matrix-postgresql:ro # Matrix PostgreSQL database local backup
-      - /home/pranav/matrix:/drpm-matrix:ro # Matrix server
-      - /home/pranav/restore:/drpm-restore:rw # Restore folder for duplicati
-    # ports:
-    #   - 8200:8200
-    restart: unless-stopped
-    networks:
-      - traefik_external
-      - default
-    labels:
-      - "traefik.enable=true"
-      ## HTTP Routers
-      - "traefik.http.routers.duplicati-rtr.entrypoints=https"
-      - "traefik.http.routers.duplicati-rtr.tls=true"
-      - "traefik.http.routers.duplicati-rtr.rule=Host(`duplicati.$DOMAINNAME`)"
-      ## Middlewares
-      # - "traefik.http.routers.duplicati-rtr.middlewares=chain-no-auth@file"
-      - "traefik.http.routers.duplicati-rtr.middlewares=chain-authelia@file"
-      ## HTTP Services
-      - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
-      - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
+  # duplicati:
+  #   image: ghcr.io/linuxserver/duplicati
+  #   container_name: duplicati
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   environment:
+  #     - PUID=0 #need to be root in order to read the files
+  #     - PGID=0
+  #     - TZ=$TZ
+  #     # - CLI_ARGS= #optional
+  #     - SETTINGS_ENCRYPTION_KEY=$DUPLICATI_ENCRYPTION_KEY
+  #   volumes:
+  #     - ~/duplicati/config:/config
+  #     # - ~/backups:/backups #will not be storing local backups
+  #     - $DOCKERDIR/:/drpm-website:ro #website backup
+  #     - /home/pranav/research:/drpm-research:ro #research directory backup
+  #     - /home/pranav/github-profile:/github-profile:ro #github profile page backup
+  #     - /home/pranav/backup/matrix:/drpm-matrix-postgresql:ro # Matrix PostgreSQL database local backup
+  #     - /home/pranav/matrix:/drpm-matrix:ro # Matrix server
+  #     - /home/pranav/restore:/drpm-restore:rw # Restore folder for duplicati
+  #   # ports:
+  #   #   - 8200:8200
+  #   restart: unless-stopped
+  #   networks:
+  #     - traefik_external
+  #     - default
+  #   labels:
+  #     - "traefik.enable=true"
+  #     ## HTTP Routers
+  #     - "traefik.http.routers.duplicati-rtr.entrypoints=https"
+  #     - "traefik.http.routers.duplicati-rtr.tls=true"
+  #     - "traefik.http.routers.duplicati-rtr.rule=Host(`duplicati.$DOMAINNAME`)"
+  #     ## Middlewares
+  #     # - "traefik.http.routers.duplicati-rtr.middlewares=chain-no-auth@file"
+  #     - "traefik.http.routers.duplicati-rtr.middlewares=chain-authelia@file"
+  #     ## HTTP Services
+  #     - "traefik.http.routers.duplicati-rtr.service=duplicati-svc"
+  #     - "traefik.http.services.duplicati-svc.loadbalancer.server.port=8200"
