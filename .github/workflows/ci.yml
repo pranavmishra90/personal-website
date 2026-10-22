@@ -188,6 +188,7 @@ jobs:
               exit 0
 
       - name: Workflow Status
+        id: workflow-status
         if: github.ref == 'refs/heads/main'
         env:
           SUMMARY_FILE: "logs/release_summary.md"
@@ -201,11 +202,11 @@ jobs:
 
           echo "## Python Semantic Release - GitHub Action" >> $SUMMARY_FILE
           echo ""  >> $SUMMARY_FILE
-          echo "Version: ${{ steps.semver.outputs.version }}" >> $SUMMARY_FILE
+          echo "Version: ${{ steps.semver-main.outputs.version }}" >> $SUMMARY_FILE
           echo ""  >> $SUMMARY_FILE
           printf "Tags: \n$(git tag -l)" >> $SUMMARY_FILE
           echo ""  >> $SUMMARY_FILE
-          echo "Released: ${{ steps.semver.outputs.released }}" >> $SUMMARY_FILE
+          echo "Released: ${{ steps.semver-main.outputs.released }}" >> $SUMMARY_FILE
           echo ""  >> $SUMMARY_FILE
           echo ""  >> $SUMMARY_FILE
           cat CHANGELOG.md >> $SUMMARY_FILE
