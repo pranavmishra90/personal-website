@@ -385,7 +385,7 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: 50M
+          memory: 64M
 
   # # Wiki.js - a Wiki site built on JS
   # wiki:
