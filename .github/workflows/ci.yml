@@ -45,7 +45,7 @@ jobs:
           echo "Checked out branch: $REF_NAME at SHA: ${{ github.sha }}. Server URL: ${{ github.server_url }}"
 
       - name: Set platform variables
-        if: ${{ github.server.url == 'https://github.com' }}
+        if: ${{ github.server_url == 'https://github.com' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -67,7 +67,7 @@ jobs:
           ssh-private-key: ${{ secrets.FACSIMILAB_BOT_SSHKEY }}
 
       - name: Setup SSH Configuration
-        if: ${{ github.server.url != 'https://github.com' }}
+        if: ${{ github.server_url != 'https://github.com' }}
         run: |
           echo "Setting up SSH configuration..."
           mkdir -p ~/.ssh
