@@ -6,7 +6,7 @@
 
 services:
   kutt:
-    image: kutt/kutt:2.7.1
+    image: kutt/kutt:v2.7.4
     depends_on:
       - kutt_postgres
       - kutt_redis
