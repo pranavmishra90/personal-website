@@ -365,7 +365,7 @@ services:
   # Redis - Key-value Store
   redis:
     container_name: redis
-    image: redis:8.10.1
+    image: redis:8.10.2
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
